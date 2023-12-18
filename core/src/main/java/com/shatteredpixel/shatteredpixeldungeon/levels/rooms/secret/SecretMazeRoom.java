@@ -113,6 +113,8 @@ public class SecretMazeRoom extends SecretRoom {
 		
 		PathFinder.setMapSize(level.width(), level.height());
 		
-		entrance().set(Door.Type.HIDDEN);
+		if (Random.Float() > 0.5)
+			entrance().set(Door.Type.HIDDEN);
+		else entrance().set(Door.Type.REGULAR);
 	}
 }

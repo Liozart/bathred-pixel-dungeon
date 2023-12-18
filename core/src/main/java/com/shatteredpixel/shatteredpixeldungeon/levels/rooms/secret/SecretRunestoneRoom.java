@@ -28,6 +28,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
 import com.watabou.utils.Point;
+import com.watabou.utils.Random;
 
 public class SecretRunestoneRoom extends SecretRoom {
 	
@@ -69,18 +70,22 @@ public class SecretRunestoneRoom extends SecretRoom {
 			dropPos = level.pointToCell(random());
 		} while (level.map[dropPos] != Terrain.EMPTY);
 		level.drop( Generator.randomUsingDefaults(Generator.Category.STONE), dropPos);
-		
-		do{
-			dropPos = level.pointToCell(random());
-		} while (level.map[dropPos] != Terrain.EMPTY || level.heaps.get(dropPos) != null);
-		level.drop( Generator.randomUsingDefaults(Generator.Category.STONE), dropPos);
+
+		for (int i = 0; i < 2; i++) {
+			do {
+				dropPos = level.pointToCell(random());
+			} while (level.map[dropPos] != Terrain.EMPTY || level.heaps.get(dropPos) != null);
+			level.drop(Generator.randomUsingDefaults(Generator.Category.STONE), dropPos);
+		}
 		
 		do{
 			dropPos = level.pointToCell(random());
 		} while (level.map[dropPos] != Terrain.EMPTY_SP);
 		level.drop( new StoneOfEnchantment(), dropPos);
-		
-		entrance.set(Door.Type.HIDDEN);
+
+		if (Random.Float() > 0.5)
+			entrance().set(Door.Type.HIDDEN);
+		else entrance().set(Door.Type.REGULAR);
 	}
 	
 	@Override

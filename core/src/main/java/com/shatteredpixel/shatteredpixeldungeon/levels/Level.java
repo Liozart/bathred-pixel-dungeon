@@ -213,11 +213,13 @@ public abstract class Level implements Bundlable {
 				Dungeon.LimitedDrops.ARCANE_STYLI.count++;
 				addItemToSpawn( new Stylus() );
 			}
-			//one scroll of transmutation is guaranteed to spawn somewhere on chapter 2-4
-			int enchChapter = (int)((Dungeon.seed / 10) % 3) + 1;
-			if ( Dungeon.depth / 5 == enchChapter &&
-					Dungeon.seed % 4 + 1 == Dungeon.depth % 5){
-				addItemToSpawn( new StoneOfEnchantment() );
+			//two scroll of transmutation is guaranteed to spawn somewhere on chapter 2-4
+			for (int i = 0; i < 2; i++){
+				int enchChapter = (int)((Dungeon.seed / 10) % 3) + 1;
+				if ( Dungeon.depth / 5 == enchChapter &&
+						Dungeon.seed % 4 + 1 == Dungeon.depth % 5){
+					addItemToSpawn( new StoneOfEnchantment() );
+				}
 			}
 			
 			if ( Dungeon.depth == ((Dungeon.seed % 3) + 1)){
@@ -225,9 +227,9 @@ public abstract class Level implements Bundlable {
 			}
 			
 			if (Dungeon.depth > 1) {
-				//50% chance of getting a level feeling
-				//~7.15% chance for each feeling
-				switch (Random.Int( 14 )) {
+				//50+% chance of getting a level feeling
+				//~7.15+% chance for each feeling
+				switch (Random.Int( 13 )) {
 					case 0:
 						feeling = Feeling.CHASM;
 						break;

@@ -144,7 +144,7 @@ public abstract class RegularLevel extends Level {
 			initRooms.add(s);
 		}
 		
-		int secrets = SecretRoom.secretsForFloor(Dungeon.depth);
+		int secrets = SecretRoom.secretsForFloor(Dungeon.depth) + 1;
 		//one additional secret for secret levels
 		if (feeling == Feeling.SECRETS) secrets++;
 		for (int i = 0; i < secrets; i++) {
@@ -686,7 +686,7 @@ public abstract class RegularLevel extends Level {
 	public boolean isLevelExplored( int depth ) {
 		//A level is considered fully explored if:
 
-		//There are no levelgen heaps which are undiscovered, in an openable container, or which contain keys
+		//There are no levelgen heaps which are undiscovere.d, in an openable container, or which contain keys
 		for (Heap h : heaps.valueList()){
 			if (h.autoExplored) continue;
 

@@ -65,7 +65,9 @@ public class SecretWellRoom extends SecretRoom {
 		Class<? extends WellWater> waterClass = (Class<? extends WellWater>) Random.element( WATERS );
 		
 		WellWater.seed(well.x + level.width() * well.y, 1, waterClass, level);
-		
-		entrance().set( Door.Type.HIDDEN );
+
+		if (Random.Float() > 0.5)
+			entrance().set(Door.Type.HIDDEN);
+		else entrance().set(Door.Type.REGULAR);
 	}
 }

@@ -23,45 +23,26 @@ package com.shatteredpixel.shatteredpixeldungeon.levels.rooms.secret;
 
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
+import com.shatteredpixel.shatteredpixeldungeon.items.bombs.Bomb;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
-import com.shatteredpixel.shatteredpixeldungeon.levels.traps.SummoningTrap;
-import com.watabou.utils.Point;
 import com.watabou.utils.Random;
 
-public class SecretSummoningRoom extends SecretRoom {
-	
-	//minimum of 3x3 traps, max of 6x6 traps
-	
-	@Override
-	public int maxWidth() {
-		return 8;
-	}
-	
-	@Override
-	public int maxHeight() {
-		return 8;
-	}
-	
+public class SecretMagicRoom extends SecretRoom {
+
 	@Override
 	public void paint(Level level) {
 		Painter.fill(level, this, Terrain.WALL);
-		Painter.fill(level, this, 1, Terrain.SECRET_TRAP);
-		
-		Point center = center();
-		level.drop(Generator.random(), level.pointToCell(center)).setHauntedIfCursed().type = Heap.Type.SKELETON;
-		
-		for (Point p : getPoints()){
-			int cell = level.pointToCell(p);
-			if (level.map[cell] == Terrain.SECRET_TRAP){
-				level.setTrap(new SummoningTrap().hide(), cell);
-			}
-		}
+		Painter.fill(level, this, 1, Terrain.EMPTY_SP);
+
+		Painter.set(level, center(), Terrain.PEDESTAL);
+
+		Heap d = level.drop(Generator.random(Generator.Category.WAND), level.pointToCell(center()));
+		d.peek().cursed = false;
 
 		if (Random.Float() > 0.5)
 			entrance().set(Door.Type.HIDDEN);
 		else entrance().set(Door.Type.REGULAR);
 	}
-	
 }

@@ -81,7 +81,10 @@ public class SecretLibraryRoom extends SecretRoom {
 		} else {
 			Painter.drawInside(level, this, entrance, (height() - 3) / 2, Terrain.EMPTY_SP);
 		}
-		entrance.set( Door.Type.HIDDEN );
+
+		if (Random.Float() > 0.5)
+			entrance().set(Door.Type.HIDDEN);
+		else entrance().set(Door.Type.REGULAR);
 		
 		int n = Random.IntRange( 2, 3 );
 		HashMap<Class<? extends Scroll>, Float> chances = new HashMap<>(scrollChances);

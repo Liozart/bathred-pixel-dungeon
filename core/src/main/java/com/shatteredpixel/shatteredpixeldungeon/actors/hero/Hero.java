@@ -183,8 +183,8 @@ public class Hero extends Char {
 	public static final int STARTING_STR = 10;
 	
 	private static final float TIME_TO_REST		    = 1f;
-	private static final float TIME_TO_SEARCH	    = 2f;
-	private static final float HUNGER_FOR_SEARCH	= 6f;
+	private static final float TIME_TO_SEARCH	    = 1f;
+	private static final float HUNGER_FOR_SEARCH	= 3f;
 	
 	public HeroClass heroClass = HeroClass.ROGUE;
 	public HeroSubClass subClass = HeroSubClass.NONE;
@@ -193,7 +193,7 @@ public class Hero extends Char {
 	public LinkedHashMap<Talent, Talent> metamorphedTalents = new LinkedHashMap<>();
 	
 	private int attackSkill = 10;
-	private int defenseSkill = 5;
+	private int defenseSkill = 6;
 
 	public boolean ready = false;
 	public boolean damageInterrupt = true;
@@ -224,7 +224,7 @@ public class Hero extends Char {
 	public Hero() {
 		super();
 
-		HP = HT = 20;
+		HP = HT = 25;
 		STR = STARTING_STR;
 		
 		belongings = new Belongings( this );
@@ -235,7 +235,7 @@ public class Hero extends Char {
 	public void updateHT( boolean boostHP ){
 		int curHT = HT;
 		
-		HT = 20 + 5*(lvl-1) + HTBoost;
+		HT = 25 + 6*(lvl-1) + HTBoost;
 		float multiplier = RingOfMight.HTMultiplier(this);
 		HT = Math.round(multiplier * HT);
 		
@@ -1744,7 +1744,7 @@ public class Hero extends Char {
 		if (source != AscensionChallenge.class) {
 			this.exp += exp;
 		}
-		float percent = exp/(float)maxExp();
+		float percent = exp/(float)maxExp() * 1.5f;
 
 		EtherealChains.chainsRecharge chains = buff(EtherealChains.chainsRecharge.class);
 		if (chains != null) chains.gainExp(percent);

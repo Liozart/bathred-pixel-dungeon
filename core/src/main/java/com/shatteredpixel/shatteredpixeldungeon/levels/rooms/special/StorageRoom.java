@@ -36,8 +36,6 @@ public class StorageRoom extends SpecialRoom {
 		
 		Painter.fill( level, this, Terrain.WALL );
 		Painter.fill( level, this, 1, Terrain.EMPTY_SP );
-
-		boolean honeyPot = Random.Int( 2 ) == 0;
 		
 		int n = Random.IntRange( 3, 4 );
 		for (int i=0; i < n; i++) {
@@ -45,12 +43,7 @@ public class StorageRoom extends SpecialRoom {
 			do {
 				pos = level.pointToCell(random());
 			} while (level.map[pos] != Terrain.EMPTY_SP || level.heaps.get(pos) != null);
-			if (honeyPot){
-				level.drop( new Honeypot(), pos);
-				honeyPot = false;
-			} else {
-				level.drop( prize(level), pos);
-			}
+			level.drop( prize(level), pos);
 		}
 		
 		entrance().set( Door.Type.BARRICADE );

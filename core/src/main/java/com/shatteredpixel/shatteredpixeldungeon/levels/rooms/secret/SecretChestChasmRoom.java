@@ -30,6 +30,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
 import com.watabou.utils.Point;
+import com.watabou.utils.Random;
 
 public class SecretChestChasmRoom extends SecretRoom {
 	
@@ -111,7 +112,9 @@ public class SecretChestChasmRoom extends SecretRoom {
 		}
 		
 		level.addItemToSpawn(new PotionOfLevitation());
-		
-		entrance().set(Door.Type.HIDDEN);
+
+		if (Random.Float() > 0.5)
+			entrance().set(Door.Type.HIDDEN);
+		else entrance().set(Door.Type.REGULAR);
 	}
 }

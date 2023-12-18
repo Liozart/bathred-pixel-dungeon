@@ -45,17 +45,17 @@ public class SecretGardenRoom extends SecretRoom {
 				}
 			}
 		}
-		
-		entrance().set( Door.Type.HIDDEN );
-		
-		level.plant(new Starflower.Seed(), plantPos(level));
-		level.plant(new WandOfRegrowth.Seedpod.Seed(), plantPos( level ));
-		level.plant(new WandOfRegrowth.Dewcatcher.Seed(), plantPos( level ));
-		
-		if (Random.Int(2) == 0){
-			level.plant(new WandOfRegrowth.Seedpod.Seed(), plantPos( level ));
-		} else {
-			level.plant(new WandOfRegrowth.Dewcatcher.Seed(), plantPos( level ));
+
+		if (Random.Float() > 0.5)
+			entrance().set(Door.Type.HIDDEN);
+		else entrance().set(Door.Type.REGULAR);
+
+		for (int i = 0; i < 5; i++)
+		{
+			if (i % 2 == 0)
+				level.plant(new WandOfRegrowth.Seedpod.Seed(), plantPos( level ));
+			else
+				level.plant(new WandOfRegrowth.Dewcatcher.Seed(), plantPos( level ));
 		}
 		
 		Foliage light = (Foliage)level.blobs.get( Foliage.class );

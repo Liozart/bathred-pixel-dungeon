@@ -315,16 +315,16 @@ public class Ghost extends NPC {
 				processed = false;
 				depth = Dungeon.depth;
 
-				//50%:tier2, 30%:tier3, 15%:tier4, 5%:tier5
-				switch (Random.chances(new float[]{0, 0, 10, 6, 3, 1})){
+				//50%:tier2, 30%:tier3, 15%:tier4, 0%:tier5
+				switch (Random.chances(new float[]{0, 0, 10, 6, 3, 0})){
 					default:
 					case 2: armor = new LeatherArmor(); break;
 					case 3: armor = new MailArmor();    break;
 					case 4: armor = new ScaleArmor();   break;
 					case 5: armor = new PlateArmor();   break;
 				}
-				//50%:tier2, 30%:tier3, 15%:tier4, 5%:tier5
-				int wepTier = Random.chances(new float[]{0, 0, 10, 6, 3, 1});
+				//50%:tier2, 30%:tier3, 15%:tier4, 0%:tier5
+				int wepTier = Random.chances(new float[]{0, 0, 10, 6, 3, 0});
 				weapon = (Weapon) Generator.random(Generator.wepTiers[wepTier - 1]);
 
 				//clear weapon's starting properties
@@ -332,23 +332,16 @@ public class Ghost extends NPC {
 				weapon.enchant(null);
 				weapon.cursed = false;
 
-				//50%:+0, 30%:+1, 15%:+2, 5%:+3
-				float itemLevelRoll = Random.Float();
-				int itemLevel;
-				if (itemLevelRoll < 0.5f){
-					itemLevel = 0;
-				} else if (itemLevelRoll < 0.8f){
-					itemLevel = 1;
-				} else if (itemLevelRoll < 0.95f){
-					itemLevel = 2;
-				} else {
+				int itemLevel = 2;
+				if (Random.Float() < 0.5f){
 					itemLevel = 3;
 				}
+
 				weapon.upgrade(itemLevel);
 				armor.upgrade(itemLevel);
 
-				//10% to be enchanted. We store it separately so enchant status isn't revealed early
-				if (Random.Int(10) == 0){
+				//50% to be enchanted. We store it separately so enchant status isn't revealed early
+				if (Random.Int(5) == 0){
 					enchant = Weapon.Enchantment.random();
 					glyph = Armor.Glyph.random();
 				}

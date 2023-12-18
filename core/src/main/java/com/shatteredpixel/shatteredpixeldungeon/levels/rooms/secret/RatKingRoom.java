@@ -52,7 +52,7 @@ public class RatKingRoom extends SecretRoom {
 		Painter.fill( level, this, 1, Terrain.EMPTY_SP );
 		
 		Door entrance = entrance();
-		entrance.set( Door.Type.HIDDEN );
+		entrance.set( Door.Type.REGULAR );
 		int door = entrance.x + entrance.y * level.width();
 		
 		for (int i=left + 1; i < right; i++) {
@@ -79,7 +79,7 @@ public class RatKingRoom extends SecretRoom {
 			return;
 		}
 		
-		Item prize = new Gold( Random.IntRange( 10, 25 ) );
+		Item prize = new Gold( Random.IntRange( 20, 35 ) );
 		
 		level.drop( prize, pos ).type = Heap.Type.CHEST;
 	}

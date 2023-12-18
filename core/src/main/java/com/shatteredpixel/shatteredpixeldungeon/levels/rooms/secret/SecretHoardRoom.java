@@ -61,7 +61,7 @@ public class SecretHoardRoom extends SecretRoom {
 			do {
 				goldPos = level.pointToCell(random());
 			} while (level.heaps.get(goldPos) != null);
-			Item gold = new Gold().random();
+			Item gold = new Gold().randomBuffed();
 			gold.quantity(Math.round(gold.quantity() * goldRatio));
 			level.drop(gold, goldPos);
 		}
@@ -72,8 +72,10 @@ public class SecretHoardRoom extends SecretRoom {
 				Painter.set(level, p, Terrain.TRAP);
 			}
 		}
-		
-		entrance().set(Door.Type.HIDDEN);
+
+		if (Random.Float() > 0.5)
+			entrance().set(Door.Type.HIDDEN);
+		else entrance().set(Door.Type.REGULAR);
 	}
 	
 	@Override

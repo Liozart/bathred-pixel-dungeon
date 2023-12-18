@@ -47,7 +47,7 @@ public class ArmoredStatue extends Statue {
 		super();
 
 		//double HP
-		HP = HT = 30 + Dungeon.depth * 10;
+		HP = HT = 25 + Dungeon.depth * 10;
 	}
 
 	@Override
@@ -138,7 +138,7 @@ public class ArmoredStatue extends Statue {
 	@Override
 	public void die( Object cause ) {
 		armor.identify(false);
-		Dungeon.level.drop( armor, pos ).sprite.drop();
+		Dungeon.level.drop( armor.upgrade(), pos ).sprite.drop();
 		super.die( cause );
 	}
 

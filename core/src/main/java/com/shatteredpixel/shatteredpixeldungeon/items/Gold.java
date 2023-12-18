@@ -89,4 +89,9 @@ public class Gold extends Item {
 		return this;
 	}
 
+	public Item randomBuffed() {
+		quantity = Random.IntRange( 50 + Dungeon.depth * 10, 100 + Dungeon.depth * 20 );
+		return this;
+	}
+
 }

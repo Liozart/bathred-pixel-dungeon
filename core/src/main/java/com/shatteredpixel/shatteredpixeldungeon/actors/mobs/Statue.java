@@ -98,7 +98,7 @@ public class Statue extends Mob {
 	
 	@Override
 	public int attackSkill( Char target ) {
-		return (int)((9 + Dungeon.depth) * weapon.accuracyFactor( this, target ));
+		return (int)((5 + Dungeon.depth) * weapon.accuracyFactor( this, target ));
 	}
 	
 	@Override
@@ -156,7 +156,7 @@ public class Statue extends Mob {
 	@Override
 	public void die( Object cause ) {
 		weapon.identify(false);
-		Dungeon.level.drop( weapon, pos ).sprite.drop();
+		Dungeon.level.drop( weapon.upgrade(), pos ).sprite.drop();
 		super.die( cause );
 	}
 	

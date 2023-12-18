@@ -66,8 +66,10 @@ public class SecretLaboratoryRoom extends SecretRoom {
 		
 		Painter.fill( level, this, Terrain.WALL );
 		Painter.fill( level, this, 1, Terrain.EMPTY_SP );
-		
-		entrance().set( Door.Type.HIDDEN );
+
+		if (Random.Float() > 0.5)
+			entrance().set(Door.Type.HIDDEN);
+		else entrance().set(Door.Type.REGULAR);
 		
 		Point pot = center();
 		Painter.set( level, pot, Terrain.ALCHEMY );
@@ -96,7 +98,5 @@ public class SecretLaboratoryRoom extends SecretRoom {
 			chances.put(potionCls, 0f);
 			level.drop( Reflection.newInstance(potionCls), pos );
 		}
-		
 	}
-	
 }
