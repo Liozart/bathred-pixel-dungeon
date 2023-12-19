@@ -44,12 +44,14 @@ import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.warrior.Endu
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.warrior.HeroicLeap;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.warrior.Shockwave;
 import com.shatteredpixel.bathredpixeldungeon.items.BrokenSeal;
+import com.shatteredpixel.bathredpixeldungeon.items.Generator;
 import com.shatteredpixel.bathredpixeldungeon.items.Item;
 import com.shatteredpixel.bathredpixeldungeon.items.Waterskin;
 import com.shatteredpixel.bathredpixeldungeon.items.armor.ClothArmor;
 import com.shatteredpixel.bathredpixeldungeon.items.artifacts.CloakOfShadows;
 import com.shatteredpixel.bathredpixeldungeon.items.bags.VelvetPouch;
 import com.shatteredpixel.bathredpixeldungeon.items.food.Food;
+import com.shatteredpixel.bathredpixeldungeon.items.potions.PotionOfExperience;
 import com.shatteredpixel.bathredpixeldungeon.items.potions.PotionOfHealing;
 import com.shatteredpixel.bathredpixeldungeon.items.potions.PotionOfInvisibility;
 import com.shatteredpixel.bathredpixeldungeon.items.potions.PotionOfLiquidFlame;
@@ -63,6 +65,7 @@ import com.shatteredpixel.bathredpixeldungeon.items.scrolls.ScrollOfRage;
 import com.shatteredpixel.bathredpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.shatteredpixel.bathredpixeldungeon.items.wands.WandOfMagicMissile;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.SpiritBow;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Dagger;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Gloves;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.MagesStaff;
@@ -80,7 +83,8 @@ public enum HeroClass {
 	MAGE( HeroSubClass.BATTLEMAGE, HeroSubClass.WARLOCK ),
 	ROGUE( HeroSubClass.ASSASSIN, HeroSubClass.FREERUNNER ),
 	HUNTRESS( HeroSubClass.SNIPER, HeroSubClass.WARDEN ),
-	DUELIST( HeroSubClass.CHAMPION, HeroSubClass.MONK );
+	DUELIST( HeroSubClass.CHAMPION, HeroSubClass.MONK ),
+	GIUX( HeroSubClass.GLADIATOR, HeroSubClass.SNIPER );
 
 	private HeroSubClass[] subClasses;
 
@@ -106,6 +110,7 @@ public enum HeroClass {
 		waterskin.collect();
 
 		new ScrollOfIdentify().identify();
+		new PotionOfExperience().identify();
 
 		switch (this) {
 			case WARRIOR:
@@ -126,6 +131,10 @@ public enum HeroClass {
 
 			case DUELIST:
 				initDuelist( hero );
+				break;
+
+			case GIUX:
+				initGiux(hero);
 				break;
 		}
 
@@ -154,6 +163,13 @@ public enum HeroClass {
 				return Badges.Badge.MASTERY_DUELIST;
 		}
 		return null;
+	}
+
+	private static void initGiux(Hero hero) {
+		(hero.belongings.weapon = (Weapon)Generator.randomUsingDefaults(Generator.Category.WEAPON)).identify();
+		ThrowingKnife knives = new ThrowingKnife();
+		knives.quantity(4).collect();
+		Dungeon.quickslot.setSlot(0, knives);
 	}
 
 	private static void initWarrior( Hero hero ) {
@@ -256,6 +272,8 @@ public enum HeroClass {
 				return new ArmorAbility[]{new SpectralBlades(), new NaturesPower(), new SpiritHawk()};
 			case DUELIST:
 				return new ArmorAbility[]{new Challenge(), new ElementalStrike(), new Feint()};
+			case GIUX:
+				return new ArmorAbility[]{new SmokeBomb(), new SpectralBlades(), new ElementalBlast()};
 		}
 	}
 
@@ -271,6 +289,8 @@ public enum HeroClass {
 				return Assets.Sprites.HUNTRESS;
 			case DUELIST:
 				return Assets.Sprites.DUELIST;
+			case GIUX:
+				return Assets.Sprites.GIUX;
 		}
 	}
 
@@ -286,6 +306,8 @@ public enum HeroClass {
 				return Assets.Splashes.HUNTRESS;
 			case DUELIST:
 				return Assets.Splashes.DUELIST;
+			case GIUX:
+				return Assets.Splashes.GIUX;
 		}
 	}
 	
@@ -294,7 +316,7 @@ public enum HeroClass {
 		if (DeviceCompat.isDebug()) return true;
 
 		switch (this){
-			case WARRIOR: default:
+			case WARRIOR: case GIUX:default:
 				return true;
 			case MAGE:
 				return Badges.isUnlocked(Badges.Badge.UNLOCK_MAGE);

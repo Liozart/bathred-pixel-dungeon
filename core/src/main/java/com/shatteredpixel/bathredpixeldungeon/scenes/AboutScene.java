@@ -62,7 +62,21 @@ public class AboutScene extends PixelScene {
 		Component content = list.content();
 		content.clear();
 
+		final int GDX_COLOR = 0xE44D3C;
 		//*** Shattered Pixel Dungeon Credits ***
+		CreditsBlock bathr = new CreditsBlock(true, GDX_COLOR,
+				"Bathred Pixel Dungeon",
+				Icons.SEED_POUCH.get(),
+				"Developed by: Liozart\nBased on Shattered Pixel Dungeon's open source",
+				"",
+				"");
+		if (landscape()){
+			bathr.setRect((w - fullWidth)/2f - 6, 10, 120, 0);
+		} else {
+			bathr.setRect((w - fullWidth)/2f, 6, 120, 0);
+		}
+		content.add(bathr);
+
 
 		String shpxLink = "https://ShatteredPixel.com";
 		//tracking codes, so that the website knows where this pageview came from
@@ -77,11 +91,12 @@ public class AboutScene extends PixelScene {
 				"ShatteredPixel.com",
 				shpxLink);
 		if (landscape()){
-			shpx.setRect((w - fullWidth)/2f - 6, 10, 120, 0);
+			shpx.setRect((w - fullWidth)/2f - 6, 80, 120, 0);
 		} else {
-			shpx.setRect((w - fullWidth)/2f, 6, 120, 0);
+			shpx.setRect((w - fullWidth)/2f, 55, 120, 0);
 		}
 		content.add(shpx);
+		addLine(shpx.top() - 4, content);
 
 		CreditsBlock alex = new CreditsBlock(false, Window.SHPX_COLOR,
 				"Hero Art & Design:",
@@ -149,7 +164,6 @@ public class AboutScene extends PixelScene {
 
 		//*** libGDX Credits ***
 
-		final int GDX_COLOR = 0xE44D3C;
 		CreditsBlock gdx = new CreditsBlock(true,
 				GDX_COLOR,
 				"libGDX",
