@@ -367,6 +367,8 @@ public enum Talent {
 					return 122;
 				case DUELIST:
 					return 154;
+				case GIUX:
+					return 154;
 			}
 		} else {
 			return icon;
@@ -776,6 +778,9 @@ public enum Talent {
 			case DUELIST:
 				Collections.addAll(tierTalents, STRENGTHENING_MEAL, ADVENTURERS_INTUITION, PATIENT_STRIKE, AGGRESSIVE_BARRIER);
 				break;
+			case GIUX:
+				Collections.addAll(tierTalents, SUCKER_PUNCH, NATURES_AID, ADVENTURERS_INTUITION, PROTECTIVE_SHADOWS);
+				break;
 		}
 		for (Talent talent : tierTalents){
 			if (replacements.containsKey(talent)){
@@ -802,6 +807,9 @@ public enum Talent {
 			case DUELIST:
 				Collections.addAll(tierTalents, FOCUSED_MEAL, LIQUID_AGILITY, WEAPON_RECHARGING, LETHAL_HASTE, SWIFT_EQUIP);
 				break;
+			case GIUX:
+				Collections.addAll(tierTalents, LETHAL_MOMENTUM, ARCANE_VISION, REJUVENATING_STEPS, HEIGHTENED_SENSES, SILENT_STEPS);
+				break;
 		}
 		for (Talent talent : tierTalents){
 			if (replacements.containsKey(talent)){
@@ -827,6 +835,9 @@ public enum Talent {
 				break;
 			case DUELIST:
 				Collections.addAll(tierTalents, PRECISE_ASSAULT, DEADLY_FOLLOWUP);
+				break;
+			case GIUX:
+				Collections.addAll(tierTalents, STRONGMAN, DESPERATE_POWER);
 				break;
 		}
 		for (Talent talent : tierTalents){
