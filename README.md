@@ -1,5 +1,6 @@
 Bathred PD is an easier, more causal version of shattered PD
 
+credits to ARanged-PD
 ------------------------------------------------------------------------------------------
 
 # Shattered Pixel Dungeon
