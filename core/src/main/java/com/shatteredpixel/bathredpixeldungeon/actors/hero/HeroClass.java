@@ -76,6 +76,7 @@ import com.shatteredpixel.bathredpixeldungeon.items.weapon.missiles.ThrowingSpik
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.missiles.ThrowingStone;
 import com.shatteredpixel.bathredpixeldungeon.messages.Messages;
 import com.watabou.utils.DeviceCompat;
+import com.watabou.utils.Random;
 
 public enum HeroClass {
 
@@ -166,7 +167,25 @@ public enum HeroClass {
 	}
 
 	private static void initGiux(Hero hero) {
-		(hero.belongings.weapon = (Weapon)Generator.randomUsingDefaults(Generator.Category.WEAPON)).identify();
+		float r = Random.Float();
+		if (r < 0.2)
+			(hero.belongings.weapon = new WornShortsword()).identify();
+		else if (r < 0.4 && r > 0.2)
+			(hero.belongings.weapon = new Dagger()).identify();
+		else if (r < 0.6 && r > 0.4)
+			(hero.belongings.weapon = new Gloves()).identify();
+		else if (r < 0.8 && r > 0.6)
+		{
+			(hero.belongings.weapon = new Rapier()).identify();
+			hero.belongings.weapon.activate(hero);
+		}
+		else
+		{
+			MagesStaff staff = new MagesStaff(new WandOfMagicMissile());
+			(hero.belongings.weapon = staff).identify();
+			hero.belongings.weapon.activate(hero);
+		}
+
 		ThrowingKnife knives = new ThrowingKnife();
 		knives.quantity(4).collect();
 		Dungeon.quickslot.setSlot(0, knives);

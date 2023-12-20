@@ -779,7 +779,7 @@ public enum Talent {
 				Collections.addAll(tierTalents, STRENGTHENING_MEAL, ADVENTURERS_INTUITION, PATIENT_STRIKE, AGGRESSIVE_BARRIER);
 				break;
 			case GIUX:
-				Collections.addAll(tierTalents, SUCKER_PUNCH, NATURES_AID, ADVENTURERS_INTUITION, PROTECTIVE_SHADOWS);
+				Collections.addAll(tierTalents, NATURES_BOUNTY, PATIENT_STRIKE, ADVENTURERS_INTUITION, HEIGHTENED_SENSES);
 				break;
 		}
 		for (Talent talent : tierTalents){
@@ -808,7 +808,7 @@ public enum Talent {
 				Collections.addAll(tierTalents, FOCUSED_MEAL, LIQUID_AGILITY, WEAPON_RECHARGING, LETHAL_HASTE, SWIFT_EQUIP);
 				break;
 			case GIUX:
-				Collections.addAll(tierTalents, LETHAL_MOMENTUM, ARCANE_VISION, REJUVENATING_STEPS, HEIGHTENED_SENSES, SILENT_STEPS);
+				Collections.addAll(tierTalents, LETHAL_MOMENTUM, ARCANE_VISION, REJUVENATING_STEPS, INSCRIBED_POWER, SILENT_STEPS);
 				break;
 		}
 		for (Talent talent : tierTalents){
