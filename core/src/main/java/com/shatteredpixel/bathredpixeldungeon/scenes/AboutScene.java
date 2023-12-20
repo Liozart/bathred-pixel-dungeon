@@ -66,8 +66,8 @@ public class AboutScene extends PixelScene {
 		//*** Shattered Pixel Dungeon Credits ***
 		CreditsBlock bathr = new CreditsBlock(true, GDX_COLOR,
 				"Bathred Pixel Dungeon",
-				Icons.SEED_POUCH.get(),
-				"Developed by: Liozart\nBased on Shattered Pixel Dungeon's open source",
+				Icons.GIUX.get(),
+				"Developed by: Liozart\nBased on Shattered Pixel Dungeon's open source and some work of ARanged-PD",
 				"",
 				"");
 		if (landscape()){
@@ -77,6 +77,21 @@ public class AboutScene extends PixelScene {
 		}
 		content.add(bathr);
 
+		//*** Shattered Pixel Dungeon Credits ***
+		String arLink = "https://github.com/Hoto-Mocha/ARranged-Pixel-Dungeon";
+		CreditsBlock ranged = new CreditsBlock(true, Window.SHPX_COLOR,
+				"ARranged-Pixel-Dungeon",
+				Icons.BADGES.get(),
+				"Developed by: Hoto-Mocha\nBased on Shattered Pixel Dungeon's open source",
+				"ARranged-PD github",
+				arLink);
+		if (landscape()){
+			ranged.setRect((w - fullWidth)/2f - 6, 80, 120, 0);
+		} else {
+			ranged.setRect((w - fullWidth)/2f, 55, 120, 0);
+		}
+		content.add(ranged);
+		addLine(ranged.top() - 4, content);
 
 		String shpxLink = "https://ShatteredPixel.com";
 		//tracking codes, so that the website knows where this pageview came from
@@ -91,9 +106,9 @@ public class AboutScene extends PixelScene {
 				"ShatteredPixel.com",
 				shpxLink);
 		if (landscape()){
-			shpx.setRect((w - fullWidth)/2f - 6, 80, 120, 0);
+			shpx.setRect((w - fullWidth)/2f - 6, 174, 120, 0);
 		} else {
-			shpx.setRect((w - fullWidth)/2f, 55, 120, 0);
+			shpx.setRect((w - fullWidth)/2f, 115, 120, 0);
 		}
 		content.add(shpx);
 		addLine(shpx.top() - 4, content);

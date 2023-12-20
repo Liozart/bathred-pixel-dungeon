@@ -87,9 +87,11 @@ public class ItemSpriteSheet {
 	public static final int PETAL           = UNCOLLECTIBLE+4;
 	public static final int SANDBAG         = UNCOLLECTIBLE+5;
 	public static final int SPIRIT_ARROW    = UNCOLLECTIBLE+6;
+	public static final int BULLET          = UNCOLLECTIBLE+7;
 	
 	public static final int TENGU_BOMB      = UNCOLLECTIBLE+8;
 	public static final int TENGU_SHOCKER   = UNCOLLECTIBLE+9;
+
 	static{
 		assignItemRect(GOLD,        15, 13);
 		assignItemRect(ENERGY,      16, 16);
@@ -98,6 +100,7 @@ public class ItemSpriteSheet {
 		assignItemRect(PETAL,       8,  8);
 		assignItemRect(SANDBAG,     10, 10);
 		assignItemRect(SPIRIT_ARROW,11, 11);
+		assignItemRect(BULLET,      4,  4);
 		
 		assignItemRect(TENGU_BOMB,      10, 10);
 		assignItemRect(TENGU_SHOCKER,   10, 10);
@@ -195,13 +198,14 @@ public class ItemSpriteSheet {
 
 	private static final int WEP_TIER1      =                               xy(1, 7);   //8 slots
 	public static final int WORN_SHORTSWORD = WEP_TIER1+0;
-	public static final int CUDGEL          = WEP_TIER1+1;
+	public  static final int HUNTING_RIFLE  = WEP_TIER1+1;
 	public static final int GLOVES          = WEP_TIER1+2;
 	public static final int RAPIER          = WEP_TIER1+3;
 	public static final int DAGGER          = WEP_TIER1+4;
 	public static final int MAGES_STAFF     = WEP_TIER1+5;
 	static{
 		assignItemRect(WORN_SHORTSWORD, 13, 13);
+		assignItemRect(HUNTING_RIFLE,     13, 16);
 		assignItemRect(GLOVES,          12, 16);
 		assignItemRect(RAPIER,          13, 14);
 		assignItemRect(DAGGER,          12, 13);

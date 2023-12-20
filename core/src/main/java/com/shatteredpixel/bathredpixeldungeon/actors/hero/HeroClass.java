@@ -68,6 +68,7 @@ import com.shatteredpixel.bathredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Dagger;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Gloves;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.HuntingRifle;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Rapier;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.WornShortsword;
@@ -167,28 +168,10 @@ public enum HeroClass {
 	}
 
 	private static void initGiux(Hero hero) {
-		float r = Random.Float();
-		if (r < 0.2)
-			(hero.belongings.weapon = new WornShortsword()).identify();
-		else if (r < 0.4 && r > 0.2)
-			(hero.belongings.weapon = new Dagger()).identify();
-		else if (r < 0.6 && r > 0.4)
-			(hero.belongings.weapon = new Gloves()).identify();
-		else if (r < 0.8 && r > 0.6)
-		{
-			(hero.belongings.weapon = new Rapier()).identify();
-			hero.belongings.weapon.activate(hero);
-		}
-		else
-		{
-			MagesStaff staff = new MagesStaff(new WandOfMagicMissile());
-			(hero.belongings.weapon = staff).identify();
-			hero.belongings.weapon.activate(hero);
-		}
+		(hero.belongings.weapon = new HuntingRifle()).identify();
+		hero.belongings.weapon.activate(hero);
 
-		ThrowingKnife knives = new ThrowingKnife();
-		knives.quantity(4).collect();
-		Dungeon.quickslot.setSlot(0, knives);
+		Dungeon.quickslot.setSlot(0, hero.belongings.weapon);
 	}
 
 	private static void initWarrior( Hero hero ) {
