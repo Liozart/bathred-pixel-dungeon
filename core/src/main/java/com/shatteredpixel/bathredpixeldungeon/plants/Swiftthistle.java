@@ -99,6 +99,8 @@ public class Swiftthistle extends Plant {
 		public void reset(){
 			left = 7f;
 		}
+
+		public void setLeft(float l) { left = l; }
 		
 		@Override
 		public String desc() {
@@ -111,8 +113,9 @@ public class Swiftthistle extends Plant {
 			//use 1/1,000 to account for rounding errors
 			if (left < -0.001f){
 				detach();
+				spend(TICK);
 			}
-			
+
 		}
 		
 		public void setDelayedPress(int cell){

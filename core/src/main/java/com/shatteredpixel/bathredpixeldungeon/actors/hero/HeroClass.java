@@ -27,6 +27,9 @@ import com.shatteredpixel.bathredpixeldungeon.Challenges;
 import com.shatteredpixel.bathredpixeldungeon.Dungeon;
 import com.shatteredpixel.bathredpixeldungeon.QuickSlot;
 import com.shatteredpixel.bathredpixeldungeon.SPDSettings;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.EscapeRoll;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Preparation;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.ArmorAbility;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.duelist.Challenge;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.duelist.ElementalStrike;
@@ -87,7 +90,7 @@ public enum HeroClass {
 	ROGUE( HeroSubClass.ASSASSIN, HeroSubClass.FREERUNNER ),
 	HUNTRESS( HeroSubClass.SNIPER, HeroSubClass.WARDEN ),
 	DUELIST( HeroSubClass.CHAMPION, HeroSubClass.MONK ),
-	GIUX( HeroSubClass.GLADIATOR, HeroSubClass.SNIPER );
+	GIUX( HeroSubClass.FREERUNNER, HeroSubClass.SNIPER );
 
 	private HeroSubClass[] subClasses;
 
@@ -173,6 +176,7 @@ public enum HeroClass {
 		hero.belongings.weapon.activate(hero);
 
 		Dungeon.quickslot.setSlot(0, hero.belongings.weapon);
+		Buff.affect(hero, EscapeRoll.class);
 	}
 
 	private static void initWarrior( Hero hero ) {
