@@ -44,6 +44,7 @@ import com.shatteredpixel.bathredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.bathredpixeldungeon.effects.particles.BlastParticle;
 import com.shatteredpixel.bathredpixeldungeon.effects.particles.SmokeParticle;
 import com.shatteredpixel.bathredpixeldungeon.items.Item;
+import com.shatteredpixel.bathredpixeldungeon.items.LiquidMetal;
 import com.shatteredpixel.bathredpixeldungeon.items.rings.RingOfSharpshooting;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.missiles.MissileWeapon;
@@ -59,41 +60,35 @@ import com.watabou.utils.Random;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-public class HuntingRifle extends MeleeWeapon {
+public class AutoHandgun extends MeleeWeapon {
 
     public static final String AC_SHOOT		= "SHOOT";
     public static final String AC_RELOAD = "RELOAD";
+    public static final String AC_AUTO = "AUTO";
 
     public int max_round;
     public int round = 0;
     public float reload_time;
+    public boolean auto = false;
     private static final String TXT_STATUS = "%d/%d";
 
     {
-
         defaultAction = AC_SHOOT;
         usesTargeting = true;
 
-        image = ItemSpriteSheet.HUNTING_RIFLE;
+        image = ItemSpriteSheet.AUTOHANDGUN;
         hitSound = Assets.Sounds.HIT_CRUSH;
         hitSoundPitch = 0.8f;
 
-        tier = 3;
-
+        tier = 5;
         gun = true;
-        sniperGun = true;
+        handGun = true;
     }
 
     private static final String ROUND = "round";
     private static final String MAX_ROUND = "max_round";
     private static final String RELOAD_TIME = "reload_time";
-    private static final String SILENCER = "silencer";
-    private static final String SHORT_BARREL = "short_barrel";
-    private static final String LONG_BARREL = "long_barrel";
-    private static final String MAGAZINE = "magazine";
-    private static final String LIGHT = "light";
-    private static final String HEAVY = "heavy";
-    private static final String FLASH = "flash";
+    private static final String AUTO = "auto";
 
     @Override
     public void storeInBundle(Bundle bundle) {
@@ -101,6 +96,7 @@ public class HuntingRifle extends MeleeWeapon {
         bundle.put(MAX_ROUND, max_round);
         bundle.put(ROUND, round);
         bundle.put(RELOAD_TIME, reload_time);
+        bundle.put(AUTO, auto);
     }
 
     @Override
@@ -109,10 +105,8 @@ public class HuntingRifle extends MeleeWeapon {
         max_round = bundle.getInt(MAX_ROUND);
         round = bundle.getInt(ROUND);
         reload_time = bundle.getFloat(RELOAD_TIME);
+        auto = bundle.getBoolean(AUTO);
     }
-
-
-
 
     @Override
     public ArrayList<String> actions(Hero hero) {
@@ -120,21 +114,10 @@ public class HuntingRifle extends MeleeWeapon {
         if (isEquipped( hero )) {
             actions.add(AC_SHOOT);
             actions.add(AC_RELOAD);
+            actions.add(AC_AUTO);
         }
         return actions;
     }
-
-    @Override
-    protected int baseChargeUse(Hero hero, Char target){
-        return 0;
-    }
-
-    @Override
-    protected void duelistAbility(Hero hero, Integer target) {
-        CrudePistol.shootAbility(hero, this);
-    }
-
-
 
     @Override
     public void execute(Hero hero, String action) {
@@ -160,17 +143,30 @@ public class HuntingRifle extends MeleeWeapon {
             }
         }
         if (action.equals(AC_RELOAD)) {
-            max_round = 1;
+            max_round = 3;
             if (round == max_round){
                 GLog.w(Messages.get(this, "already_loaded"));
             } else {
                 reload();
             }
         }
+        if (action.equals(AC_AUTO)) {
+            if (auto) {
+                auto = false;
+                GLog.i(Messages.get(AutoHandgun.class, "semi"));
+            } else {
+                auto = true;
+                GLog.i(Messages.get(AutoHandgun.class, "auto"));
+            }
+            curUser.spend(Actor.TICK);
+            curUser.busy();
+            Sample.INSTANCE.play(Assets.Sounds.UNLOCK, 2, 1.1f);
+            curUser.sprite.operate(curUser.pos);
+        }
     }
 
     public void reload() {
-        max_round = 1;
+        max_round = 3;
 
         curUser.spend(reload_time);
         curUser.busy();
@@ -179,14 +175,17 @@ public class HuntingRifle extends MeleeWeapon {
         round = Math.max(max_round, round);
 
         GLog.i(Messages.get(this, "reloading"));
+
         updateQuickslot();
     }
+
+
 
 
     public int getRound() { return this.round; }
 
     public void oneReload() {
-        max_round = 1;
+        max_round = 3;
         round ++;
         if (round > max_round) {
             round = max_round;
@@ -195,7 +194,7 @@ public class HuntingRifle extends MeleeWeapon {
 
     @Override
     public String status() {
-        max_round = 1;
+        max_round = 3;
         return Messages.format(TXT_STATUS, round, max_round);
     }
 
@@ -216,15 +215,15 @@ public class HuntingRifle extends MeleeWeapon {
     }
 
     public int Bulletmin(int lvl) {
-        return 3 * tier +
-                lvl      +
-                RingOfSharpshooting.levelDamageBonus(Dungeon.hero);
+            return 2 * tier +
+                    lvl      +
+                    RingOfSharpshooting.levelDamageBonus(hero);
     }
 
     public int Bulletmax(int lvl) {
-        return 6 * (tier+3)   +
-                lvl * (tier+3) +
-                RingOfSharpshooting.levelDamageBonus(Dungeon.hero);
+            return 4 * (tier+1)   +
+                    lvl * (tier+1)  +
+                    RingOfSharpshooting.levelDamageBonus(hero);
     }
 
     @Override
@@ -235,7 +234,7 @@ public class HuntingRifle extends MeleeWeapon {
     @Override
     public String info() {
 
-        max_round = 1;
+        max_round = 3;
         reload_time = 2f;
         String info = super.info();
 
@@ -250,7 +249,6 @@ public class HuntingRifle extends MeleeWeapon {
                     Bulletmax(0),
                     round, max_round, new DecimalFormat("#.##").format(reload_time));
         }
-
         return info;
     }
 
@@ -273,7 +271,7 @@ public class HuntingRifle extends MeleeWeapon {
         }
 
         return damage;
-    }                           //초과 힘에 따른 추가 데미지
+    }
 
     @Override
     protected float baseDelay(Char owner) {
@@ -287,32 +285,36 @@ public class HuntingRifle extends MeleeWeapon {
         return delay;
     }
 
-    public HuntingRifle.Bullet knockBullet(){
-        return new HuntingRifle.Bullet();
+    public AutoHandgun.Bullet knockBullet(){
+        return new AutoHandgun.Bullet();
     }
     public class Bullet extends MissileWeapon {
 
         {
-            image = ItemSpriteSheet.SNIPER_BULLET;
+            if (auto) {
+                image = ItemSpriteSheet.TRIPLE_BULLET;
+            } else {
+                image = ItemSpriteSheet.SINGLE_BULLET;
+            }
 
             hitSound = Assets.Sounds.PUFF;
-            tier = 3;
+            tier = 5;
 
             bullet = true;
-            sniperGunBullet = true;
+            handGunBullet = true;
         }
 
         @Override
         public int buffedLvl(){
-            return HuntingRifle.this.buffedLvl();
+            return AutoHandgun.this.buffedLvl();
         }
 
         @Override
         public int damageRoll(Char owner) {
             Hero hero = (Hero)owner;
             Char enemy = hero.enemy();
-            int bulletdamage = Random.NormalIntRange(Bulletmin(HuntingRifle.this.buffedLvl()),
-                    Bulletmax(HuntingRifle.this.buffedLvl()));
+            int bulletdamage = Random.NormalIntRange(Bulletmin(AutoHandgun.this.buffedLvl()),
+                    Bulletmax(AutoHandgun.this.buffedLvl()));
 
             if (owner.buff(Momentum.class) != null && owner.buff(Momentum.class).freerunning()) {
                 bulletdamage = Math.round(bulletdamage * (1f + 0.15f * ((Hero) owner).pointsInTalent(Talent.PROJECTILE_MOMENTUM)));
@@ -322,56 +324,85 @@ public class HuntingRifle extends MeleeWeapon {
 
         @Override
         public boolean hasEnchant(Class<? extends Enchantment> type, Char owner) {
-            return HuntingRifle.this.hasEnchant(type, owner);
+            return AutoHandgun.this.hasEnchant(type, owner);
         }
 
         @Override
         public int proc(Char attacker, Char defender, int damage) {
             SpiritBow bow = hero.belongings.getItem(SpiritBow.class);
-            if (HuntingRifle.this.enchantment == null
+            if (AutoHandgun.this.enchantment == null
                     && Random.Int(3) < hero.pointsInTalent(Talent.SHARED_ENCHANTMENT)
                     && hero.buff(MagicImmune.class) == null
                     && bow != null
                     && bow.enchantment != null) {
                 return bow.enchantment.proc(this, attacker, defender, damage);
             } else {
-                return HuntingRifle.this.proc(attacker, defender, damage);
+                return AutoHandgun.this.proc(attacker, defender, damage);
             }
         }
 
         @Override
         public float delayFactor(Char user) {
-            return HuntingRifle.this.delayFactor(user);
+            return AutoHandgun.this.delayFactor(user);
         }
 
         @Override
         public float accuracyFactor(Char owner, Char target) {
             float accFactor = super.accuracyFactor(owner, target);
+            if (auto) {
+                if (Dungeon.level.adjacent( hero.pos, target.pos )) {
+                    accFactor *= 2.5f;
+                } else {
+                    accFactor *= 0.33f;
+                }
+            } else {
+                accFactor *= 1.25f;
+            }
             return accFactor;
         }
 
         @Override
         public int STRReq(int lvl) {
-            return HuntingRifle.this.STRReq();
+            return AutoHandgun.this.STRReq();
         }
 
         @Override
         protected void onThrow( int cell ) {
             Char enemy = Actor.findChar( cell );
-            if (enemy == null || enemy == curUser) {
-                parent = null;
-                CellEmitter.get(cell).burst(SmokeParticle.FACTORY, 2);
-                CellEmitter.center(cell).burst(BlastParticle.FACTORY, 2);
-            } else {
-                if (!curUser.shoot( enemy, this )) {
+            if (!auto) {
+                if (enemy == null || enemy == curUser) {
+                    parent = null;
                     CellEmitter.get(cell).burst(SmokeParticle.FACTORY, 2);
                     CellEmitter.center(cell).burst(BlastParticle.FACTORY, 2);
+                } else {
+                    if (!curUser.shoot( enemy, this )) {
+                        CellEmitter.get(cell).burst(SmokeParticle.FACTORY, 2);
+                        CellEmitter.center(cell).burst(BlastParticle.FACTORY, 2);
+                    }
                 }
-            }
-            if (hero.buff(InfiniteBullet.class) != null) {
-                //round preserves
+                if (hero.buff(InfiniteBullet.class) != null) {
+                    //round preserves
+                } else {
+                    round --;
+                }
             } else {
-                round --;
+                do {
+                    if (enemy == null || enemy == curUser) {
+                        parent = null;
+                        CellEmitter.get(cell).burst(SmokeParticle.FACTORY, 2);
+                        CellEmitter.center(cell).burst(BlastParticle.FACTORY, 2);
+                    } else {
+                        if (!curUser.shoot(enemy, this)) {
+                            CellEmitter.get(cell).burst(SmokeParticle.FACTORY, 2);
+                            CellEmitter.center(cell).burst(BlastParticle.FACTORY, 2);
+                        }
+                    }
+                    if (hero.buff(InfiniteBullet.class) != null && Random.Int(2) == 0) {
+                        //round preserves
+                    } else {
+                        round--;
+                    }
+                } while (round > 0); //shoots all rounds, and round preserve effect will be halved
             }
             for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] )) {
                 int dist = 4;
@@ -411,4 +442,16 @@ public class HuntingRifle extends MeleeWeapon {
         }
     };
 
+    public static class Recipe1 extends com.shatteredpixel.bathredpixeldungeon.items.Recipe.SimpleRecipe {
+
+        {
+            inputs =  new Class[]{Magnum.class, LiquidMetal.class};
+            inQuantity = new int[]{1, 40};
+
+            cost = 0;
+
+            output = AutoHandgun.class;
+            outQuantity = 1;
+        }
+    }
 }

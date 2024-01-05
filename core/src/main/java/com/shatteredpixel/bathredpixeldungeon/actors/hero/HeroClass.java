@@ -66,6 +66,7 @@ import com.shatteredpixel.bathredpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.shatteredpixel.bathredpixeldungeon.items.wands.WandOfMagicMissile;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.Weapon;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.CrudePistol;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Dagger;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Gloves;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.HuntingRifle;
@@ -168,7 +169,7 @@ public enum HeroClass {
 	}
 
 	private static void initGiux(Hero hero) {
-		(hero.belongings.weapon = new HuntingRifle()).identify();
+		(hero.belongings.weapon = new CrudePistol()).identify();
 		hero.belongings.weapon.activate(hero);
 
 		Dungeon.quickslot.setSlot(0, hero.belongings.weapon);

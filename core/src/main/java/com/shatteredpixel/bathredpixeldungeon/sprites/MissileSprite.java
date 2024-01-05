@@ -24,7 +24,23 @@ package com.shatteredpixel.bathredpixeldungeon.sprites;
 import com.shatteredpixel.bathredpixeldungeon.Dungeon;
 import com.shatteredpixel.bathredpixeldungeon.items.Item;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.SpiritBow;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.AssultRifle;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.AutoHandgun;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.AutoRifle;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Carbine;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Crossbow;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.CrudePistol;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.DualPistol;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.GoldenPistol;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Handgun;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.HeavyMachinegun;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.HuntingRifle;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Magnum;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.MarksmanRifle;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Pistol;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Revolver;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.SubMachinegun;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.TacticalHandgun;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.missiles.Bolas;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.missiles.FishingSpear;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.missiles.HeavyBoomerang;
@@ -100,6 +116,23 @@ public class MissileSprite extends ItemSprite implements Tweener.Listener {
 		
 		ANGULAR_SPEEDS.put(SpiritBow.SpiritArrow.class,       0);
 		ANGULAR_SPEEDS.put(ScorpioSprite.ScorpioShot.class,   0);
+
+		ANGULAR_SPEEDS.put(CrudePistol.Bullet.class,          0);
+		ANGULAR_SPEEDS.put(Pistol.Bullet.class,               0);
+		ANGULAR_SPEEDS.put(GoldenPistol.Bullet.class,         0);
+		ANGULAR_SPEEDS.put(Handgun.Bullet.class,              0);
+		ANGULAR_SPEEDS.put(Magnum.Bullet.class,               0);
+		ANGULAR_SPEEDS.put(TacticalHandgun.Bullet.class,      0);
+		ANGULAR_SPEEDS.put(AutoHandgun.Bullet.class,          0);
+		ANGULAR_SPEEDS.put(DualPistol.Bullet.class,           0);
+		ANGULAR_SPEEDS.put(SubMachinegun.Bullet.class,        0);
+		ANGULAR_SPEEDS.put(AssultRifle.Bullet.class,          0);
+		ANGULAR_SPEEDS.put(HeavyMachinegun.Bullet.class,      0);
+		ANGULAR_SPEEDS.put(AutoRifle.Bullet.class,            0);
+		ANGULAR_SPEEDS.put(Revolver.Bullet.class,         	  0);
+		ANGULAR_SPEEDS.put(HuntingRifle.Bullet.class,         0);
+		ANGULAR_SPEEDS.put(Carbine.Bullet.class,       		  0);
+		ANGULAR_SPEEDS.put(MarksmanRifle.Bullet.class,        0);
 		
 		//720 is default
 		

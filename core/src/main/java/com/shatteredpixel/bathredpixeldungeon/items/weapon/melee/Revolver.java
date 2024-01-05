@@ -59,7 +59,7 @@ import com.watabou.utils.Random;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-public class HuntingRifle extends MeleeWeapon {
+public class Revolver extends MeleeWeapon {
 
     public static final String AC_SHOOT		= "SHOOT";
     public static final String AC_RELOAD = "RELOAD";
@@ -74,11 +74,11 @@ public class HuntingRifle extends MeleeWeapon {
         defaultAction = AC_SHOOT;
         usesTargeting = true;
 
-        image = ItemSpriteSheet.HUNTING_RIFLE;
+        image = ItemSpriteSheet.REVOLVER;
         hitSound = Assets.Sounds.HIT_CRUSH;
         hitSoundPitch = 0.8f;
 
-        tier = 3;
+        tier = 2;
 
         gun = true;
         sniperGun = true;
@@ -87,13 +87,6 @@ public class HuntingRifle extends MeleeWeapon {
     private static final String ROUND = "round";
     private static final String MAX_ROUND = "max_round";
     private static final String RELOAD_TIME = "reload_time";
-    private static final String SILENCER = "silencer";
-    private static final String SHORT_BARREL = "short_barrel";
-    private static final String LONG_BARREL = "long_barrel";
-    private static final String MAGAZINE = "magazine";
-    private static final String LIGHT = "light";
-    private static final String HEAVY = "heavy";
-    private static final String FLASH = "flash";
 
     @Override
     public void storeInBundle(Bundle bundle) {
@@ -179,6 +172,7 @@ public class HuntingRifle extends MeleeWeapon {
         round = Math.max(max_round, round);
 
         GLog.i(Messages.get(this, "reloading"));
+
         updateQuickslot();
     }
 
@@ -250,7 +244,6 @@ public class HuntingRifle extends MeleeWeapon {
                     Bulletmax(0),
                     round, max_round, new DecimalFormat("#.##").format(reload_time));
         }
-
         return info;
     }
 
@@ -287,8 +280,8 @@ public class HuntingRifle extends MeleeWeapon {
         return delay;
     }
 
-    public HuntingRifle.Bullet knockBullet(){
-        return new HuntingRifle.Bullet();
+    public Revolver.Bullet knockBullet(){
+        return new Revolver.Bullet();
     }
     public class Bullet extends MissileWeapon {
 
@@ -296,7 +289,7 @@ public class HuntingRifle extends MeleeWeapon {
             image = ItemSpriteSheet.SNIPER_BULLET;
 
             hitSound = Assets.Sounds.PUFF;
-            tier = 3;
+            tier = 2;
 
             bullet = true;
             sniperGunBullet = true;
@@ -304,15 +297,15 @@ public class HuntingRifle extends MeleeWeapon {
 
         @Override
         public int buffedLvl(){
-            return HuntingRifle.this.buffedLvl();
+            return Revolver.this.buffedLvl();
         }
 
         @Override
         public int damageRoll(Char owner) {
             Hero hero = (Hero)owner;
             Char enemy = hero.enemy();
-            int bulletdamage = Random.NormalIntRange(Bulletmin(HuntingRifle.this.buffedLvl()),
-                    Bulletmax(HuntingRifle.this.buffedLvl()));
+            int bulletdamage = Random.NormalIntRange(Bulletmin(Revolver.this.buffedLvl()),
+                    Bulletmax(Revolver.this.buffedLvl()));
 
             if (owner.buff(Momentum.class) != null && owner.buff(Momentum.class).freerunning()) {
                 bulletdamage = Math.round(bulletdamage * (1f + 0.15f * ((Hero) owner).pointsInTalent(Talent.PROJECTILE_MOMENTUM)));
@@ -322,26 +315,17 @@ public class HuntingRifle extends MeleeWeapon {
 
         @Override
         public boolean hasEnchant(Class<? extends Enchantment> type, Char owner) {
-            return HuntingRifle.this.hasEnchant(type, owner);
+            return Revolver.this.hasEnchant(type, owner);
         }
 
         @Override
         public int proc(Char attacker, Char defender, int damage) {
-            SpiritBow bow = hero.belongings.getItem(SpiritBow.class);
-            if (HuntingRifle.this.enchantment == null
-                    && Random.Int(3) < hero.pointsInTalent(Talent.SHARED_ENCHANTMENT)
-                    && hero.buff(MagicImmune.class) == null
-                    && bow != null
-                    && bow.enchantment != null) {
-                return bow.enchantment.proc(this, attacker, defender, damage);
-            } else {
-                return HuntingRifle.this.proc(attacker, defender, damage);
-            }
+            return Revolver.this.proc(attacker, defender, damage);
         }
 
         @Override
         public float delayFactor(Char user) {
-            return HuntingRifle.this.delayFactor(user);
+            return Revolver.this.delayFactor(user);
         }
 
         @Override
@@ -352,7 +336,7 @@ public class HuntingRifle extends MeleeWeapon {
 
         @Override
         public int STRReq(int lvl) {
-            return HuntingRifle.this.STRReq();
+            return Revolver.this.STRReq();
         }
 
         @Override
@@ -373,6 +357,7 @@ public class HuntingRifle extends MeleeWeapon {
             } else {
                 round --;
             }
+
             for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] )) {
                 int dist = 4;
                 if (mob.paralysed <= 0

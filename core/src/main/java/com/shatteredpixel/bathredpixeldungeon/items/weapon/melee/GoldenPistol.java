@@ -44,6 +44,7 @@ import com.shatteredpixel.bathredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.bathredpixeldungeon.effects.particles.BlastParticle;
 import com.shatteredpixel.bathredpixeldungeon.effects.particles.SmokeParticle;
 import com.shatteredpixel.bathredpixeldungeon.items.Item;
+import com.shatteredpixel.bathredpixeldungeon.items.LiquidMetal;
 import com.shatteredpixel.bathredpixeldungeon.items.rings.RingOfSharpshooting;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.missiles.MissileWeapon;
@@ -59,7 +60,7 @@ import com.watabou.utils.Random;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-public class HuntingRifle extends MeleeWeapon {
+public class GoldenPistol extends MeleeWeapon {
 
     public static final String AC_SHOOT		= "SHOOT";
     public static final String AC_RELOAD = "RELOAD";
@@ -70,30 +71,22 @@ public class HuntingRifle extends MeleeWeapon {
     private static final String TXT_STATUS = "%d/%d";
 
     {
-
         defaultAction = AC_SHOOT;
         usesTargeting = true;
 
-        image = ItemSpriteSheet.HUNTING_RIFLE;
+        image = ItemSpriteSheet.GOLDEN_PISTOL;
         hitSound = Assets.Sounds.HIT_CRUSH;
         hitSoundPitch = 0.8f;
 
         tier = 3;
 
         gun = true;
-        sniperGun = true;
+        handGun = true;
     }
 
     private static final String ROUND = "round";
     private static final String MAX_ROUND = "max_round";
     private static final String RELOAD_TIME = "reload_time";
-    private static final String SILENCER = "silencer";
-    private static final String SHORT_BARREL = "short_barrel";
-    private static final String LONG_BARREL = "long_barrel";
-    private static final String MAGAZINE = "magazine";
-    private static final String LIGHT = "light";
-    private static final String HEAVY = "heavy";
-    private static final String FLASH = "flash";
 
     @Override
     public void storeInBundle(Bundle bundle) {
@@ -110,9 +103,6 @@ public class HuntingRifle extends MeleeWeapon {
         round = bundle.getInt(ROUND);
         reload_time = bundle.getFloat(RELOAD_TIME);
     }
-
-
-
 
     @Override
     public ArrayList<String> actions(Hero hero) {
@@ -133,8 +123,6 @@ public class HuntingRifle extends MeleeWeapon {
     protected void duelistAbility(Hero hero, Integer target) {
         CrudePistol.shootAbility(hero, this);
     }
-
-
 
     @Override
     public void execute(Hero hero, String action) {
@@ -160,7 +148,7 @@ public class HuntingRifle extends MeleeWeapon {
             }
         }
         if (action.equals(AC_RELOAD)) {
-            max_round = 1;
+            max_round = 3;
             if (round == max_round){
                 GLog.w(Messages.get(this, "already_loaded"));
             } else {
@@ -170,7 +158,7 @@ public class HuntingRifle extends MeleeWeapon {
     }
 
     public void reload() {
-        max_round = 1;
+        max_round = 3;
 
         curUser.spend(reload_time);
         curUser.busy();
@@ -179,14 +167,14 @@ public class HuntingRifle extends MeleeWeapon {
         round = Math.max(max_round, round);
 
         GLog.i(Messages.get(this, "reloading"));
+
         updateQuickslot();
     }
-
 
     public int getRound() { return this.round; }
 
     public void oneReload() {
-        max_round = 1;
+        max_round = 3;
         round ++;
         if (round > max_round) {
             round = max_round;
@@ -195,7 +183,7 @@ public class HuntingRifle extends MeleeWeapon {
 
     @Override
     public String status() {
-        max_round = 1;
+        max_round = 3;
         return Messages.format(TXT_STATUS, round, max_round);
     }
 
@@ -216,15 +204,15 @@ public class HuntingRifle extends MeleeWeapon {
     }
 
     public int Bulletmin(int lvl) {
-        return 3 * tier +
-                lvl      +
-                RingOfSharpshooting.levelDamageBonus(Dungeon.hero);
+            return 2 * tier +
+                    lvl      +
+                    RingOfSharpshooting.levelDamageBonus(hero);
     }
 
     public int Bulletmax(int lvl) {
-        return 6 * (tier+3)   +
-                lvl * (tier+3) +
-                RingOfSharpshooting.levelDamageBonus(Dungeon.hero);
+            return 4 * (tier+1)   +
+                    lvl * (tier+1)  +
+                    RingOfSharpshooting.levelDamageBonus(hero);
     }
 
     @Override
@@ -235,7 +223,7 @@ public class HuntingRifle extends MeleeWeapon {
     @Override
     public String info() {
 
-        max_round = 1;
+        max_round = 3;
         reload_time = 2f;
         String info = super.info();
 
@@ -250,7 +238,6 @@ public class HuntingRifle extends MeleeWeapon {
                     Bulletmax(0),
                     round, max_round, new DecimalFormat("#.##").format(reload_time));
         }
-
         return info;
     }
 
@@ -273,7 +260,7 @@ public class HuntingRifle extends MeleeWeapon {
         }
 
         return damage;
-    }                           //초과 힘에 따른 추가 데미지
+    }
 
     @Override
     protected float baseDelay(Char owner) {
@@ -287,32 +274,32 @@ public class HuntingRifle extends MeleeWeapon {
         return delay;
     }
 
-    public HuntingRifle.Bullet knockBullet(){
-        return new HuntingRifle.Bullet();
+    public GoldenPistol.Bullet knockBullet(){
+        return new GoldenPistol.Bullet();
     }
     public class Bullet extends MissileWeapon {
 
         {
-            image = ItemSpriteSheet.SNIPER_BULLET;
+            image = ItemSpriteSheet.SINGLE_BULLET;
 
             hitSound = Assets.Sounds.PUFF;
             tier = 3;
 
             bullet = true;
-            sniperGunBullet = true;
+            handGunBullet = true;
         }
 
         @Override
         public int buffedLvl(){
-            return HuntingRifle.this.buffedLvl();
+            return GoldenPistol.this.buffedLvl();
         }
 
         @Override
         public int damageRoll(Char owner) {
             Hero hero = (Hero)owner;
             Char enemy = hero.enemy();
-            int bulletdamage = Random.NormalIntRange(Bulletmin(HuntingRifle.this.buffedLvl()),
-                    Bulletmax(HuntingRifle.this.buffedLvl()));
+            int bulletdamage = Random.NormalIntRange(Bulletmin(GoldenPistol.this.buffedLvl()),
+                    Bulletmax(GoldenPistol.this.buffedLvl()));
 
             if (owner.buff(Momentum.class) != null && owner.buff(Momentum.class).freerunning()) {
                 bulletdamage = Math.round(bulletdamage * (1f + 0.15f * ((Hero) owner).pointsInTalent(Talent.PROJECTILE_MOMENTUM)));
@@ -322,26 +309,26 @@ public class HuntingRifle extends MeleeWeapon {
 
         @Override
         public boolean hasEnchant(Class<? extends Enchantment> type, Char owner) {
-            return HuntingRifle.this.hasEnchant(type, owner);
+            return GoldenPistol.this.hasEnchant(type, owner);
         }
 
         @Override
         public int proc(Char attacker, Char defender, int damage) {
             SpiritBow bow = hero.belongings.getItem(SpiritBow.class);
-            if (HuntingRifle.this.enchantment == null
+            if (GoldenPistol.this.enchantment == null
                     && Random.Int(3) < hero.pointsInTalent(Talent.SHARED_ENCHANTMENT)
                     && hero.buff(MagicImmune.class) == null
                     && bow != null
                     && bow.enchantment != null) {
                 return bow.enchantment.proc(this, attacker, defender, damage);
             } else {
-                return HuntingRifle.this.proc(attacker, defender, damage);
+                return GoldenPistol.this.proc(attacker, defender, damage);
             }
         }
 
         @Override
         public float delayFactor(Char user) {
-            return HuntingRifle.this.delayFactor(user);
+            return GoldenPistol.this.delayFactor(user);
         }
 
         @Override
@@ -352,7 +339,7 @@ public class HuntingRifle extends MeleeWeapon {
 
         @Override
         public int STRReq(int lvl) {
-            return HuntingRifle.this.STRReq();
+            return GoldenPistol.this.STRReq();
         }
 
         @Override
@@ -373,6 +360,7 @@ public class HuntingRifle extends MeleeWeapon {
             } else {
                 round --;
             }
+
             for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] )) {
                 int dist = 4;
                 if (mob.paralysed <= 0
@@ -410,5 +398,18 @@ public class HuntingRifle extends MeleeWeapon {
             return Messages.get(SpiritBow.class, "prompt");
         }
     };
+
+    public static class Recipe extends com.shatteredpixel.bathredpixeldungeon.items.Recipe.SimpleRecipe {
+
+        {
+            inputs =  new Class[]{Pistol.class, LiquidMetal.class};
+            inQuantity = new int[]{1, 30};
+
+            cost = 0;
+
+            output = GoldenPistol.class;
+            outQuantity = 1;
+        }
+    }
 
 }

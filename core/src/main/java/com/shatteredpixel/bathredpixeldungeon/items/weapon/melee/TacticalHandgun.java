@@ -54,12 +54,13 @@ import com.shatteredpixel.bathredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.bathredpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.GameMath;
 import com.watabou.utils.Random;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-public class HuntingRifle extends MeleeWeapon {
+public class TacticalHandgun extends MeleeWeapon {
 
     public static final String AC_SHOOT		= "SHOOT";
     public static final String AC_RELOAD = "RELOAD";
@@ -70,30 +71,21 @@ public class HuntingRifle extends MeleeWeapon {
     private static final String TXT_STATUS = "%d/%d";
 
     {
-
         defaultAction = AC_SHOOT;
         usesTargeting = true;
 
-        image = ItemSpriteSheet.HUNTING_RIFLE;
+        image = ItemSpriteSheet.WA2000;
         hitSound = Assets.Sounds.HIT_CRUSH;
         hitSoundPitch = 0.8f;
 
-        tier = 3;
+        tier = 6;
 
         gun = true;
-        sniperGun = true;
     }
 
     private static final String ROUND = "round";
     private static final String MAX_ROUND = "max_round";
     private static final String RELOAD_TIME = "reload_time";
-    private static final String SILENCER = "silencer";
-    private static final String SHORT_BARREL = "short_barrel";
-    private static final String LONG_BARREL = "long_barrel";
-    private static final String MAGAZINE = "magazine";
-    private static final String LIGHT = "light";
-    private static final String HEAVY = "heavy";
-    private static final String FLASH = "flash";
 
     @Override
     public void storeInBundle(Bundle bundle) {
@@ -110,9 +102,6 @@ public class HuntingRifle extends MeleeWeapon {
         round = bundle.getInt(ROUND);
         reload_time = bundle.getFloat(RELOAD_TIME);
     }
-
-
-
 
     @Override
     public ArrayList<String> actions(Hero hero) {
@@ -134,8 +123,6 @@ public class HuntingRifle extends MeleeWeapon {
         CrudePistol.shootAbility(hero, this);
     }
 
-
-
     @Override
     public void execute(Hero hero, String action) {
 
@@ -148,10 +135,8 @@ public class HuntingRifle extends MeleeWeapon {
                 GLog.w(Messages.get(this, "not_equipped"));
             } else {
                 if (round <= 0) {
-                    reload_time = 2f;
                     reload();
                 } else {
-                    reload_time = 2f;
                     usesTargeting = true;
                     curUser = hero;
                     curItem = this;
@@ -160,7 +145,7 @@ public class HuntingRifle extends MeleeWeapon {
             }
         }
         if (action.equals(AC_RELOAD)) {
-            max_round = 1;
+            max_round = 4;
             if (round == max_round){
                 GLog.w(Messages.get(this, "already_loaded"));
             } else {
@@ -170,7 +155,7 @@ public class HuntingRifle extends MeleeWeapon {
     }
 
     public void reload() {
-        max_round = 1;
+        max_round = 4;
 
         curUser.spend(reload_time);
         curUser.busy();
@@ -179,14 +164,14 @@ public class HuntingRifle extends MeleeWeapon {
         round = Math.max(max_round, round);
 
         GLog.i(Messages.get(this, "reloading"));
+
         updateQuickslot();
     }
-
 
     public int getRound() { return this.round; }
 
     public void oneReload() {
-        max_round = 1;
+        max_round = 4;
         round ++;
         if (round > max_round) {
             round = max_round;
@@ -195,36 +180,34 @@ public class HuntingRifle extends MeleeWeapon {
 
     @Override
     public String status() {
-        max_round = 1;
+        max_round = 4;
         return Messages.format(TXT_STATUS, round, max_round);
     }
 
     @Override
     public int STRReq(int lvl) {
-        int needSTR = STRReq(tier, lvl);
+        int needSTR = STRReq(tier, lvl)+2;
         return needSTR;
     }
 
     public int min(int lvl) {
-        return tier +
-                lvl;
+        return 0;
     }
 
     public int max(int lvl) {
-        return 3 * (tier + 1) +
-                lvl;
+        return 20;
     }
 
     public int Bulletmin(int lvl) {
-        return 3 * tier +
-                lvl      +
-                RingOfSharpshooting.levelDamageBonus(Dungeon.hero);
+            return 2 * tier +
+                    lvl      +
+                    RingOfSharpshooting.levelDamageBonus(hero);
     }
 
     public int Bulletmax(int lvl) {
-        return 6 * (tier+3)   +
-                lvl * (tier+3) +
-                RingOfSharpshooting.levelDamageBonus(Dungeon.hero);
+            return 4 * (tier)   +
+                    lvl * (tier)  +
+                    RingOfSharpshooting.levelDamageBonus(hero);
     }
 
     @Override
@@ -235,7 +218,7 @@ public class HuntingRifle extends MeleeWeapon {
     @Override
     public String info() {
 
-        max_round = 1;
+        max_round = 4;
         reload_time = 2f;
         String info = super.info();
 
@@ -273,7 +256,7 @@ public class HuntingRifle extends MeleeWeapon {
         }
 
         return damage;
-    }                           //초과 힘에 따른 추가 데미지
+    }
 
     @Override
     protected float baseDelay(Char owner) {
@@ -287,32 +270,42 @@ public class HuntingRifle extends MeleeWeapon {
         return delay;
     }
 
-    public HuntingRifle.Bullet knockBullet(){
-        return new HuntingRifle.Bullet();
+    public TacticalHandgun.Bullet knockBullet(){
+        return new TacticalHandgun.Bullet();
     }
     public class Bullet extends MissileWeapon {
 
         {
             image = ItemSpriteSheet.SNIPER_BULLET;
+            /*float heroHPPercent = ((float)hero.HP / (float)hero.HT);
+            if (heroHPPercent < 0.25f) {
+                image = ItemSpriteSheet.ENERGY_BULLET_1;
+            }
+            if (heroHPPercent >= 0.75f) {
+                image = ItemSpriteSheet.ENERGY_BULLET_3;
+            }
+            if (heroHPPercent >= 0.25f && heroHPPercent < 0.75f){
+                image = ItemSpriteSheet.ENERGY_BULLET_2;
+            }*/
 
             hitSound = Assets.Sounds.PUFF;
-            tier = 3;
+            tier = 7;
 
             bullet = true;
-            sniperGunBullet = true;
+            handGunBullet = true;
         }
 
         @Override
         public int buffedLvl(){
-            return HuntingRifle.this.buffedLvl();
+            return TacticalHandgun.this.buffedLvl();
         }
 
         @Override
         public int damageRoll(Char owner) {
             Hero hero = (Hero)owner;
             Char enemy = hero.enemy();
-            int bulletdamage = Random.NormalIntRange(Bulletmin(HuntingRifle.this.buffedLvl()),
-                    Bulletmax(HuntingRifle.this.buffedLvl()));
+            int bulletdamage = Random.NormalIntRange(Bulletmin(TacticalHandgun.this.buffedLvl()),
+                    Bulletmax(TacticalHandgun.this.buffedLvl()));
 
             if (owner.buff(Momentum.class) != null && owner.buff(Momentum.class).freerunning()) {
                 bulletdamage = Math.round(bulletdamage * (1f + 0.15f * ((Hero) owner).pointsInTalent(Talent.PROJECTILE_MOMENTUM)));
@@ -322,26 +315,19 @@ public class HuntingRifle extends MeleeWeapon {
 
         @Override
         public boolean hasEnchant(Class<? extends Enchantment> type, Char owner) {
-            return HuntingRifle.this.hasEnchant(type, owner);
+            return TacticalHandgun.this.hasEnchant(type, owner);
         }
 
         @Override
         public int proc(Char attacker, Char defender, int damage) {
-            SpiritBow bow = hero.belongings.getItem(SpiritBow.class);
-            if (HuntingRifle.this.enchantment == null
-                    && Random.Int(3) < hero.pointsInTalent(Talent.SHARED_ENCHANTMENT)
-                    && hero.buff(MagicImmune.class) == null
-                    && bow != null
-                    && bow.enchantment != null) {
-                return bow.enchantment.proc(this, attacker, defender, damage);
-            } else {
-                return HuntingRifle.this.proc(attacker, defender, damage);
-            }
+            float heroHPPercent = ((float)hero.HP / (float)hero.HT);
+            damage *= GameMath.gate(0.125f, 2*heroHPPercent, 1.5f); //0%~6.25% HP : 0.125x, scales defend on Hero health, 75%~100% HP : 1.5x
+            return TacticalHandgun.this.proc(attacker, defender, damage);
         }
 
         @Override
         public float delayFactor(Char user) {
-            return HuntingRifle.this.delayFactor(user);
+            return TacticalHandgun.this.delayFactor(user);
         }
 
         @Override
@@ -352,20 +338,42 @@ public class HuntingRifle extends MeleeWeapon {
 
         @Override
         public int STRReq(int lvl) {
-            return HuntingRifle.this.STRReq();
+            return TacticalHandgun.this.STRReq();
         }
 
         @Override
         protected void onThrow( int cell ) {
             Char enemy = Actor.findChar( cell );
             if (enemy == null || enemy == curUser) {
+                float heroHPPercent = ((float)hero.HP / (float)hero.HT);
                 parent = null;
-                CellEmitter.get(cell).burst(SmokeParticle.FACTORY, 2);
-                CellEmitter.center(cell).burst(BlastParticle.FACTORY, 2);
-            } else {
-                if (!curUser.shoot( enemy, this )) {
+                if (heroHPPercent < 0.25f) {
+                    CellEmitter.get(cell).burst(SmokeParticle.FACTORY, 1);
+                    CellEmitter.center(cell).burst(BlastParticle.FACTORY, 1);
+                }
+                if (heroHPPercent >= 0.75f) {
+                    CellEmitter.get(cell).burst(SmokeParticle.FACTORY, 3);
+                    CellEmitter.center(cell).burst(BlastParticle.FACTORY, 3);
+                }
+                if (heroHPPercent >= 0.25f && heroHPPercent < 0.75f){
                     CellEmitter.get(cell).burst(SmokeParticle.FACTORY, 2);
                     CellEmitter.center(cell).burst(BlastParticle.FACTORY, 2);
+                }
+            } else {
+                if (!curUser.shoot( enemy, this )) {
+                    float heroHPPercent = ((float)hero.HP / (float)hero.HT);
+                    if (heroHPPercent < 0.25f) {
+                        CellEmitter.get(cell).burst(SmokeParticle.FACTORY, 1);
+                        CellEmitter.center(cell).burst(BlastParticle.FACTORY, 1);
+                    }
+                    if (heroHPPercent >= 0.75f) {
+                        CellEmitter.get(cell).burst(SmokeParticle.FACTORY, 3);
+                        CellEmitter.center(cell).burst(BlastParticle.FACTORY, 3);
+                    }
+                    if (heroHPPercent >= 0.25f && heroHPPercent < 0.75f){
+                        CellEmitter.get(cell).burst(SmokeParticle.FACTORY, 2);
+                        CellEmitter.center(cell).burst(BlastParticle.FACTORY, 2);
+                    }
                 }
             }
             if (hero.buff(InfiniteBullet.class) != null) {
@@ -380,7 +388,6 @@ public class HuntingRifle extends MeleeWeapon {
                         && mob.state != mob.HUNTING) {
                     mob.beckon( curUser.pos ); }
             }
-            updateQuickslot();
         }
 
         @Override
@@ -410,5 +417,4 @@ public class HuntingRifle extends MeleeWeapon {
             return Messages.get(SpiritBow.class, "prompt");
         }
     };
-
 }

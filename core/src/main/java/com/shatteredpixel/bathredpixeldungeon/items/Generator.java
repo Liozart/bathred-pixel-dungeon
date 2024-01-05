@@ -115,32 +115,45 @@ import com.shatteredpixel.bathredpixeldungeon.items.wands.WandOfRegrowth;
 import com.shatteredpixel.bathredpixeldungeon.items.wands.WandOfTransfusion;
 import com.shatteredpixel.bathredpixeldungeon.items.wands.WandOfWarding;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.AssassinsBlade;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.AssultRifle;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.BattleAxe;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Carbine;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Crossbow;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.CrudePistol;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Dagger;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Dirk;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.DualPistol;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Flail;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Gauntlet;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Glaive;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Gloves;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.GoldenPistol;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Greataxe;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Greatshield;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Greatsword;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.HandAxe;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Handgun;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.HeavyMachinegun;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.HuntingRifle;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Katana;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Longsword;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Mace;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.MagesStaff;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Magnum;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.MeleeWeapon;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Pistol;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Quarterstaff;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Rapier;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Revolver;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.RoundShield;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.RunicBlade;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Sai;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Scimitar;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Shortsword;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Sickle;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.SniperRifle;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Spear;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.SubMachinegun;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Sword;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.WarHammer;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.WarScythe;
@@ -350,9 +363,10 @@ public class Generator {
 					MagesStaff.class,
 					Dagger.class,
 					Gloves.class,
-					Rapier.class
+					Rapier.class,
+					CrudePistol.class
 			};
-			WEP_T1.defaultProbs = new float[]{ 2, 0, 2, 2, 2 };
+			WEP_T1.defaultProbs = new float[]{ 2, 0, 2, 2, 2, 2 };
 			WEP_T1.probs = WEP_T1.defaultProbs.clone();
 			
 			WEP_T2.classes = new Class<?>[]{
@@ -361,9 +375,12 @@ public class Generator {
 					Spear.class,
 					Quarterstaff.class,
 					Dirk.class,
-					Sickle.class
+					Sickle.class,
+					Pistol.class,
+					DualPistol.class,
+					Revolver.class,
 			};
-			WEP_T2.defaultProbs = new float[]{ 2, 2, 2, 2, 2, 2 };
+			WEP_T2.defaultProbs = new float[]{ 3, 3, 3, 3, 3, 3, 4, 4, 4 };
 			WEP_T2.probs = WEP_T2.defaultProbs.clone();
 			
 			WEP_T3.classes = new Class<?>[]{
@@ -372,9 +389,12 @@ public class Generator {
 					Scimitar.class,
 					RoundShield.class,
 					Sai.class,
-					Whip.class
+					Whip.class,
+					GoldenPistol.class,
+					SubMachinegun.class,
+					HuntingRifle.class
 			};
-			WEP_T3.defaultProbs = new float[]{ 2, 2, 2, 2, 2, 2 };
+			WEP_T3.defaultProbs = new float[]{ 3, 3, 3, 3, 3, 3, 4, 4, 4 };
 			WEP_T3.probs = WEP_T1.defaultProbs.clone();
 			
 			WEP_T4.classes = new Class<?>[]{
@@ -384,9 +404,12 @@ public class Generator {
 					RunicBlade.class,
 					AssassinsBlade.class,
 					Crossbow.class,
-					Katana.class
+					Katana.class,
+					Handgun.class,
+					AssultRifle.class,
+					Carbine.class,
 			};
-			WEP_T4.defaultProbs = new float[]{ 2, 2, 2, 2, 2, 2, 2 };
+			WEP_T4.defaultProbs = new float[]{ 3, 3, 3, 3, 3, 3, 3, 4, 4, 4 };
 			WEP_T4.probs = WEP_T4.defaultProbs.clone();
 			
 			WEP_T5.classes = new Class<?>[]{
@@ -396,9 +419,12 @@ public class Generator {
 					Greataxe.class,
 					Greatshield.class,
 					Gauntlet.class,
-					WarScythe.class
+					WarScythe.class,
+					Magnum.class,
+					HeavyMachinegun.class,
+					SniperRifle.class,
 			};
-			WEP_T5.defaultProbs = new float[]{ 2, 2, 2, 2, 2, 2, 2 };
+			WEP_T5.defaultProbs = new float[]{ 3, 3, 3, 3, 3, 3, 3, 4, 4, 4 };
 			WEP_T5.probs = WEP_T5.defaultProbs.clone();
 			
 			//see Generator.randomArmor
