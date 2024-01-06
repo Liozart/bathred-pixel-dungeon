@@ -173,7 +173,7 @@ public enum Icons {
 				icon.frame( icon.texture.uvRectBySize( 80, 16, 13, 14 ) );
 				break;
 			case GIUX:
-				icon.frame( icon.texture.uvRectBySize( 48, 16, 9, 15 ) );
+				icon.frame( icon.texture.uvRectBySize( 96, 16, 10, 13 ) );
 				break;
 
 			case EXIT:

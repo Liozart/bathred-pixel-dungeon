@@ -2277,7 +2277,7 @@ public class Hero extends Char {
 							
 						//unintentional door detection scales from 20% at floor 0 to 0% at floor 20
 						} else {
-							chance = 0.2f - (Dungeon.depth / 100f);
+							chance = 0.3f - (Dungeon.depth / 50f);
 						}
 
 						//don't want to let the player search though hidden doors in tutorial

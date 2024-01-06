@@ -175,6 +175,15 @@ public enum Talent {
 	//Ratmogrify T4
 	RATSISTANCE(215, 4), RATLOMACY(216, 4), RATFORCEMENTS(217, 4);
 
+	//GIUX T1
+	//GIUX T2
+	//GIUX T3 ROLLER
+	//GIUX T3 PEWPEW
+	//GIUX T4
+	//GIUX T4
+	//GIUX T4
+
+
 	public static class ImprovisedProjectileCooldown extends FlavourBuff{
 		public int icon() { return BuffIndicator.TIME; }
 		public void tintIcon(Image icon) { icon.hardlight(0.15f, 0.2f, 0.5f); }

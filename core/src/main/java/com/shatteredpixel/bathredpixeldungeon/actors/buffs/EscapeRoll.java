@@ -2,20 +2,37 @@ package com.shatteredpixel.bathredpixeldungeon.actors.buffs;
 
 import com.shatteredpixel.bathredpixeldungeon.Assets;
 import com.shatteredpixel.bathredpixeldungeon.Dungeon;
+import com.shatteredpixel.bathredpixeldungeon.actors.Actor;
+import com.shatteredpixel.bathredpixeldungeon.actors.Char;
+import com.shatteredpixel.bathredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.bathredpixeldungeon.actors.hero.Talent;
+import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.warrior.HeroicLeap;
 import com.shatteredpixel.bathredpixeldungeon.effects.Speck;
 import com.shatteredpixel.bathredpixeldungeon.effects.SpellSprite;
+import com.shatteredpixel.bathredpixeldungeon.effects.TargetedCell;
+import com.shatteredpixel.bathredpixeldungeon.items.wands.WandOfBlastWave;
+import com.shatteredpixel.bathredpixeldungeon.mechanics.Ballistica;
+import com.shatteredpixel.bathredpixeldungeon.mechanics.ConeAOE;
+import com.shatteredpixel.bathredpixeldungeon.mechanics.ShadowCaster;
 import com.shatteredpixel.bathredpixeldungeon.messages.Messages;
 import com.shatteredpixel.bathredpixeldungeon.plants.Swiftthistle;
+import com.shatteredpixel.bathredpixeldungeon.scenes.CellSelector;
+import com.shatteredpixel.bathredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.bathredpixeldungeon.scenes.PixelScene;
 import com.shatteredpixel.bathredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.bathredpixeldungeon.ui.ActionIndicator;
 import com.shatteredpixel.bathredpixeldungeon.ui.BuffIndicator;
 import com.shatteredpixel.bathredpixeldungeon.ui.HeroIcon;
+import com.shatteredpixel.bathredpixeldungeon.utils.GLog;
 import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.Visual;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.Callback;
+import com.watabou.utils.PathFinder;
+import com.watabou.utils.Point;
+import com.watabou.utils.Random;
 
 public class EscapeRoll extends Buff implements ActionIndicator.Action {
 
@@ -29,6 +46,13 @@ public class EscapeRoll extends Buff implements ActionIndicator.Action {
     private int rollCoolDown = 0;
     private  int maxCoolDown = 8;
 
+    private int distance = 2;
+
+    private Hero hero;
+
+    public void setHero(Hero h){
+        hero = h;
+    }
     @Override
     public void detach() {
         super.detach();
@@ -126,14 +150,81 @@ public class EscapeRoll extends Buff implements ActionIndicator.Action {
         return 0x009933;
     }
 
+    public String targetingPrompt() {
+        return Messages.get(this, "prompt");
+    }
+
     @Override
     public void doAction() {
-        Sample.INSTANCE.play(Assets.Sounds.MISS, 1f, 0.8f);
+        if (hero.rooted) {
+            PixelScene.shake(0.5f, 0.5f);
+            return;
+        }
+
+        Point c = Dungeon.level.cellToPoint(hero.pos);
+        int left, right;
+        int curr;
+        for (int y = Math.max(0, c.y - distance); y <= Math.min(Dungeon.level.height()-1, c.y + distance); y++) {
+            left = c.x - distance;
+            right = Math.min(Dungeon.level.width()-1, c.x + c.x - left);
+            left = Math.max(0, left);
+            for (curr = left + y * Dungeon.level.width(); curr <= right + y * Dungeon.level.width(); curr++) {
+                hero.sprite.parent.add(new TargetedCell(curr, 0x00CC66));
+            }
+        }
+
+        GameScene.selectCell(new CellSelector.Listener() {
+            @Override
+            public void onSelect(Integer cell) {
+                if (cell == null) return;
+                if (Dungeon.level.distance(hero.pos, cell) > 2){
+                    GLog.w(Messages.get(Combo.class, "bad_target"));
+                }
+                else
+                    DoRoll(hero, cell);
+            }
+
+            @Override
+            public String prompt() {
+                return targetingPrompt();
+            }
+        });
+
+        /*Sample.INSTANCE.play(Assets.Sounds.MISS, 1f, 0.8f);
         target.sprite.emitter().burst(Speck.factory(Speck.JET), 10);
         SpellSprite.show(target, SpellSprite.HASTE, 1, 1, 0);
+        Buff.affect(Dungeon.hero, Swiftthistle.TimeBubble.class).setLeft(0.5f);*/
+    }
+
+    private void DoRoll(Hero hero, int target) {
+        Ballistica route = new Ballistica(hero.pos, target, Ballistica.STOP_TARGET | Ballistica.STOP_SOLID);
+        int cell = route.collisionPos;
+
+        //can't occupy the same cell as another char, so move back one.
+        int backTrace = route.dist-1;
+        while (Actor.findChar( cell ) != null && cell != hero.pos) {
+            cell = route.path.get(backTrace);
+            backTrace--;
+        }
+
         rollCoolDown = maxCoolDown;
-        Buff.affect(Dungeon.hero, Swiftthistle.TimeBubble.class).setLeft(0.5f);
         BuffIndicator.refreshHero();
         ActionIndicator.clearAction(this);
+
+        final int dest = cell;
+        hero.busy();
+        hero.sprite.jump(hero.pos, cell, new Callback() {
+            public void call() {
+                hero.move(dest);
+                Dungeon.level.occupyCell(hero);
+                Dungeon.observe();
+                GameScene.updateFog();
+
+                PixelScene.shake(0.2f, 0.5f);
+
+                Invisibility.dispel();
+                hero.spendAndNext(Actor.TICK);
+            }
+        });
     }
 }

@@ -47,6 +47,11 @@ public class HeroIcon extends Image {
 	public static final int WARDEN      = 7;
 	public static final int CHAMPION    = 8;
 	public static final int MONK        = 9;
+	public static final int ROLLER        = 10;
+	public static final int PEWPEW        = 11;
+	public static final int GIUXPOWER_1        = 12;
+	public static final int GIUXPOWER_2        = 13;
+	public static final int GIUXPOWER_3        = 14;
 
 	//abilities
 	public static final int HEROIC_LEAP     = 16;

@@ -65,6 +65,7 @@ import com.shatteredpixel.bathredpixeldungeon.items.scrolls.ScrollOfLullaby;
 import com.shatteredpixel.bathredpixeldungeon.items.scrolls.ScrollOfMagicMapping;
 import com.shatteredpixel.bathredpixeldungeon.items.scrolls.ScrollOfMirrorImage;
 import com.shatteredpixel.bathredpixeldungeon.items.scrolls.ScrollOfRage;
+import com.shatteredpixel.bathredpixeldungeon.items.scrolls.ScrollOfTransmutation;
 import com.shatteredpixel.bathredpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.shatteredpixel.bathredpixeldungeon.items.wands.WandOfMagicMissile;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.SpiritBow;
@@ -90,7 +91,7 @@ public enum HeroClass {
 	ROGUE( HeroSubClass.ASSASSIN, HeroSubClass.FREERUNNER ),
 	HUNTRESS( HeroSubClass.SNIPER, HeroSubClass.WARDEN ),
 	DUELIST( HeroSubClass.CHAMPION, HeroSubClass.MONK ),
-	GIUX( HeroSubClass.FREERUNNER, HeroSubClass.SNIPER );
+	GIUX( HeroSubClass.ROLLER, HeroSubClass.PEWPEW );
 
 	private HeroSubClass[] subClasses;
 
@@ -176,7 +177,11 @@ public enum HeroClass {
 		hero.belongings.weapon.activate(hero);
 
 		Dungeon.quickslot.setSlot(0, hero.belongings.weapon);
-		Buff.affect(hero, EscapeRoll.class);
+		Buff.affect(hero, EscapeRoll.class).setHero(hero);
+
+		new ScrollOfIdentify().identify();
+		new ScrollOfTransmutation().identify();
+		new PotionOfHealing().identify();
 	}
 
 	private static void initWarrior( Hero hero ) {
