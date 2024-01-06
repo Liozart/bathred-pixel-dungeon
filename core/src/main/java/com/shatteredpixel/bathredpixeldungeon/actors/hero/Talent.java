@@ -61,6 +61,7 @@ import com.shatteredpixel.bathredpixeldungeon.items.wands.Wand;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Gloves;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Gun;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.MeleeWeapon;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.missiles.MissileWeapon;
@@ -173,10 +174,13 @@ public enum Talent {
 	//universal T4
 	HEROIC_ENERGY(26, 4), //See icon() and title() for special logic for this one
 	//Ratmogrify T4
-	RATSISTANCE(215, 4), RATLOMACY(216, 4), RATFORCEMENTS(217, 4);
+	RATSISTANCE(215, 4), RATLOMACY(216, 4), RATFORCEMENTS(217, 4),
 
 	//GIUX T1
+	GIUX_GUNMEAL(160), GIUX_ROLL1(162), GIUX_ROLLGRASS(163),
 	//GIUX T2
+	GIUX_SCROLLBULLET(164), GIUX_ROLLCRIT(165), GIUX_ROLLDIST(166);
+	//GIUX T3 COMMON
 	//GIUX T3 ROLLER
 	//GIUX T3 PEWPEW
 	//GIUX T4
@@ -377,7 +381,7 @@ public enum Talent {
 				case DUELIST:
 					return 154;
 				case GIUX:
-					return 154;
+					return 186;
 			}
 		} else {
 			return icon;
@@ -485,9 +489,10 @@ public enum Talent {
 				hero.sprite.emitter().burst(Speck.factory(Speck.HEALING), hero.pointsInTalent(HEARTY_MEAL));
 			}
 		}
-		if (hero.hasTalent(IRON_STOMACH)){
-			if (hero.cooldown() > 0) {
-				Buff.affect(hero, WarriorFoodImmunity.class, hero.cooldown());
+		if (hero.hasTalent(GIUX_GUNMEAL)){
+			if (hero.belongings.weapon instanceof Gun)
+			{
+				((Gun)hero.belongings.weapon).reload();
 			}
 		}
 		if (hero.hasTalent(EMPOWERING_MEAL)){
@@ -788,7 +793,7 @@ public enum Talent {
 				Collections.addAll(tierTalents, STRENGTHENING_MEAL, ADVENTURERS_INTUITION, PATIENT_STRIKE, AGGRESSIVE_BARRIER);
 				break;
 			case GIUX:
-				Collections.addAll(tierTalents, NATURES_BOUNTY, PATIENT_STRIKE, ADVENTURERS_INTUITION, HEIGHTENED_SENSES);
+				Collections.addAll(tierTalents, GIUX_GUNMEAL, ADVENTURERS_INTUITION, GIUX_ROLL1, GIUX_ROLLGRASS);
 				break;
 		}
 		for (Talent talent : tierTalents){
@@ -817,7 +822,7 @@ public enum Talent {
 				Collections.addAll(tierTalents, FOCUSED_MEAL, LIQUID_AGILITY, WEAPON_RECHARGING, LETHAL_HASTE, SWIFT_EQUIP);
 				break;
 			case GIUX:
-				Collections.addAll(tierTalents, LETHAL_MOMENTUM, ARCANE_VISION, REJUVENATING_STEPS, INSCRIBED_POWER, SILENT_STEPS);
+				Collections.addAll(tierTalents, GIUX_ROLLDIST, GIUX_SCROLLBULLET, REJUVENATING_STEPS, HEIGHTENED_SENSES, SILENT_STEPS);
 				break;
 		}
 		for (Talent talent : tierTalents){
@@ -906,6 +911,13 @@ public enum Talent {
 			case MONK:
 				Collections.addAll(tierTalents, UNENCUMBERED_SPIRIT, MONASTIC_VIGOR, COMBINED_ENERGY);
 				break;
+			case ROLLER:
+				Collections.addAll(tierTalents, EVASIVE_ARMOR, PROJECTILE_MOMENTUM, SPEEDY_STEALTH);
+				break;
+			case PEWPEW:
+				Collections.addAll(tierTalents, EVASIVE_ARMOR, PROJECTILE_MOMENTUM, SPEEDY_STEALTH);
+				break;
+
 		}
 		for (Talent talent : tierTalents){
 			talents.get(2).put(talent, 0);
