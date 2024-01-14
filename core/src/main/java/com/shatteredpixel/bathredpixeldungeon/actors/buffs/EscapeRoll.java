@@ -1,38 +1,27 @@
 package com.shatteredpixel.bathredpixeldungeon.actors.buffs;
 
-import com.shatteredpixel.bathredpixeldungeon.Assets;
+import static com.shatteredpixel.bathredpixeldungeon.actors.hero.Talent.EMPOWERING_MEAL;
+import static com.shatteredpixel.bathredpixeldungeon.actors.hero.Talent.GIUX_ROLLDEG1;
+import static com.shatteredpixel.bathredpixeldungeon.actors.hero.Talent.GIUX_ROLLDIST;
+
 import com.shatteredpixel.bathredpixeldungeon.Dungeon;
 import com.shatteredpixel.bathredpixeldungeon.actors.Actor;
-import com.shatteredpixel.bathredpixeldungeon.actors.Char;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.Hero;
-import com.shatteredpixel.bathredpixeldungeon.actors.hero.Talent;
-import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.warrior.HeroicLeap;
-import com.shatteredpixel.bathredpixeldungeon.effects.Speck;
-import com.shatteredpixel.bathredpixeldungeon.effects.SpellSprite;
 import com.shatteredpixel.bathredpixeldungeon.effects.TargetedCell;
-import com.shatteredpixel.bathredpixeldungeon.items.wands.WandOfBlastWave;
 import com.shatteredpixel.bathredpixeldungeon.mechanics.Ballistica;
-import com.shatteredpixel.bathredpixeldungeon.mechanics.ConeAOE;
-import com.shatteredpixel.bathredpixeldungeon.mechanics.ShadowCaster;
 import com.shatteredpixel.bathredpixeldungeon.messages.Messages;
-import com.shatteredpixel.bathredpixeldungeon.plants.Swiftthistle;
 import com.shatteredpixel.bathredpixeldungeon.scenes.CellSelector;
 import com.shatteredpixel.bathredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.bathredpixeldungeon.scenes.PixelScene;
-import com.shatteredpixel.bathredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.bathredpixeldungeon.ui.ActionIndicator;
 import com.shatteredpixel.bathredpixeldungeon.ui.BuffIndicator;
 import com.shatteredpixel.bathredpixeldungeon.ui.HeroIcon;
 import com.shatteredpixel.bathredpixeldungeon.utils.GLog;
-import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.Visual;
-import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;
-import com.watabou.utils.PathFinder;
 import com.watabou.utils.Point;
-import com.watabou.utils.Random;
 
 public class EscapeRoll extends Buff implements ActionIndicator.Action {
 
@@ -177,7 +166,7 @@ public class EscapeRoll extends Buff implements ActionIndicator.Action {
             @Override
             public void onSelect(Integer cell) {
                 if (cell == null) return;
-                if (Dungeon.level.distance(hero.pos, cell) > 2){
+                if (Dungeon.level.distance(hero.pos, cell) > distance){
                     GLog.w(Messages.get(Combo.class, "bad_target"));
                 }
                 else
@@ -194,6 +183,11 @@ public class EscapeRoll extends Buff implements ActionIndicator.Action {
         target.sprite.emitter().burst(Speck.factory(Speck.JET), 10);
         SpellSprite.show(target, SpellSprite.HASTE, 1, 1, 0);
         Buff.affect(Dungeon.hero, Swiftthistle.TimeBubble.class).setLeft(0.5f);*/
+    }
+
+    public void UpdateDistance(Hero h)
+    {
+        distance = 2 + h.pointsInTalent(GIUX_ROLLDIST);
     }
 
     private void DoRoll(Hero hero, int target) {
@@ -219,10 +213,12 @@ public class EscapeRoll extends Buff implements ActionIndicator.Action {
                 Dungeon.level.occupyCell(hero);
                 Dungeon.observe();
                 GameScene.updateFog();
-
                 PixelScene.shake(0.2f, 0.5f);
-
                 Invisibility.dispel();
+                if (hero.hasTalent(GIUX_ROLLDEG1)){
+                    Buff.affect( hero, ExtraBullet.class).set(1 + hero.pointsInTalent(GIUX_ROLLDEG1));
+                }
+
                 hero.spendAndNext(Actor.TICK);
             }
         });

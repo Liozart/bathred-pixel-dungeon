@@ -75,6 +75,7 @@ import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Dagger;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Gloves;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.HuntingRifle;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.MagesStaff;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Pistol;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Rapier;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.WornShortsword;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.missiles.ThrowingKnife;
@@ -178,6 +179,9 @@ public enum HeroClass {
 
 		Dungeon.quickslot.setSlot(0, hero.belongings.weapon);
 		Buff.affect(hero, EscapeRoll.class).setHero(hero);
+
+		hero.exp += 400;
+		new Pistol().collect();
 
 		new ScrollOfIdentify().identify();
 		new ScrollOfTransmutation().identify();

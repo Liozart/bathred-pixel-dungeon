@@ -32,6 +32,7 @@ import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Barrier;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Bless;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Blindness;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.ExtraBullet;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.InfiniteBullet;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Light;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.MagicImmune;
@@ -170,9 +171,9 @@ public class TacticalHandgun extends MeleeWeapon {
 
     public int getRound() { return this.round; }
 
-    public void oneReload() {
+    public void oneReload(int num) {
         max_round = 4;
-        round ++;
+        round += num;
         if (round > max_round) {
             round = max_round;
         }
@@ -309,6 +310,11 @@ public class TacticalHandgun extends MeleeWeapon {
 
             if (owner.buff(Momentum.class) != null && owner.buff(Momentum.class).freerunning()) {
                 bulletdamage = Math.round(bulletdamage * (1f + 0.15f * ((Hero) owner).pointsInTalent(Talent.PROJECTILE_MOMENTUM)));
+            }
+            ExtraBullet emp = Dungeon.hero.buff(ExtraBullet.class);
+            if (emp != null){
+                bulletdamage += emp.dmgBoost;
+                emp.detach();
             }
             return bulletdamage;
         }

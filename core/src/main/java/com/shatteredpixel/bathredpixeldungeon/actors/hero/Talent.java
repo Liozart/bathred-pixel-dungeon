@@ -32,6 +32,7 @@ import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Barrier;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.CounterBuff;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.EnhancedRings;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.EscapeRoll;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.FlavourBuff;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Haste;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Invisibility;
@@ -51,6 +52,7 @@ import com.shatteredpixel.bathredpixeldungeon.effects.SpellSprite;
 import com.shatteredpixel.bathredpixeldungeon.effects.particles.LeafParticle;
 import com.shatteredpixel.bathredpixeldungeon.items.BrokenSeal;
 import com.shatteredpixel.bathredpixeldungeon.items.Item;
+import com.shatteredpixel.bathredpixeldungeon.items.KindOfWeapon;
 import com.shatteredpixel.bathredpixeldungeon.items.armor.Armor;
 import com.shatteredpixel.bathredpixeldungeon.items.armor.ClothArmor;
 import com.shatteredpixel.bathredpixeldungeon.items.artifacts.CloakOfShadows;
@@ -60,10 +62,26 @@ import com.shatteredpixel.bathredpixeldungeon.items.scrolls.ScrollOfRecharging;
 import com.shatteredpixel.bathredpixeldungeon.items.wands.Wand;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.Weapon;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.AssultRifle;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.AutoHandgun;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Carbine;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.CrudePistol;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.DualPistol;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Gloves;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.GoldenPistol;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Gun;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Handgun;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.HeavyMachinegun;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.HuntingRifle;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.MagesStaff;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Magnum;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.MarksmanRifle;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.MeleeWeapon;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Pistol;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Revolver;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.SniperRifle;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.SubMachinegun;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.TacticalHandgun;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.bathredpixeldungeon.levels.Level;
 import com.shatteredpixel.bathredpixeldungeon.levels.Terrain;
@@ -177,9 +195,9 @@ public enum Talent {
 	RATSISTANCE(215, 4), RATLOMACY(216, 4), RATFORCEMENTS(217, 4),
 
 	//GIUX T1
-	GIUX_GUNMEAL(160), GIUX_ROLL1(162), GIUX_ROLLGRASS(163),
+	GIUX_GUNMEAL(160),  GIUX_GUNIDENTIFY(161), GIUX_ROLLDEG1(162), GIUX_ROLLGRASS(163),
 	//GIUX T2
-	GIUX_SCROLLBULLET(164), GIUX_ROLLCRIT(165), GIUX_ROLLDIST(166);
+	GIUX_SCROLLBULLET(166), GIUX_ROLLCRIT(165), GIUX_ROLLDIST(164);
 	//GIUX T3 COMMON
 	//GIUX T3 ROLLER
 	//GIUX T3 PEWPEW
@@ -438,6 +456,18 @@ public enum Talent {
 		if (talent == ADVENTURERS_INTUITION && hero.pointsInTalent(ADVENTURERS_INTUITION) == 2){
 			if (hero.belongings.weapon() != null) hero.belongings.weapon().identify();
 		}
+		if (talent == GIUX_GUNIDENTIFY && hero.pointsInTalent(GIUX_GUNIDENTIFY) == 2){
+			if (hero.belongings.weapon() != null){
+				if (hero.belongings.weapon().gun){
+					hero.belongings.weapon().identify();
+				}
+			}
+		}
+
+		if (talent == GIUX_ROLLDIST)
+		{
+			hero.buff(EscapeRoll.class).UpdateDistance(hero);
+		}
 
 		if (talent == PROTECTIVE_SHADOWS && hero.invisible > 0){
 			Buff.affect(hero, Talent.ProtectiveShadowsTracker.class);
@@ -490,9 +520,54 @@ public enum Talent {
 			}
 		}
 		if (hero.hasTalent(GIUX_GUNMEAL)){
-			if (hero.belongings.weapon instanceof Gun)
-			{
-				((Gun)hero.belongings.weapon).reload();
+			KindOfWeapon wep = hero.belongings.attackingWeapon();
+			if (wep instanceof CrudePistol ) {
+				((CrudePistol)wep).oneReload(hero.pointsInTalent(GIUX_GUNMEAL ) * 2);
+
+			} else if (wep instanceof Pistol ) {
+				((Pistol)wep).oneReload(hero.pointsInTalent(GIUX_GUNMEAL ) * 2);
+
+			} else if (wep instanceof GoldenPistol ) {
+				((GoldenPistol)wep).oneReload(hero.pointsInTalent(GIUX_GUNMEAL ) * 2);
+
+			} else if (wep instanceof Handgun ) {
+				((Handgun)wep).oneReload(hero.pointsInTalent(GIUX_GUNMEAL ) * 2);
+
+			} else if (wep instanceof Magnum ) {
+				((Magnum)wep).oneReload(hero.pointsInTalent(GIUX_GUNMEAL ) * 2);
+
+			} else if (wep instanceof TacticalHandgun ) {
+				((TacticalHandgun)wep).oneReload(hero.pointsInTalent(GIUX_GUNMEAL ) * 2);
+
+			} else if (wep instanceof AutoHandgun ) {
+				((AutoHandgun)wep).oneReload(hero.pointsInTalent(GIUX_GUNMEAL ) * 2);
+
+			} else if (wep instanceof DualPistol) {
+				((DualPistol)wep).oneReload(hero.pointsInTalent(GIUX_GUNMEAL ) * 2);
+
+			} else if (wep instanceof SubMachinegun) {
+				((SubMachinegun)wep).oneReload(hero.pointsInTalent(GIUX_GUNMEAL ) * 2);
+
+			} else if (wep instanceof AssultRifle ) {
+				((AssultRifle)wep).oneReload(hero.pointsInTalent(GIUX_GUNMEAL ) * 2);
+
+			} else if (wep instanceof HeavyMachinegun ) {
+				((HeavyMachinegun)wep).oneReload(hero.pointsInTalent(GIUX_GUNMEAL ) * 2);
+
+			} else if (wep instanceof Revolver ) {
+				((Revolver)wep).oneReload(hero.pointsInTalent(GIUX_GUNMEAL ) * 2);
+
+			} else if (wep instanceof HuntingRifle ) {
+				((HuntingRifle)wep).oneReload(hero.pointsInTalent(GIUX_GUNMEAL ) * 2);
+
+			} else if (wep instanceof Carbine ) {
+				((Carbine)wep).oneReload(hero.pointsInTalent(GIUX_GUNMEAL ) * 2);
+
+			} else if (wep instanceof SniperRifle ) {
+				((SniperRifle)wep).oneReload(hero.pointsInTalent(GIUX_GUNMEAL ) * 2);
+
+			} else if (wep instanceof MarksmanRifle ) {
+				((MarksmanRifle) wep).oneReload(hero.pointsInTalent(GIUX_GUNMEAL ) * 2);
 			}
 		}
 		if (hero.hasTalent(EMPOWERING_MEAL)){
@@ -546,11 +621,16 @@ public enum Talent {
 		if (item instanceof MeleeWeapon){
 			factor *= 1f + 1.5f*hero.pointsInTalent(ADVENTURERS_INTUITION); //instant at +2 (see onItemEquipped)
 			factor *= 1f + 0.75f*hero.pointsInTalent(VETERANS_INTUITION);
+			if (((MeleeWeapon)item).gun)
+			{
+				factor *= 1f + hero.pointsInTalent(GIUX_GUNIDENTIFY);
+			}
 		}
 		// Affected by both Warrior(2.5x/inst.) and Duelist(1.75x/2.5x) talents
 		if (item instanceof Armor){
 			factor *= 1f + 0.75f*hero.pointsInTalent(ADVENTURERS_INTUITION);
-			factor *= 1f + hero.pointsInTalent(VETERANS_INTUITION); //instant at +2 (see onItemEquipped)
+			factor *= 1f + hero.pointsInTalent(VETERANS_INTUITION); //instant at +2 (see onItemEquippe
+			factor *= 1f + hero.pointsInTalent(GIUX_GUNIDENTIFY);
 		}
 		// 3x/instant for Mage (see Wand.wandUsed())
 		if (item instanceof Wand){
@@ -661,6 +741,11 @@ public enum Talent {
 				item.identify();
 			} else {
 				((Ring) item).setKnown();
+			}
+		}
+		if (item instanceof MeleeWeapon){
+			if (hero.pointsInTalent(GIUX_GUNIDENTIFY) == 2 && ((MeleeWeapon)item).gun){
+				item.identify();
 			}
 		}
 		if (hero.pointsInTalent(ADVENTURERS_INTUITION) == 2 && item instanceof Weapon){
@@ -793,7 +878,7 @@ public enum Talent {
 				Collections.addAll(tierTalents, STRENGTHENING_MEAL, ADVENTURERS_INTUITION, PATIENT_STRIKE, AGGRESSIVE_BARRIER);
 				break;
 			case GIUX:
-				Collections.addAll(tierTalents, GIUX_GUNMEAL, ADVENTURERS_INTUITION, GIUX_ROLL1, GIUX_ROLLGRASS);
+				Collections.addAll(tierTalents, GIUX_GUNMEAL, GIUX_GUNIDENTIFY, GIUX_ROLLDEG1, GIUX_ROLLGRASS);
 				break;
 		}
 		for (Talent talent : tierTalents){
@@ -822,7 +907,7 @@ public enum Talent {
 				Collections.addAll(tierTalents, FOCUSED_MEAL, LIQUID_AGILITY, WEAPON_RECHARGING, LETHAL_HASTE, SWIFT_EQUIP);
 				break;
 			case GIUX:
-				Collections.addAll(tierTalents, GIUX_ROLLDIST, GIUX_SCROLLBULLET, REJUVENATING_STEPS, HEIGHTENED_SENSES, SILENT_STEPS);
+				Collections.addAll(tierTalents, GIUX_ROLLDIST, GIUX_SCROLLBULLET, GIUX_ROLLCRIT, REJUVENATING_STEPS, HEIGHTENED_SENSES);
 				break;
 		}
 		for (Talent talent : tierTalents){

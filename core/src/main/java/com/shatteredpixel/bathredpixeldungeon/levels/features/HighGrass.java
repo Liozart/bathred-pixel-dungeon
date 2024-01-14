@@ -117,15 +117,25 @@ public class HighGrass {
 
 				}
 			}
-			
+
+			int gdew = 0, gseed = 0;
+			if (ch instanceof Hero){
+				if (((Hero)ch).hasTalent(Talent.GIUX_ROLLGRASS)){
+					gdew = 4;
+					if (((Hero)ch).pointsInTalent(Talent.GIUX_ROLLGRASS) == 2){
+						gseed = 3;
+					}
+				}
+			}
+
 			if (naturalismLevel >= 0) {
 				// Seed, scales from 1/25 to 1/9
-				if (Random.Int(25 - (naturalismLevel * 4)) == 0) {
+				if (Random.Int(25 - ((naturalismLevel + gseed) * 4)) == 0) {
 					level.drop(Generator.random(Generator.Category.SEED), pos).sprite.drop();
 				}
 				
 				// Dew, scales from 1/6 to 1/4
-				if (Random.Int(6 - naturalismLevel/2) == 0) {
+				if (Random.Int(6 - (naturalismLevel + gdew)/2) == 0) {
 					level.drop(new Dewdrop(), pos).sprite.drop();
 				}
 			}
