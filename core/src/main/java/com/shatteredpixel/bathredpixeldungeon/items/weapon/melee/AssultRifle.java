@@ -319,7 +319,11 @@ public class AssultRifle extends MeleeWeapon {
             if (emp != null){
                 bulletdamage += emp.dmgBoost;
                 emp.detach();
-                }
+            }
+            if (hero.pointsInTalent(Talent.GIUX_SCROLLBULLET) == 2)
+            {
+
+            }
             return bulletdamage;
         }
 

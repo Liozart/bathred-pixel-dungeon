@@ -31,12 +31,13 @@ import com.watabou.utils.Reflection;
 import java.util.HashSet;
 
 public class Buff extends Actor {
-	
+
 	public Char target;
 
 	{
 		actPriority = BUFF_PRIO; //low priority, towards the end of a turn
 	}
+
 
 	//determines how the buff is announced when it is shown.
 	public enum buffType {POSITIVE, NEGATIVE, NEUTRAL}

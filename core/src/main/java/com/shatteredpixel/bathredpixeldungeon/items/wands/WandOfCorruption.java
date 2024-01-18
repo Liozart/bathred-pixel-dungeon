@@ -87,7 +87,7 @@ public class WandOfCorruption extends Wand {
 	// for the purposes of reducing resistance, but does not actually apply them itself
 	
 	private static final float MINOR_DEBUFF_WEAKEN = 1/4f;
-	private static final HashMap<Class<? extends Buff>, Float> MINOR_DEBUFFS = new HashMap<>();
+	public static final HashMap<Class<? extends Buff>, Float> MINOR_DEBUFFS = new HashMap<>();
 	static{
 		MINOR_DEBUFFS.put(Weakness.class,       2f);
 		MINOR_DEBUFFS.put(Vulnerable.class,     2f);
@@ -106,7 +106,7 @@ public class WandOfCorruption extends Wand {
 	}
 	
 	private static final float MAJOR_DEBUFF_WEAKEN = 1/2f;
-	private static final HashMap<Class<? extends Buff>, Float> MAJOR_DEBUFFS = new HashMap<>();
+	public static final HashMap<Class<? extends Buff>, Float> MAJOR_DEBUFFS = new HashMap<>();
 	static{
 		MAJOR_DEBUFFS.put(Amok.class,           3f);
 		MAJOR_DEBUFFS.put(Slow.class,           2f);
@@ -178,9 +178,9 @@ public class WandOfCorruption extends Wand {
 			} else {
 				float debuffChance = corruptingPower / enemyResist;
 				if (Random.Float() < debuffChance){
-					debuffEnemy( enemy, MAJOR_DEBUFFS);
+					debuffEnemy( enemy, MAJOR_DEBUFFS, buffedLvl());
 				} else {
-					debuffEnemy( enemy, MINOR_DEBUFFS);
+					debuffEnemy( enemy, MINOR_DEBUFFS, buffedLvl());
 				}
 			}
 
@@ -192,7 +192,7 @@ public class WandOfCorruption extends Wand {
 		}
 	}
 	
-	private void debuffEnemy( Mob enemy, HashMap<Class<? extends Buff>, Float> category ){
+	public static void debuffEnemy( Mob enemy, HashMap<Class<? extends Buff>, Float> category, int buffedLvl){
 		
 		//do not consider buffs which are already assigned, or that the enemy is immune to.
 		HashMap<Class<? extends Buff>, Float> debuffs = new HashMap<>(category);
@@ -211,18 +211,18 @@ public class WandOfCorruption extends Wand {
 		Class<?extends FlavourBuff> debuffCls = (Class<? extends FlavourBuff>) Random.chances(debuffs);
 		
 		if (debuffCls != null){
-			Buff.append(enemy, debuffCls, 6 + buffedLvl()*3);
+			Buff.append(enemy, debuffCls, 6 + buffedLvl*3);
 		} else {
 			//if no debuff can be applied (all are present), then go up one tier
-			if (category == MINOR_DEBUFFS)          debuffEnemy( enemy, MAJOR_DEBUFFS);
+			if (category == MINOR_DEBUFFS)          debuffEnemy( enemy, MAJOR_DEBUFFS, buffedLvl);
 			else if (category == MAJOR_DEBUFFS)     corruptEnemy( enemy );
 		}
 	}
 	
-	private void corruptEnemy( Mob enemy ){
+	public static void corruptEnemy( Mob enemy ){
 		//cannot re-corrupt or doom an enemy, so give them a major debuff instead
 		if(enemy.buff(Corruption.class) != null || enemy.buff(Doom.class) != null){
-			GLog.w( Messages.get(this, "already_corrupted") );
+			GLog.w( Messages.get(WandOfCorruption.class, "already_corrupted") );
 			return;
 		}
 		

@@ -27,22 +27,48 @@ import com.shatteredpixel.bathredpixeldungeon.GamesInProgress;
 import com.shatteredpixel.bathredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.bathredpixeldungeon.actors.Actor;
 import com.shatteredpixel.bathredpixeldungeon.actors.Char;
+import com.shatteredpixel.bathredpixeldungeon.actors.blobs.Freezing;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Amok;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.ArtifactRecharge;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Barrier;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.BathredBullets;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Bleeding;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Blindness;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Burning;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Charm;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Chill;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Corrosion;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.CounterBuff;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Cripple;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Daze;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Doom;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Dread;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Drowsy;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.EnhancedRings;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.EscapeRoll;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.FlavourBuff;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Frost;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Haste;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Hex;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.LostInventory;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.MagicalSleep;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Ooze;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Paralysis;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.PhysicalEmpower;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Poison;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Recharging;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.RevealedArea;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Roots;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.ScrollEmpower;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Slow;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.SoulMark;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Terror;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Vertigo;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Vulnerable;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.WandEmpower;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Weakness;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.ArmorAbility;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.Ratmogrify;
 import com.shatteredpixel.bathredpixeldungeon.actors.mobs.Mob;
@@ -97,10 +123,12 @@ import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 public enum Talent {
 
@@ -523,49 +551,34 @@ public enum Talent {
 			KindOfWeapon wep = hero.belongings.attackingWeapon();
 			if (wep instanceof CrudePistol ) {
 				((CrudePistol)wep).oneReload(hero.pointsInTalent(GIUX_GUNMEAL ) * 2);
-
 			} else if (wep instanceof Pistol ) {
 				((Pistol)wep).oneReload(hero.pointsInTalent(GIUX_GUNMEAL ) * 2);
-
 			} else if (wep instanceof GoldenPistol ) {
 				((GoldenPistol)wep).oneReload(hero.pointsInTalent(GIUX_GUNMEAL ) * 2);
-
 			} else if (wep instanceof Handgun ) {
 				((Handgun)wep).oneReload(hero.pointsInTalent(GIUX_GUNMEAL ) * 2);
-
 			} else if (wep instanceof Magnum ) {
 				((Magnum)wep).oneReload(hero.pointsInTalent(GIUX_GUNMEAL ) * 2);
-
 			} else if (wep instanceof TacticalHandgun ) {
 				((TacticalHandgun)wep).oneReload(hero.pointsInTalent(GIUX_GUNMEAL ) * 2);
-
 			} else if (wep instanceof AutoHandgun ) {
 				((AutoHandgun)wep).oneReload(hero.pointsInTalent(GIUX_GUNMEAL ) * 2);
-
 			} else if (wep instanceof DualPistol) {
 				((DualPistol)wep).oneReload(hero.pointsInTalent(GIUX_GUNMEAL ) * 2);
-
 			} else if (wep instanceof SubMachinegun) {
 				((SubMachinegun)wep).oneReload(hero.pointsInTalent(GIUX_GUNMEAL ) * 2);
-
 			} else if (wep instanceof AssultRifle ) {
 				((AssultRifle)wep).oneReload(hero.pointsInTalent(GIUX_GUNMEAL ) * 2);
-
 			} else if (wep instanceof HeavyMachinegun ) {
 				((HeavyMachinegun)wep).oneReload(hero.pointsInTalent(GIUX_GUNMEAL ) * 2);
-
 			} else if (wep instanceof Revolver ) {
 				((Revolver)wep).oneReload(hero.pointsInTalent(GIUX_GUNMEAL ) * 2);
-
 			} else if (wep instanceof HuntingRifle ) {
 				((HuntingRifle)wep).oneReload(hero.pointsInTalent(GIUX_GUNMEAL ) * 2);
-
 			} else if (wep instanceof Carbine ) {
 				((Carbine)wep).oneReload(hero.pointsInTalent(GIUX_GUNMEAL ) * 2);
-
 			} else if (wep instanceof SniperRifle ) {
 				((SniperRifle)wep).oneReload(hero.pointsInTalent(GIUX_GUNMEAL ) * 2);
-
 			} else if (wep instanceof MarksmanRifle ) {
 				((MarksmanRifle) wep).oneReload(hero.pointsInTalent(GIUX_GUNMEAL ) * 2);
 			}
@@ -708,6 +721,47 @@ public enum Talent {
 			// 3/5 turns of stealth
 			Buff.affect(hero, Invisibility.class, factor * (1 + 2*hero.pointsInTalent(INSCRIBED_STEALTH)));
 			Sample.INSTANCE.play( Assets.Sounds.MELD );
+		}
+		if (hero.hasTalent(GIUX_SCROLLBULLET)){
+			Sample.INSTANCE.play( Assets.Sounds.MELD );
+			KindOfWeapon wep = hero.belongings.attackingWeapon();
+			if (wep instanceof CrudePistol ) {
+				((CrudePistol)wep).reload();
+			} else if (wep instanceof Pistol ) {
+				((Pistol)wep).reload();
+			} else if (wep instanceof GoldenPistol ) {
+				((GoldenPistol)wep).reload();
+			} else if (wep instanceof Handgun ) {
+				((Handgun)wep).reload();
+			} else if (wep instanceof Magnum ) {
+				((Magnum)wep).reload();
+			} else if (wep instanceof TacticalHandgun ) {
+				((TacticalHandgun)wep).reload();
+			} else if (wep instanceof AutoHandgun ) {
+				((AutoHandgun)wep).reload();
+			} else if (wep instanceof DualPistol) {
+				((DualPistol)wep).reload();
+			} else if (wep instanceof SubMachinegun) {
+				((SubMachinegun)wep).reload();
+			} else if (wep instanceof AssultRifle ) {
+				((AssultRifle)wep).reload();
+			} else if (wep instanceof HeavyMachinegun ) {
+				((HeavyMachinegun)wep).reload();
+			} else if (wep instanceof Revolver ) {
+				((Revolver)wep).reload();
+			} else if (wep instanceof HuntingRifle ) {
+				((HuntingRifle)wep).reload();
+			} else if (wep instanceof Carbine ) {
+				((Carbine)wep).reload();
+			} else if (wep instanceof SniperRifle ) {
+				((SniperRifle)wep).reload();
+			} else if (wep instanceof MarksmanRifle ) {
+				((MarksmanRifle) wep).reload();
+			}
+
+			if (hero.pointsInTalent(GIUX_SCROLLBULLET) == 2){
+				Buff.affect(hero, BathredBullets.class);
+			}
 		}
 	}
 
@@ -1119,5 +1173,4 @@ public enum Talent {
 			}
 		}
 	}
-
 }

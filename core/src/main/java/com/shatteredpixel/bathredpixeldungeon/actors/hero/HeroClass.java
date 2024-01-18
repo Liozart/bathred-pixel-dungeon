@@ -182,8 +182,7 @@ public enum HeroClass {
 
 		hero.exp += 400;
 		new Pistol().collect();
-
-		new ScrollOfIdentify().identify();
+		new ScrollOfIdentify().identify().collect();
 		new ScrollOfTransmutation().identify();
 		new PotionOfHealing().identify();
 	}

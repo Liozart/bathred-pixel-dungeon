@@ -33,7 +33,7 @@ public class EscapeRoll extends Buff implements ActionIndicator.Action {
     }
 
     private int rollCoolDown = 0;
-    private  int maxCoolDown = 8;
+    private  int maxCoolDown = 10;
 
     private int distance = 2;
 
@@ -188,6 +188,7 @@ public class EscapeRoll extends Buff implements ActionIndicator.Action {
     public void UpdateDistance(Hero h)
     {
         distance = 2 + h.pointsInTalent(GIUX_ROLLDIST);
+        maxCoolDown = 10 + 5 * h.pointsInTalent(GIUX_ROLLDIST);
     }
 
     private void DoRoll(Hero hero, int target) {
@@ -201,7 +202,7 @@ public class EscapeRoll extends Buff implements ActionIndicator.Action {
             backTrace--;
         }
 
-        rollCoolDown = maxCoolDown;
+        rollCoolDown = maxCoolDown + 1;
         BuffIndicator.refreshHero();
         ActionIndicator.clearAction(this);
 

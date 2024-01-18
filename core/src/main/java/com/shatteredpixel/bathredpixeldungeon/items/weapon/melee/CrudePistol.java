@@ -22,6 +22,9 @@
 package com.shatteredpixel.bathredpixeldungeon.items.weapon.melee;
 
 import static com.shatteredpixel.bathredpixeldungeon.Dungeon.hero;
+import static com.shatteredpixel.bathredpixeldungeon.items.wands.WandOfCorruption.MAJOR_DEBUFFS;
+import static com.shatteredpixel.bathredpixeldungeon.items.wands.WandOfCorruption.MINOR_DEBUFFS;
+import static com.shatteredpixel.bathredpixeldungeon.items.wands.WandOfCorruption.debuffEnemy;
 
 import com.shatteredpixel.bathredpixeldungeon.Assets;
 import com.shatteredpixel.bathredpixeldungeon.Challenges;
@@ -29,6 +32,7 @@ import com.shatteredpixel.bathredpixeldungeon.Dungeon;
 import com.shatteredpixel.bathredpixeldungeon.actors.Actor;
 import com.shatteredpixel.bathredpixeldungeon.actors.Char;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Barrier;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.BathredBullets;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Bless;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Blindness;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Buff;
@@ -46,6 +50,7 @@ import com.shatteredpixel.bathredpixeldungeon.effects.particles.BlastParticle;
 import com.shatteredpixel.bathredpixeldungeon.effects.particles.SmokeParticle;
 import com.shatteredpixel.bathredpixeldungeon.items.Item;
 import com.shatteredpixel.bathredpixeldungeon.items.rings.RingOfSharpshooting;
+import com.shatteredpixel.bathredpixeldungeon.items.wands.WandOfCorruption;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.bathredpixeldungeon.messages.Messages;
@@ -59,6 +64,7 @@ import com.watabou.utils.Random;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class CrudePistol extends MeleeWeapon {
 
@@ -315,10 +321,22 @@ public class CrudePistol extends MeleeWeapon {
             if (owner.buff(Momentum.class) != null && owner.buff(Momentum.class).freerunning()) {
                 bulletdamage = Math.round(bulletdamage * (1f + 0.15f * ((Hero) owner).pointsInTalent(Talent.PROJECTILE_MOMENTUM)));
             }
-            ExtraBullet emp = Dungeon.hero.buff(ExtraBullet.class);
+            ExtraBullet emp = hero.buff(ExtraBullet.class);
             if (emp != null){
                 bulletdamage += emp.dmgBoost;
                 emp.detach();
+            }
+            BathredBullets bat = hero.buff(BathredBullets.class);
+            if (bat != null)
+            {
+                if (Random.Float() < 0.5){
+                    debuffEnemy( (Mob)enemy, MAJOR_DEBUFFS, buffedLvl());
+                } else {
+                    debuffEnemy( (Mob)enemy, MINOR_DEBUFFS, buffedLvl());
+                }
+                bat.bulletsLeft--;
+                if (bat.bulletsLeft == 0)
+                    bat.detach();
             }
             return bulletdamage;
         }

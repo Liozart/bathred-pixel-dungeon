@@ -1,6 +1,6 @@
 Bathred PD is an easier, more causal version of shattered PD
 
-credits to ARanged-PD
+guns sprites, gun mechanics and some talents sprites are based on ARanged-PD from Hoto-Mocha (https://github.com/Hoto-Mocha/ARranged-Pixel-Dungeon)
 ------------------------------------------------------------------------------------------
 
 # Shattered Pixel Dungeon
