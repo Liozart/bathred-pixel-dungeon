@@ -29,7 +29,6 @@ import com.shatteredpixel.bathredpixeldungeon.QuickSlot;
 import com.shatteredpixel.bathredpixeldungeon.SPDSettings;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.EscapeRoll;
-import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Preparation;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.ArmorAbility;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.duelist.Challenge;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.duelist.ElementalStrike;
@@ -47,7 +46,6 @@ import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.warrior.Endu
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.warrior.HeroicLeap;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.warrior.Shockwave;
 import com.shatteredpixel.bathredpixeldungeon.items.BrokenSeal;
-import com.shatteredpixel.bathredpixeldungeon.items.Generator;
 import com.shatteredpixel.bathredpixeldungeon.items.Item;
 import com.shatteredpixel.bathredpixeldungeon.items.Waterskin;
 import com.shatteredpixel.bathredpixeldungeon.items.armor.ClothArmor;
@@ -69,21 +67,22 @@ import com.shatteredpixel.bathredpixeldungeon.items.scrolls.ScrollOfTransmutatio
 import com.shatteredpixel.bathredpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.shatteredpixel.bathredpixeldungeon.items.wands.WandOfMagicMissile;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.SpiritBow;
-import com.shatteredpixel.bathredpixeldungeon.items.weapon.Weapon;
-import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.CrudePistol;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun.AssultRifle;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun.AutoHandgun;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun.AutoRifle;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun.CrudePistol;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Dagger;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Gloves;
-import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.HuntingRifle;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.MagesStaff;
-import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Pistol;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun.Pistol;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Rapier;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.WornShortsword;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun.TacticalHandgun;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.missiles.ThrowingKnife;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.missiles.ThrowingSpike;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.missiles.ThrowingStone;
 import com.shatteredpixel.bathredpixeldungeon.messages.Messages;
 import com.watabou.utils.DeviceCompat;
-import com.watabou.utils.Random;
 
 public enum HeroClass {
 
@@ -181,7 +180,10 @@ public enum HeroClass {
 		Buff.affect(hero, EscapeRoll.class).setHero(hero);
 
 		hero.exp += 400;
+		hero.STR = 20;
 		new Pistol().collect();
+		new AssultRifle().identify().collect();
+
 		new ScrollOfIdentify().identify().collect();
 		new ScrollOfTransmutation().identify();
 		new PotionOfHealing().identify();

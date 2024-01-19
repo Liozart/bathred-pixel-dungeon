@@ -47,20 +47,6 @@ abstract public class KindOfWeapon extends EquipableItem {
 
 	protected String hitSound = Assets.Sounds.HIT;
 	protected float hitSoundPitch = 1f;
-
-	public boolean gun = false;
-	public boolean handGun = false;
-	public boolean machineGun = false;
-	public boolean sniperGun = false;
-	public boolean shotGun = false;
-	public boolean rocketGun = false;
-	public boolean heavyGun = false;
-	public boolean bullet = false;
-	public boolean handGunBullet = false;
-	public boolean machineGunBullet = false;
-	public boolean sniperGunBullet = false;
-	public boolean shotGunBullet = false;
-	public boolean rocketGunBullet = false;
 	
 	@Override
 	public void execute(Hero hero, String action) {
