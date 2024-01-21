@@ -28,6 +28,7 @@ import com.shatteredpixel.bathredpixeldungeon.GamesInProgress;
 import com.shatteredpixel.bathredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.bathredpixeldungeon.actors.Actor;
 import com.shatteredpixel.bathredpixeldungeon.actors.Char;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.ArmorEmpower;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.ArtifactRecharge;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Barrier;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.BathredBullets;
@@ -199,9 +200,11 @@ public enum Talent {
 	//GIUX T1
 	GIUX_GUNMEAL(160),  GIUX_GUNIDENTIFY(161), GIUX_ROLLDEG1(162), GIUX_ROLLGRASS(163),
 	//GIUX T2
-	GIUX_SCROLLBULLET(166), GIUX_ROLLCRIT(165), GIUX_ROLLDIST(164);
+	GIUX_SCROLLBULLET(166), GIUX_ROLLCRIT(165), GIUX_ROLLDIST(164), GIUX_STEPVISION(167), GIUX_ARMORMEAL(168),
 	//GIUX T3 COMMON
+	GIUX_WANDRELOAD(169, 3), GIUX_INSTANTBULLET(170, 3),
 	//GIUX T3 ROLLER
+	GIUX_ROLLERCONF(171, 3), GIUX_ROLLERRANGE(172, 3), GIUX_ROLLERRANDOM(173, 3);
 	//GIUX T3 PEWPEW
 	//GIUX T4
 	//GIUX T4
@@ -524,8 +527,11 @@ public enum Talent {
 		if (hero.hasTalent(GIUX_GUNMEAL)){
 			KindOfWeapon wep = hero.belongings.attackingWeapon();
 			if (wep instanceof BaseGun){
-				((BaseGun)wep).manualReload(hero.pointsInTalent(GIUX_GUNMEAL ) * 2, false);
+				((BaseGun)wep).manualReload(hero.pointsInTalent(GIUX_GUNMEAL ) * 2, false, false);
 			}
+		}
+		if (hero.hasTalent(GIUX_ARMORMEAL)){
+			Buff.affect(hero, ArmorEmpower.class).set(hero.pointsInTalent(Talent.GIUX_ARMORMEAL), 10f + hero.pointsInTalent(Talent.GIUX_ARMORMEAL) * 10f);
 		}
 		if (hero.hasTalent(EMPOWERING_MEAL)){
 			//2/3 bonus wand damage for next 3 zaps
@@ -905,7 +911,7 @@ public enum Talent {
 				Collections.addAll(tierTalents, FOCUSED_MEAL, LIQUID_AGILITY, WEAPON_RECHARGING, LETHAL_HASTE, SWIFT_EQUIP);
 				break;
 			case GIUX:
-				Collections.addAll(tierTalents, GIUX_ROLLDIST, GIUX_SCROLLBULLET, GIUX_ROLLCRIT, REJUVENATING_STEPS, HEIGHTENED_SENSES);
+				Collections.addAll(tierTalents, GIUX_ARMORMEAL, GIUX_SCROLLBULLET, GIUX_ROLLDIST, GIUX_ROLLCRIT, GIUX_STEPVISION);
 				break;
 		}
 		for (Talent talent : tierTalents){
@@ -934,7 +940,7 @@ public enum Talent {
 				Collections.addAll(tierTalents, PRECISE_ASSAULT, DEADLY_FOLLOWUP);
 				break;
 			case GIUX:
-				Collections.addAll(tierTalents, STRONGMAN, DESPERATE_POWER);
+				Collections.addAll(tierTalents, GIUX_WANDRELOAD, GIUX_INSTANTBULLET);
 				break;
 		}
 		for (Talent talent : tierTalents){
@@ -995,7 +1001,7 @@ public enum Talent {
 				Collections.addAll(tierTalents, UNENCUMBERED_SPIRIT, MONASTIC_VIGOR, COMBINED_ENERGY);
 				break;
 			case ROLLER:
-				Collections.addAll(tierTalents, EVASIVE_ARMOR, PROJECTILE_MOMENTUM, SPEEDY_STEALTH);
+				Collections.addAll(tierTalents, GIUX_ROLLERCONF, GIUX_ROLLERRANGE, GIUX_ROLLERRANDOM);
 				break;
 			case PEWPEW:
 				Collections.addAll(tierTalents, EVASIVE_ARMOR, PROJECTILE_MOMENTUM, SPEEDY_STEALTH);

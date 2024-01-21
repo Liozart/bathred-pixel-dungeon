@@ -46,6 +46,7 @@ import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Burning;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Combo;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Drowsy;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.EscapeRoll;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Foresight;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.HoldFast;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Hunger;
@@ -321,6 +322,10 @@ public class Hero extends Char {
 		STR = bundle.getInt( STRENGTH );
 
 		belongings.restoreFromBundle( bundle );
+
+		if (heroClass == HeroClass.GIUX){
+			buff(EscapeRoll.class).setHero(this);
+		}
 	}
 	
 	public static void preview( GamesInProgress.Info info, Bundle bundle ) {
@@ -875,6 +880,12 @@ public class Hero extends Char {
 	private boolean actMove( HeroAction.Move action ) {
 
 		if (getCloser( action.dst )) {
+
+			if (hasTalent(Talent.GIUX_STEPVISION)) {
+				if (Random.Int(100) <= pointsInTalent(Talent.GIUX_STEPVISION)) {
+					Buff.affect(this, MindVision.class, 2f);
+				}
+			}
 			canSelfTrample = false;
 			return true;
 

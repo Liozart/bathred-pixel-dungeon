@@ -45,8 +45,10 @@ import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.rogue.SmokeB
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.warrior.Endure;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.warrior.HeroicLeap;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.warrior.Shockwave;
+import com.shatteredpixel.bathredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.bathredpixeldungeon.items.BrokenSeal;
 import com.shatteredpixel.bathredpixeldungeon.items.Item;
+import com.shatteredpixel.bathredpixeldungeon.items.TengusMask;
 import com.shatteredpixel.bathredpixeldungeon.items.Waterskin;
 import com.shatteredpixel.bathredpixeldungeon.items.armor.ClothArmor;
 import com.shatteredpixel.bathredpixeldungeon.items.artifacts.CloakOfShadows;
@@ -77,6 +79,7 @@ import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun.Pistol;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Rapier;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.WornShortsword;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun.SniperRifle;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun.TacticalHandgun;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.missiles.ThrowingKnife;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.missiles.ThrowingSpike;
@@ -179,10 +182,10 @@ public enum HeroClass {
 		Dungeon.quickslot.setSlot(0, hero.belongings.weapon);
 		Buff.affect(hero, EscapeRoll.class).setHero(hero);
 
-		hero.exp += 400;
+		hero.earnExp( 1000, Mob.class);
 		hero.STR = 20;
-		new Pistol().collect();
-		new AssultRifle().identify().collect();
+		TengusMask teng = new TengusMask();
+		teng.collect();
 
 		new ScrollOfIdentify().identify().collect();
 		new ScrollOfTransmutation().identify();

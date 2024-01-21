@@ -117,6 +117,7 @@ import com.shatteredpixel.bathredpixeldungeon.items.wands.WandOfWarding;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.AssassinsBlade;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun.AssultRifle;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.BattleAxe;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun.BaseGun;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun.Carbine;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Crossbow;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun.CrudePistol;
@@ -205,6 +206,7 @@ public class Generator {
 		WEP_T3	( 0, 0, MeleeWeapon.class),
 		WEP_T4	( 0, 0, MeleeWeapon.class),
 		WEP_T5	( 0, 0, MeleeWeapon.class),
+		GUNS (0, 0, BaseGun.class),
 		
 		ARMOR	( 2, 1, Armor.class ),
 		
@@ -336,6 +338,23 @@ public class Generator {
 			};
 			STONE.defaultProbs = new float[]{ 0, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 0 };
 			STONE.probs = STONE.defaultProbs.clone();
+
+			GUNS.classes = new Class<?>[] {
+					Pistol.class,
+					DualPistol.class,
+					Revolver.class,
+					Magnum.class,
+					HeavyMachinegun.class,
+					SniperRifle.class,
+					Handgun.class,
+					AssultRifle.class,
+					Carbine.class,
+					GoldenPistol.class,
+					SubMachinegun.class,
+					HuntingRifle.class
+			};
+			GUNS.defaultProbs = new float[]{ 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
+			GUNS.probs = GUNS.defaultProbs.clone();
 
 			WAND.classes = new Class<?>[]{
 					WandOfMagicMissile.class,
@@ -696,6 +715,13 @@ public class Generator {
 			w = (MeleeWeapon) random(wepTiers[Random.chances(floorSetTierProbs[floorSet])]);
 		}
 		return w;
+	}
+
+	public static BaseGun randomGun(int floorSet) {
+		floorSet = (int)GameMath.gate(0, floorSet, floorSetTierProbs.length-1);
+		BaseGun bg = (BaseGun)Reflection.newInstance(Category.GUNS.classes[Random.chances(floorSetTierProbs[floorSet])]);
+		bg.random();
+		return bg;
 	}
 	
 	public static final Category[] misTiers = new Category[]{

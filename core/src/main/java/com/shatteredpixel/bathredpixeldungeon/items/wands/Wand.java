@@ -48,6 +48,7 @@ import com.shatteredpixel.bathredpixeldungeon.items.bags.MagicalHolster;
 import com.shatteredpixel.bathredpixeldungeon.items.rings.RingOfEnergy;
 import com.shatteredpixel.bathredpixeldungeon.items.scrolls.ScrollOfRecharging;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.MagesStaff;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun.BaseGun;
 import com.shatteredpixel.bathredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.bathredpixeldungeon.messages.Messages;
 import com.shatteredpixel.bathredpixeldungeon.scenes.CellSelector;
@@ -608,6 +609,24 @@ public abstract class Wand extends Item {
 						updateQuickslot();
 						curUser.spendAndNext(Actor.TICK);
 						return;
+					}
+					if (target == curUser.pos && curUser.hasTalent(Talent.GIUX_WANDRELOAD)) {
+						if (curUser.belongings.weapon instanceof BaseGun) {
+							if (((BaseGun)curUser.belongings.weapon).canWandReload()) {
+								int num = (curUser.pointsInTalent(Talent.GIUX_WANDRELOAD) + 1) / 2;
+								((BaseGun)curUser.belongings.weapon).manualReload(curWand.curCharges * num, true, true);
+								curWand.curCharges = 0;
+								curUser.sprite.operate(curUser.pos);
+								Sample.INSTANCE.play(Assets.Sounds.CHARGEUP);
+								updateQuickslot();
+								curUser.spendAndNext(Actor.TICK);
+								return;
+							}
+							else {
+								GLog.i( Messages.get(Hero.class, "giux_wandreload") );
+								return;
+							}
+						}
 					}
 					GLog.i( Messages.get(Wand.class, "self_target") );
 					return;

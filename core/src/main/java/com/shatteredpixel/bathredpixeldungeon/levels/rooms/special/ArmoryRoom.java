@@ -26,6 +26,7 @@ import com.shatteredpixel.bathredpixeldungeon.items.Generator;
 import com.shatteredpixel.bathredpixeldungeon.items.Item;
 import com.shatteredpixel.bathredpixeldungeon.items.bombs.Bomb;
 import com.shatteredpixel.bathredpixeldungeon.items.keys.IronKey;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun.BaseGun;
 import com.shatteredpixel.bathredpixeldungeon.levels.Level;
 import com.shatteredpixel.bathredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.bathredpixeldungeon.levels.painters.Painter;
@@ -74,13 +75,11 @@ public class ArmoryRoom extends SpecialRoom {
 		int index = Random.chances(prizeCats);
 		prizeCats[index] = 0;
 		switch (index){
-			case 0:
-				return new Bomb().random();
-			case 1:
-				return Generator.randomWeapon();
+			case 0: case 1: default:
+				return new BaseGun().random();
 			case 2:
 				return Generator.randomArmor();
-			case 3: default:
+			case 3:
 				return Generator.randomMissile();
 		}
 	}

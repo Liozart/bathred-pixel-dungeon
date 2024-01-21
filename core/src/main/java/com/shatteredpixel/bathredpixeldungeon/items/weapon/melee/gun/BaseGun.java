@@ -11,11 +11,12 @@ import com.shatteredpixel.bathredpixeldungeon.Dungeon;
 import com.shatteredpixel.bathredpixeldungeon.actors.Actor;
 import com.shatteredpixel.bathredpixeldungeon.actors.Char;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.BathredBullets;
-import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Blindness;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Buff;
-import com.shatteredpixel.bathredpixeldungeon.actors.buffs.ExtraBullet;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.InstantBullet;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.RolledBullet;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.InfiniteBullet;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Momentum;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.RollCrit;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.bathredpixeldungeon.actors.mobs.Mob;
@@ -31,6 +32,7 @@ import com.shatteredpixel.bathredpixeldungeon.items.weapon.missiles.MissileWeapo
 import com.shatteredpixel.bathredpixeldungeon.messages.Messages;
 import com.shatteredpixel.bathredpixeldungeon.scenes.CellSelector;
 import com.shatteredpixel.bathredpixeldungeon.scenes.GameScene;
+import com.shatteredpixel.bathredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.bathredpixeldungeon.sprites.MissileSprite;
 import com.shatteredpixel.bathredpixeldungeon.ui.QuickSlotButton;
 import com.shatteredpixel.bathredpixeldungeon.utils.GLog;
@@ -40,7 +42,6 @@ import com.watabou.utils.Callback;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class BaseGun extends MeleeWeapon {
@@ -53,6 +54,8 @@ public class BaseGun extends MeleeWeapon {
     protected int shotPerShoot = 1;
     protected int shotPerShootFired = 0;
     protected int shotPerShootTarget = 0;
+    private boolean wandReload = false;
+    private boolean doCrit = false;
     protected float shootingSpeed = 1f;
     protected float shootingAccuracy = 1f;
     protected boolean explode = false;
@@ -71,6 +74,11 @@ public class BaseGun extends MeleeWeapon {
     private static final String MAX_ROUND = "max_round";
     private static final String RELOAD_TIME = "reload_time";
     private static final String SHOT_PER_SHOOT = "shotPerShoot";
+    private static final String SHOT_PER_FIRED = "shotPerShootFired";
+    private static final String SHOT_PER_TARGET = "shotPerShootTarget";
+    private static final String WAND_RELOAD = "wandReload";
+    private static final String DO_CRIT = "doCrit";
+    private static final String FREE_SHOT = "freeShot";
     private static final String SHOOTING_SPEED = "shootingSpeed";
     private static final String SHOOTING_ACCURACY = "shootingAccuracy";
     private static final String EXPLODE = "explode";
@@ -83,6 +91,10 @@ public class BaseGun extends MeleeWeapon {
         bundle.put(ROUND, round);
         bundle.put(RELOAD_TIME, reload_time);
         bundle.put(SHOT_PER_SHOOT, shotPerShoot);
+        bundle.put(SHOT_PER_FIRED, shotPerShootFired);
+        bundle.put(SHOT_PER_TARGET, shotPerShootTarget);
+        bundle.put(WAND_RELOAD, wandReload);
+        bundle.put(DO_CRIT, doCrit);
         bundle.put(SHOOTING_SPEED, shootingSpeed);
         bundle.put(SHOOTING_ACCURACY, shootingAccuracy);
         bundle.put(EXPLODE, explode);
@@ -96,6 +108,10 @@ public class BaseGun extends MeleeWeapon {
         round = bundle.getInt(ROUND);
         reload_time = bundle.getFloat(RELOAD_TIME);
         shotPerShoot = bundle.getInt(SHOT_PER_SHOOT);
+        shotPerShootFired = bundle.getInt(SHOT_PER_FIRED);
+        shotPerShootTarget = bundle.getInt(SHOT_PER_TARGET);
+        wandReload = bundle.getBoolean(WAND_RELOAD);
+        doCrit = bundle.getBoolean(DO_CRIT);
         shootingSpeed = bundle.getFloat(SHOOTING_SPEED);
         shootingAccuracy = bundle.getFloat(SHOOTING_ACCURACY);
         explode = bundle.getBoolean(EXPLODE);
@@ -110,6 +126,27 @@ public class BaseGun extends MeleeWeapon {
             actions.add(AC_RELOAD);
         }
         return actions;
+    }
+
+    public Item random() {
+        int n = 0;
+        if (Random.Int(3) == 0) {
+            n++;
+            if (Random.Int(3) == 0) {
+                n++;
+            }
+        }
+        level(n);
+
+        float effectRoll = Random.Float();
+        if (effectRoll < 0.3f) {
+            enchant(Enchantment.randomCurse());
+            cursed = true;
+        } else if (effectRoll >= 0.8f){
+            enchant();
+        }
+
+        return this;
     }
 
     @Override
@@ -158,40 +195,33 @@ public class BaseGun extends MeleeWeapon {
         quickReload();
         hero.busy();
         hero.sprite.operate(hero.pos);
-
-        onReload();
         Sample.INSTANCE.play(Assets.Sounds.UNLOCK);
         hero.spendAndNext(reloadTime());
         GLog.i(Messages.get(this, "reloading"));
     }
 
-    public void onReload() {
-
-    }
-
     public void quickReload() {
         round = maxRound();
+        wandReload = false;
         updateQuickslot();
     }
 
     public void manualReload() {
-        manualReload(1, false);
+        manualReload(1, false, false);
     }
 
-    public void manualReload(int amount, boolean overReload) {
+    public void manualReload(int amount, boolean overReload, boolean wandRel) {
         round += amount;
-        if (overReload) {
-            if (round > maxRound() + amount) {
-                round = maxRound() + amount;
-            }
-        } else {
+        if (!overReload) {
             if (round > maxRound()) {
                 round = maxRound();
             }
         }
-
+        wandReload = wandRel;
         updateQuickslot();
     }
+
+    public boolean canWandReload() { return !wandReload;}
 
     public int shotPerShoot() { //발사 당 탄환의 수
         return shotPerShoot;
@@ -242,7 +272,7 @@ public class BaseGun extends MeleeWeapon {
 
     @Override
     protected float baseDelay(Char owner) {
-        return super.baseDelay(owner);
+        return super.baseDelay(owner) - (hero.pointsInTalent(Talent.GIUX_INSTANTBULLET) == 3 ? 0.2f : 0);
     }
 
     @Override
@@ -292,13 +322,13 @@ public class BaseGun extends MeleeWeapon {
         }
 
         @Override
-        public int buffedLvl(){
+        public int buffedLvl() {
             return BaseGun.this.buffedLvl();
         }
 
         @Override
         public int damageRoll(Char owner) {
-            Hero hero = (Hero)owner;
+            Hero hero = (Hero) owner;
             Char enemy = hero.enemy();
             int bulletdamage = Random.NormalIntRange(Bulletmin(buffedLvl()),
                     Bulletmax(buffedLvl()));
@@ -306,22 +336,26 @@ public class BaseGun extends MeleeWeapon {
             if (owner.buff(Momentum.class) != null && owner.buff(Momentum.class).freerunning()) {
                 bulletdamage = Math.round(bulletdamage * (1f + 0.15f * ((Hero) owner).pointsInTalent(Talent.PROJECTILE_MOMENTUM)));
             }
-            ExtraBullet emp = hero.buff(ExtraBullet.class);
-            if (emp != null){
+            RolledBullet emp = hero.buff(RolledBullet.class);
+            if (emp != null) {
                 bulletdamage += emp.dmgBoost;
                 emp.detach();
             }
             BathredBullets bat = hero.buff(BathredBullets.class);
-            if (bat != null)
-            {
-                if (Random.Float() < 0.5){
-                    debuffEnemy( (Mob)enemy, MAJOR_DEBUFFS, buffedLvl());
+            if (bat != null) {
+                if (Random.Float() < 0.5) {
+                    debuffEnemy((Mob) enemy, MAJOR_DEBUFFS, buffedLvl());
                 } else {
-                    debuffEnemy( (Mob)enemy, MINOR_DEBUFFS, buffedLvl());
+                    debuffEnemy((Mob) enemy, MINOR_DEBUFFS, buffedLvl());
                 }
                 bat.bulletsLeft--;
                 if (bat.bulletsLeft == 0)
                     bat.detach();
+            }
+            if (doCrit) {
+                doCrit = false;
+                bulletdamage = Bulletmax(buffedLvl()) + 1;
+                hero.sprite.showStatus( CharSprite.POSITIVE, Messages.get(Hero.class, "crit") );
             }
             return bulletdamage;
         }
@@ -333,7 +367,7 @@ public class BaseGun extends MeleeWeapon {
 
         @Override
         public float delayFactor(Char user) {
-            return BaseGun.this.delayFactor(user) * shootingSpeed;
+            return BaseGun.this.delayFactor(user) * shootingSpeed - (hero.pointsInTalent(Talent.GIUX_INSTANTBULLET) == 3 ? 0.2f : 0);
         }
 
         @Override
@@ -354,14 +388,13 @@ public class BaseGun extends MeleeWeapon {
         }
 
         @Override
-        protected void onThrow( int cell ) {
-            boolean killedEnemy = false;
+        protected void onThrow(int cell) {
             if (explode) {
                 Char chInPos = Actor.findChar(cell);
                 ArrayList<Char> targets = new ArrayList<>();
                 int shootArea[] = PathFinder.NEIGHBOURS9;
 
-                for (int i : shootArea){
+                for (int i : shootArea) {
                     int c = cell + i;
                     if (c >= 0 && c < Dungeon.level.length()) {
                         if (Dungeon.level.heroFOV[c]) {
@@ -379,12 +412,9 @@ public class BaseGun extends MeleeWeapon {
                     }
                 }
 
-                for (Char target : targets){
+                for (Char target : targets) {
                     for (int i = 0; i < shotPerShoot(); i++) {
                         curUser.shoot(target, this);
-                    }
-                    if (!target.isAlive()) {
-                        killedEnemy = true;
                     }
                     if (target == hero && !target.isAlive()) {
                         Dungeon.fail(getClass());
@@ -392,33 +422,30 @@ public class BaseGun extends MeleeWeapon {
                     }
                 }
 
-                Sample.INSTANCE.play( Assets.Sounds.BLAST );
+                Sample.INSTANCE.play(Assets.Sounds.BLAST);
             } else {
-                Char enemy = Actor.findChar( cell );
+                Char enemy = Actor.findChar(cell);
                 if (enemy == null || enemy == curUser) {
                     parent = null;
                     CellEmitter.get(cell).burst(SmokeParticle.FACTORY, 2);
                     CellEmitter.center(cell).burst(BlastParticle.FACTORY, 2);
                 } else {
-                    if (!curUser.shoot( enemy, this )) {
+                    if (!curUser.shoot(enemy, this)) {
                         CellEmitter.get(cell).burst(SmokeParticle.FACTORY, 2);
                         CellEmitter.center(cell).burst(BlastParticle.FACTORY, 2);
                     }
                 }
-                if (enemy != null && !enemy.isAlive()) {
-                    killedEnemy = true;
-                }
             }
 
             if (hero.buff(InfiniteBullet.class) == null) {
-                round --;
+                round--;
             }
 
-            for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] )) {
+            for (Mob mob : Dungeon.level.mobs.toArray(new Mob[0])) {
                 if (mob.paralysed <= 0
                         && Dungeon.level.distance(curUser.pos, mob.pos) <= 4
                         && mob.state != mob.HUNTING) {
-                    mob.beckon( curUser.pos );
+                    mob.beckon(curUser.pos);
                 }
             }
             updateQuickslot();
@@ -426,7 +453,16 @@ public class BaseGun extends MeleeWeapon {
 
         @Override
         public void throwSound() {
-            Sample.INSTANCE.play( Assets.Sounds.HIT_CRUSH, 1, Random.Float(0.33f, 0.66f) );
+            RollCrit crit = hero.buff(RollCrit.class);
+            if (crit != null) {
+                if (Random.Int(100) <= crit.getCritChance()) {
+                    Sample.INSTANCE.play(Assets.Sounds.HIT_ARROW);
+                    doCrit = true;
+                } else
+                    Sample.INSTANCE.play(Assets.Sounds.HIT_CRUSH, 1, Random.Float(0.33f, 0.66f));
+            }
+            else
+                Sample.INSTANCE.play(Assets.Sounds.HIT_CRUSH,1,Random.Float(0.33f,0.66f));
         }
 
         @Override
@@ -450,8 +486,6 @@ public class BaseGun extends MeleeWeapon {
                             onThrow(cell);
                             AfterShoot();
                         }
-
-
                     });
             } else {
                 ((MissileSprite) user.sprite.parent.recycle(MissileSprite.class)).reset(user.sprite, cell,this,
@@ -476,7 +510,13 @@ public class BaseGun extends MeleeWeapon {
         {
             shotPerShootFired = 0;
             shotPerShootTarget = 0;
-            hero.spendAndNext(TICK);
+            if (hero.buff(InstantBullet.class) == null){
+                hero.spendAndNext(delayFactor(hero));
+            }
+            else {
+                hero.buff(InstantBullet.class).detach();
+                hero.spendAndNext(0f);
+            }
         }
     }
 

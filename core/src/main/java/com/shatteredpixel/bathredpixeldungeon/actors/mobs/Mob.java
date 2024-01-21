@@ -21,6 +21,8 @@
 
 package com.shatteredpixel.bathredpixeldungeon.actors.mobs;
 
+import static com.shatteredpixel.bathredpixeldungeon.Dungeon.hero;
+
 import com.shatteredpixel.bathredpixeldungeon.Assets;
 import com.shatteredpixel.bathredpixeldungeon.Badges;
 import com.shatteredpixel.bathredpixeldungeon.Challenges;
@@ -39,6 +41,7 @@ import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Corruption;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Dread;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Haste;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Hunger;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.InstantBullet;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.MindVision;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.MonkEnergy;
@@ -67,6 +70,7 @@ import com.shatteredpixel.bathredpixeldungeon.items.stones.StoneOfAggression;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.enchantments.Lucky;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun.BaseGun;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.missiles.darts.Dart;
 import com.shatteredpixel.bathredpixeldungeon.levels.Level;
@@ -819,6 +823,9 @@ public abstract class Mob extends Char {
 						&& Dungeon.hero.buff(Talent.LethalHasteCooldown.class) == null){
 					Buff.affect(Dungeon.hero, Talent.LethalHasteCooldown.class, 100f);
 					Buff.affect(Dungeon.hero, Haste.class, 1.67f + Dungeon.hero.pointsInTalent(Talent.LETHAL_HASTE));
+				}
+				if (hero.hasTalent(Talent.GIUX_INSTANTBULLET)){
+					Buff.affect(Dungeon.hero, InstantBullet.class, 5);
 				}
 			}
 

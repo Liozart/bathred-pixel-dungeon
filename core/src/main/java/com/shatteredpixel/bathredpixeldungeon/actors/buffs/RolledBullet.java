@@ -5,7 +5,7 @@ import com.shatteredpixel.bathredpixeldungeon.ui.BuffIndicator;
 import com.watabou.noosa.Image;
 import com.watabou.utils.Bundle;
 
-public class ExtraBullet extends Buff {
+public class RolledBullet extends Buff {
 
     {
         type = buffType.POSITIVE;

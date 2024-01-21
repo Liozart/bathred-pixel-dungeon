@@ -61,7 +61,7 @@ public class StorageRoom extends SpecialRoom {
 			Generator.Category.POTION,
 			Generator.Category.SCROLL,
 			Generator.Category.FOOD,
-			Generator.Category.GOLD
+			Generator.Category.GUNS
 		) );
 	}
 }

@@ -21,11 +21,14 @@
 
 package com.shatteredpixel.bathredpixeldungeon.items.armor;
 
+import static com.shatteredpixel.bathredpixeldungeon.Dungeon.hero;
+
 import com.shatteredpixel.bathredpixeldungeon.Badges;
 import com.shatteredpixel.bathredpixeldungeon.Challenges;
 import com.shatteredpixel.bathredpixeldungeon.Dungeon;
 import com.shatteredpixel.bathredpixeldungeon.actors.Actor;
 import com.shatteredpixel.bathredpixeldungeon.actors.Char;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.ArmorEmpower;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.MagicImmune;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Momentum;
@@ -245,8 +248,8 @@ public class Armor extends EquipableItem {
 		if (seal.getGlyph() != null){
 			inscribe(seal.getGlyph());
 		}
-		if (isEquipped(Dungeon.hero)){
-			Buff.affect(Dungeon.hero, BrokenSeal.WarriorShield.class).setArmor(this);
+		if (isEquipped(hero)){
+			Buff.affect(hero, BrokenSeal.WarriorShield.class).setArmor(this);
 		}
 	}
 
@@ -384,6 +387,21 @@ public class Armor extends EquipableItem {
 		if (curseInfusionBonus) level += 1 + level/6;
 		return level;
 	}
+
+	@Override
+	public int buffedLvl() {
+		int lvl;
+		if (isEquipped( hero ) || hero.belongings.contains( this )){
+			lvl = super.buffedLvl();
+		} else {
+			lvl = level();
+		}
+		ArmorEmpower armorEmpower = hero.buff(ArmorEmpower.class);
+		if (armorEmpower != null && isEquipped( hero )) {
+			lvl += armorEmpower.getLvl();
+		}
+		return lvl;
+	}
 	
 	@Override
 	public Item upgrade() {
@@ -412,8 +430,8 @@ public class Armor extends EquipableItem {
 
 				//the chance from +4/5, and then +6 can be set to 0% with metamorphed runic transference
 				int lossChanceStart = 4;
-				if (Dungeon.hero != null && Dungeon.hero.heroClass != HeroClass.WARRIOR && Dungeon.hero.hasTalent(Talent.RUNIC_TRANSFERENCE)){
-					lossChanceStart += 1+Dungeon.hero.pointsInTalent(Talent.RUNIC_TRANSFERENCE);
+				if (hero != null && hero.heroClass != HeroClass.WARRIOR && hero.hasTalent(Talent.RUNIC_TRANSFERENCE)){
+					lossChanceStart += 1+ hero.pointsInTalent(Talent.RUNIC_TRANSFERENCE);
 				}
 
 				if (level() >= lossChanceStart && Random.Float(10) < Math.pow(2, level()-4)) {
@@ -436,8 +454,8 @@ public class Armor extends EquipableItem {
 			damage = glyph.proc( this, attacker, defender, damage );
 		}
 		
-		if (!levelKnown && defender == Dungeon.hero) {
-			float uses = Math.min( availableUsesToID, Talent.itemIDSpeedFactor(Dungeon.hero, this) );
+		if (!levelKnown && defender == hero) {
+			float uses = Math.min( availableUsesToID, Talent.itemIDSpeedFactor(hero, this) );
 			availableUsesToID -= uses;
 			usesLeftToID -= uses;
 			if (usesLeftToID <= 0) {
@@ -472,13 +490,13 @@ public class Armor extends EquipableItem {
 
 			info += "\n\n" + Messages.get(Armor.class, "curr_absorb", tier, DRMin(), DRMax(), STRReq());
 			
-			if (STRReq() > Dungeon.hero.STR()) {
+			if (STRReq() > hero.STR()) {
 				info += " " + Messages.get(Armor.class, "too_heavy");
 			}
 		} else {
 			info += "\n\n" + Messages.get(Armor.class, "avg_absorb", tier, DRMin(0), DRMax(0), STRReq(0));
 
-			if (STRReq(0) > Dungeon.hero.STR()) {
+			if (STRReq(0) > hero.STR()) {
 				info += " " + Messages.get(Armor.class, "probably_too_heavy");
 			}
 		}
@@ -501,7 +519,7 @@ public class Armor extends EquipableItem {
 			info += "\n\n" + Messages.get(Armor.class, "hardened_no_glyph");
 		}
 		
-		if (cursed && isEquipped( Dungeon.hero )) {
+		if (cursed && isEquipped( hero )) {
 			info += "\n\n" + Messages.get(Armor.class, "cursed_worn");
 		} else if (cursedKnown && cursed) {
 			info += "\n\n" + Messages.get(Armor.class, "cursed");

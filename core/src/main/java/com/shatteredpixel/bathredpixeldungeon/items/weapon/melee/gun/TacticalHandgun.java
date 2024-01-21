@@ -23,35 +23,11 @@ package com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun;
 
 import static com.shatteredpixel.bathredpixeldungeon.Dungeon.hero;
 
-import com.shatteredpixel.bathredpixeldungeon.Assets;
-import com.shatteredpixel.bathredpixeldungeon.Dungeon;
-import com.shatteredpixel.bathredpixeldungeon.actors.Actor;
-import com.shatteredpixel.bathredpixeldungeon.actors.Char;
-import com.shatteredpixel.bathredpixeldungeon.actors.buffs.ExtraBullet;
-import com.shatteredpixel.bathredpixeldungeon.actors.buffs.InfiniteBullet;
-import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Momentum;
-import com.shatteredpixel.bathredpixeldungeon.actors.hero.Hero;
-import com.shatteredpixel.bathredpixeldungeon.actors.hero.Talent;
-import com.shatteredpixel.bathredpixeldungeon.actors.mobs.Mob;
-import com.shatteredpixel.bathredpixeldungeon.effects.CellEmitter;
-import com.shatteredpixel.bathredpixeldungeon.effects.particles.BlastParticle;
-import com.shatteredpixel.bathredpixeldungeon.effects.particles.SmokeParticle;
 import com.shatteredpixel.bathredpixeldungeon.items.rings.RingOfSharpshooting;
-import com.shatteredpixel.bathredpixeldungeon.items.weapon.SpiritBow;
-import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.MeleeWeapon;
-import com.shatteredpixel.bathredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.bathredpixeldungeon.messages.Messages;
-import com.shatteredpixel.bathredpixeldungeon.scenes.CellSelector;
-import com.shatteredpixel.bathredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.bathredpixeldungeon.sprites.ItemSpriteSheet;
-import com.shatteredpixel.bathredpixeldungeon.utils.GLog;
-import com.watabou.noosa.audio.Sample;
-import com.watabou.utils.Bundle;
-import com.watabou.utils.GameMath;
-import com.watabou.utils.Random;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 
 public class TacticalHandgun extends BaseGun {
 

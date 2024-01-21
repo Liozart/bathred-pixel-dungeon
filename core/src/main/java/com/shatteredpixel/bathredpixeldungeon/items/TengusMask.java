@@ -25,6 +25,7 @@ import com.shatteredpixel.bathredpixeldungeon.Assets;
 import com.shatteredpixel.bathredpixeldungeon.Badges;
 import com.shatteredpixel.bathredpixeldungeon.actors.Actor;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.EscapeRoll;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Preparation;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.HeroSubClass;
@@ -102,6 +103,9 @@ public class TengusMask extends Item {
 
 		if (way == HeroSubClass.ASSASSIN && curUser.invisible > 0){
 			Buff.affect(curUser, Preparation.class);
+		}
+		if (way == HeroSubClass.ROLLER){
+			curUser.buff(EscapeRoll.class).UpdateDistance(curUser);
 		}
 		
 		curUser.sprite.operate( curUser.pos );

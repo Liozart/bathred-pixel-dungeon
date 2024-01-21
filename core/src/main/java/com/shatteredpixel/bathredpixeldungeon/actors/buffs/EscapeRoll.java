@@ -1,12 +1,18 @@
 package com.shatteredpixel.bathredpixeldungeon.actors.buffs;
 
-import static com.shatteredpixel.bathredpixeldungeon.actors.hero.Talent.EMPOWERING_MEAL;
+import static com.shatteredpixel.bathredpixeldungeon.actors.hero.Talent.GIUX_INSTANTBULLET;
+import static com.shatteredpixel.bathredpixeldungeon.actors.hero.Talent.GIUX_ROLLCRIT;
 import static com.shatteredpixel.bathredpixeldungeon.actors.hero.Talent.GIUX_ROLLDEG1;
 import static com.shatteredpixel.bathredpixeldungeon.actors.hero.Talent.GIUX_ROLLDIST;
+import static com.shatteredpixel.bathredpixeldungeon.actors.hero.Talent.GIUX_ROLLERCONF;
+import static com.shatteredpixel.bathredpixeldungeon.actors.hero.Talent.GIUX_ROLLERRANDOM;
+import static com.shatteredpixel.bathredpixeldungeon.actors.hero.Talent.GIUX_ROLLERRANGE;
 
 import com.shatteredpixel.bathredpixeldungeon.Dungeon;
 import com.shatteredpixel.bathredpixeldungeon.actors.Actor;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.bathredpixeldungeon.actors.hero.HeroSubClass;
+import com.shatteredpixel.bathredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.bathredpixeldungeon.effects.TargetedCell;
 import com.shatteredpixel.bathredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.bathredpixeldungeon.messages.Messages;
@@ -22,6 +28,9 @@ import com.watabou.noosa.Visual;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;
 import com.watabou.utils.Point;
+import com.watabou.utils.Random;
+
+import java.util.ArrayList;
 
 public class EscapeRoll extends Buff implements ActionIndicator.Action {
 
@@ -104,17 +113,23 @@ public class EscapeRoll extends Buff implements ActionIndicator.Action {
     }
 
     private static final String ROLL_CD =        "roll_cd";
+    private static final String ROLL_MAXCD =        "roll_maxcd";
+    private static final String ROLL_DISTANCE =        "roll_distance";
 
     @Override
     public void storeInBundle(Bundle bundle) {
         super.storeInBundle(bundle);
         bundle.put(ROLL_CD, rollCoolDown);
+        bundle.put(ROLL_MAXCD, maxCoolDown);
+        bundle.put(ROLL_DISTANCE, distance);
     }
 
     @Override
     public void restoreFromBundle(Bundle bundle) {
         super.restoreFromBundle(bundle);
         rollCoolDown = bundle.getInt(ROLL_CD);
+        maxCoolDown = bundle.getInt(ROLL_MAXCD);
+        distance = bundle.getInt(ROLL_DISTANCE);
         if (rollCoolDown > 0){
             ActionIndicator.setAction(this);
         }
@@ -188,40 +203,141 @@ public class EscapeRoll extends Buff implements ActionIndicator.Action {
     public void UpdateDistance(Hero h)
     {
         distance = 2 + h.pointsInTalent(GIUX_ROLLDIST);
-        maxCoolDown = 10 + 5 * h.pointsInTalent(GIUX_ROLLDIST);
+        maxCoolDown = 10 + 5 * h.pointsInTalent(GIUX_ROLLDIST) + (h.subClass == HeroSubClass.ROLLER ? 5 : 0);
     }
+
+
 
     private void DoRoll(Hero hero, int target) {
         Ballistica route = new Ballistica(hero.pos, target, Ballistica.STOP_TARGET | Ballistica.STOP_SOLID);
         int cell = route.collisionPos;
 
         //can't occupy the same cell as another char, so move back one.
-        int backTrace = route.dist-1;
-        while (Actor.findChar( cell ) != null && cell != hero.pos) {
+        int backTrace = route.dist - 1;
+        while (Actor.findChar(cell) != null && cell != hero.pos) {
             cell = route.path.get(backTrace);
             backTrace--;
         }
 
-        rollCoolDown = maxCoolDown + 1;
-        BuffIndicator.refreshHero();
-        ActionIndicator.clearAction(this);
-
-        final int dest = cell;
-        hero.busy();
-        hero.sprite.jump(hero.pos, cell, new Callback() {
-            public void call() {
-                hero.move(dest);
-                Dungeon.level.occupyCell(hero);
-                Dungeon.observe();
-                GameScene.updateFog();
-                PixelScene.shake(0.2f, 0.5f);
-                Invisibility.dispel();
-                if (hero.hasTalent(GIUX_ROLLDEG1)){
-                    Buff.affect( hero, ExtraBullet.class).set(1 + hero.pointsInTalent(GIUX_ROLLDEG1));
+        if (hero.subClass == HeroSubClass.ROLLER) {
+            ArrayList<Actor> affectedMobs = new ArrayList<>();
+            for (int i : route.path) {
+                Actor act = Actor.findChar(i);
+                if (act != null) {
+                    if (act instanceof Mob) {
+                        Mob b = (Mob) act;
+                        if (hero.pointsInTalent(GIUX_ROLLERCONF) == 3) {
+                            Buff.prolong(b, Vertigo.class, 5);
+                            Buff.prolong(b, Daze.class, 5);
+                        } else {
+                            Buff.prolong(b, Vertigo.class, 3 + hero.pointsInTalent(GIUX_ROLLERCONF));
+                        }
+                        affectedMobs.add(act);
+                    }
                 }
-
-                hero.spendAndNext(Actor.TICK);
             }
-        });
+            if (hero.hasTalent(GIUX_ROLLERRANGE)) {
+                int dist = 1;
+                int maxTouch = hero.pointsInTalent(GIUX_ROLLERRANGE);
+                for (int x : route.path) {
+                    Point c = Dungeon.level.cellToPoint(x);
+                    int left, right;
+                    int curr;
+                    for (int y = Math.max(0, c.y - dist); y <= Math.min(Dungeon.level.height() - 1, c.y + dist); y++) {
+                        left = c.x - dist;
+                        right = Math.min(Dungeon.level.width() - 1, c.x + c.x - left);
+                        left = Math.max(0, left);
+                        for (curr = left + y * Dungeon.level.width(); curr <= right + y * Dungeon.level.width(); curr++) {
+                            Actor act = Actor.findChar(curr);
+                            if (act != null) {
+                                if (act instanceof Mob && !affectedMobs.contains(act)) {
+                                    Mob b = (Mob) act;
+                                    if (hero.pointsInTalent(GIUX_ROLLERCONF) == 3) {
+                                        Buff.prolong(b, Vertigo.class, 5);
+                                        Buff.prolong(b, Daze.class, 3);
+                                    } else {
+                                        Buff.prolong(b, Vertigo.class, 3 + hero.pointsInTalent(GIUX_ROLLERCONF));
+                                    }
+                                    affectedMobs.add(act);
+                                    maxTouch--;
+                                }
+                            }
+                            if (maxTouch == 0)
+                                break;
+                        }
+                    }
+                }
+            }
+            if (affectedMobs.size() > 0) {
+                if (hero.hasTalent(GIUX_ROLLERRANDOM)) {
+                    if (Random.Int(100) < hero.pointsInTalent(GIUX_ROLLERRANDOM) * 10){
+                        affectRandomBuff(hero);
+                    }
+                }
+            }
+
+            rollCoolDown = maxCoolDown + 1;
+            BuffIndicator.refreshHero();
+            ActionIndicator.clearAction(this);
+
+            final int dest = cell;
+            hero.busy();
+            hero.sprite.jump(hero.pos, cell, new Callback() {
+                public void call() {
+                    hero.move(dest);
+                    Dungeon.level.occupyCell(hero);
+                    Dungeon.observe();
+                    GameScene.updateFog();
+                    PixelScene.shake(0.2f, 0.5f);
+                    Invisibility.dispel();
+                    if (hero.hasTalent(GIUX_ROLLDEG1)) {
+                        Buff.affect(hero, RolledBullet.class).set(1 + hero.pointsInTalent(GIUX_ROLLDEG1));
+                    }
+                    if (hero.hasTalent(GIUX_ROLLCRIT)) {
+                        Buff.affect(hero, RollCrit.class, 1f).set(hero.pointsInTalent(GIUX_ROLLCRIT));
+                    }
+                    if (hero.pointsInTalent(GIUX_INSTANTBULLET) >= 2) {
+                        Buff.affect(hero, InstantBullet.class, 5);
+                    }
+                    hero.spendAndNext(Actor.TICK);
+                }
+            });
+        }
+    }
+
+    public void affectRandomBuff (Hero hero)
+    {
+        switch (Random.Int(10)) {
+            case 0:
+                Buff.affect(hero, Adrenaline.class, 10f);
+                break;
+            case 1:
+                Buff.affect(hero, Barrier.class).setShield(10);
+                break;
+            case 2:
+                Buff.affect(hero, BathredBullets.class);
+                break;
+            case 3:
+                Buff.affect(hero, Bless.class, 10f);
+                break;
+            case 4:
+                Buff.affect(hero, MagicImmune.class, 10f);
+                break;
+            case 5:
+                Buff.affect(hero, FireImbue.class).set(10f);
+                break;
+            case 6:
+                Buff.affect(hero, FrostImbue.class, 10f);
+                break;
+            case 7:
+                Buff.affect(hero, Invisibility.class, 10f);
+                break;
+            case 8:
+                Buff.affect(hero, Haste.class, 10f);
+                break;
+            case 9:
+                Buff.affect(hero, Healing.class).setHeal(10, 30, 3);
+                break;
+        }
     }
 }
