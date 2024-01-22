@@ -70,17 +70,12 @@ import com.shatteredpixel.bathredpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.shatteredpixel.bathredpixeldungeon.items.wands.WandOfMagicMissile;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun.AssultRifle;
-import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun.AutoHandgun;
-import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun.AutoRifle;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun.CrudePistol;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Dagger;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Gloves;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.MagesStaff;
-import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun.Pistol;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Rapier;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.WornShortsword;
-import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun.SniperRifle;
-import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun.TacticalHandgun;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.missiles.ThrowingKnife;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.missiles.ThrowingSpike;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.missiles.ThrowingStone;
@@ -186,6 +181,7 @@ public enum HeroClass {
 		hero.STR = 20;
 		TengusMask teng = new TengusMask();
 		teng.collect();
+		new AssultRifle().identify().collect();
 
 		new ScrollOfIdentify().identify().collect();
 		new ScrollOfTransmutation().identify();

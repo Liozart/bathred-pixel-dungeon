@@ -1,7 +1,6 @@
 package com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun;
 
 import static com.shatteredpixel.bathredpixeldungeon.Dungeon.hero;
-import static com.shatteredpixel.bathredpixeldungeon.actors.Actor.TICK;
 import static com.shatteredpixel.bathredpixeldungeon.items.wands.WandOfCorruption.MAJOR_DEBUFFS;
 import static com.shatteredpixel.bathredpixeldungeon.items.wands.WandOfCorruption.MINOR_DEBUFFS;
 import static com.shatteredpixel.bathredpixeldungeon.items.wands.WandOfCorruption.debuffEnemy;
@@ -13,11 +12,13 @@ import com.shatteredpixel.bathredpixeldungeon.actors.Char;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.BathredBullets;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.InstantBullet;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.PewpewCooldown;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.RolledBullet;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.InfiniteBullet;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Momentum;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.RollCrit;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.bathredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.bathredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.bathredpixeldungeon.effects.CellEmitter;
@@ -47,6 +48,7 @@ import java.util.ArrayList;
 public class BaseGun extends MeleeWeapon {
     public static final String AC_SHOOT		= "SHOOT";
     public static final String AC_RELOAD    = "RELOAD";
+    public static final String AC_BURST    = "BURST";
 
     protected int max_round;
     protected int round;
@@ -56,6 +58,8 @@ public class BaseGun extends MeleeWeapon {
     protected int shotPerShootTarget = 0;
     private boolean wandReload = false;
     private boolean doCrit = false;
+    private boolean doBurst = false;
+    int oldMobi = 0;
     protected float shootingSpeed = 1f;
     protected float shootingAccuracy = 1f;
     protected boolean explode = false;
@@ -125,6 +129,9 @@ public class BaseGun extends MeleeWeapon {
             actions.add(AC_SHOOT);
             actions.add(AC_RELOAD);
         }
+        if (hero.subClass == HeroSubClass.PEWPEW){
+            actions.add(AC_BURST);
+        }
         return actions;
     }
 
@@ -173,6 +180,18 @@ public class BaseGun extends MeleeWeapon {
                 GLog.w(Messages.get(this, "already_loaded"));
             } else {
                 reload();
+            }
+        }
+        if (action.equals(AC_BURST)) {
+            if (hero.buff(PewpewCooldown.class) == null){
+                usesTargeting = true;
+                curUser = hero;
+                curItem = this;
+                doBurst = true;
+                GameScene.selectCell(burster);
+            }
+            else {
+                GLog.w(Messages.get(this, "burst_cooldown"));
             }
         }
     }
@@ -376,8 +395,8 @@ public class BaseGun extends MeleeWeapon {
             if (owner instanceof Hero) {
                 ACC *= shootingAccuracy;
             }
-            if (shootAll) {
-                ACC *= 0.5f;
+            if (shootAll || doBurst) {
+                ACC *= 0.65f;
             }
             return ACC;
         }
@@ -433,6 +452,19 @@ public class BaseGun extends MeleeWeapon {
                     if (!curUser.shoot(enemy, this)) {
                         CellEmitter.get(cell).burst(SmokeParticle.FACTORY, 2);
                         CellEmitter.center(cell).burst(BlastParticle.FACTORY, 2);
+                    }
+                    if (!enemy.isAlive() && doBurst) {
+                        boolean gettarg = false;
+                        for (int i = oldMobi; i < hero.visibleEnemies(); i++){
+                            if (shotPerShootTarget != hero.visibleEnemy(i).pos){
+                                shotPerShootTarget = hero.visibleEnemy(i).pos;
+                                oldMobi = i;
+                                gettarg = true;
+                                break;
+                            }
+                        }
+                        if (!gettarg)
+                            shotPerShootTarget = cell;
                     }
                 }
             }
@@ -509,13 +541,21 @@ public class BaseGun extends MeleeWeapon {
         else
         {
             shotPerShootFired = 0;
-            shotPerShootTarget = 0;
-            if (hero.buff(InstantBullet.class) == null){
-                hero.spendAndNext(delayFactor(hero));
-            }
-            else {
-                hero.buff(InstantBullet.class).detach();
-                hero.spendAndNext(0f);
+            if (doBurst && round > 0){
+                knockBullet().cast(curUser, shotPerShootTarget);
+            } else
+            {
+                shotPerShootTarget = 0;
+                doBurst = false;
+                oldMobi = 0;
+                Buff.affect(hero, PewpewCooldown.class).set(100f);
+                if (hero.buff(InstantBullet.class) == null){
+                    hero.spendAndNext(delayFactor(hero));
+                }
+                else {
+                    hero.buff(InstantBullet.class).detach();
+                    hero.spendAndNext(0f);
+                }
             }
         }
     }
@@ -530,6 +570,23 @@ public class BaseGun extends MeleeWeapon {
                     shotPerShootTarget = target;
                     knockBullet().cast(curUser, target);
                 }
+            }
+        }
+        @Override
+        public String prompt() {
+            return Messages.get(SpiritBow.class, "prompt");
+        }
+    };
+
+    private CellSelector.Listener burster = new CellSelector.Listener() {
+        @Override
+        public void onSelect( Integer target ) {
+            if (target != null) {
+                if (target == curUser.pos) {
+                    execute(hero, AC_RELOAD);
+                }
+                shotPerShootTarget = target;
+                knockBullet().cast(curUser, target);
             }
         }
         @Override

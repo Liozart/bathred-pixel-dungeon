@@ -270,39 +270,39 @@ public class EscapeRoll extends Buff implements ActionIndicator.Action {
             }
             if (affectedMobs.size() > 0) {
                 if (hero.hasTalent(GIUX_ROLLERRANDOM)) {
-                    if (Random.Int(100) < hero.pointsInTalent(GIUX_ROLLERRANDOM) * 10){
+                    if (Random.Int(100) < hero.pointsInTalent(GIUX_ROLLERRANDOM) * 10) {
                         affectRandomBuff(hero);
                     }
                 }
             }
-
-            rollCoolDown = maxCoolDown + 1;
-            BuffIndicator.refreshHero();
-            ActionIndicator.clearAction(this);
-
-            final int dest = cell;
-            hero.busy();
-            hero.sprite.jump(hero.pos, cell, new Callback() {
-                public void call() {
-                    hero.move(dest);
-                    Dungeon.level.occupyCell(hero);
-                    Dungeon.observe();
-                    GameScene.updateFog();
-                    PixelScene.shake(0.2f, 0.5f);
-                    Invisibility.dispel();
-                    if (hero.hasTalent(GIUX_ROLLDEG1)) {
-                        Buff.affect(hero, RolledBullet.class).set(1 + hero.pointsInTalent(GIUX_ROLLDEG1));
-                    }
-                    if (hero.hasTalent(GIUX_ROLLCRIT)) {
-                        Buff.affect(hero, RollCrit.class, 1f).set(hero.pointsInTalent(GIUX_ROLLCRIT));
-                    }
-                    if (hero.pointsInTalent(GIUX_INSTANTBULLET) >= 2) {
-                        Buff.affect(hero, InstantBullet.class, 5);
-                    }
-                    hero.spendAndNext(Actor.TICK);
-                }
-            });
         }
+
+        rollCoolDown = maxCoolDown + 1;
+        BuffIndicator.refreshHero();
+        ActionIndicator.clearAction(this);
+
+        final int dest = cell;
+        hero.busy();
+        hero.sprite.jump(hero.pos, cell, new Callback() {
+            public void call() {
+                hero.move(dest);
+                Dungeon.level.occupyCell(hero);
+                Dungeon.observe();
+                GameScene.updateFog();
+                PixelScene.shake(0.2f, 0.5f);
+                Invisibility.dispel();
+                if (hero.hasTalent(GIUX_ROLLDEG1)) {
+                    Buff.affect(hero, RolledBullet.class).set(1 + hero.pointsInTalent(GIUX_ROLLDEG1));
+                }
+                if (hero.hasTalent(GIUX_ROLLCRIT)) {
+                    Buff.affect(hero, RollCrit.class, 1f).set(hero.pointsInTalent(GIUX_ROLLCRIT));
+                }
+                if (hero.pointsInTalent(GIUX_INSTANTBULLET) >= 2) {
+                    Buff.affect(hero, InstantBullet.class, 5);
+                }
+                hero.spendAndNext(Actor.TICK);
+            }
+        });
     }
 
     public void affectRandomBuff (Hero hero)
