@@ -11,6 +11,7 @@ import com.shatteredpixel.bathredpixeldungeon.actors.Actor;
 import com.shatteredpixel.bathredpixeldungeon.actors.Char;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.BathredBullets;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.EscapeRoll;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.InstantBullet;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.PewpewCooldown;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.RolledBullet;
@@ -58,8 +59,10 @@ public class BaseGun extends MeleeWeapon {
     protected int shotPerShootTarget = 0;
     private boolean wandReload = false;
     private boolean doCrit = false;
-    private boolean doBurst = false;
+    boolean doBurst = false;
+    int killedWithBurst = 0;
     int oldMobi = 0;
+    int buffsToApply = 0;
     protected float shootingSpeed = 1f;
     protected float shootingAccuracy = 1f;
     protected boolean explode = false;
@@ -82,7 +85,6 @@ public class BaseGun extends MeleeWeapon {
     private static final String SHOT_PER_TARGET = "shotPerShootTarget";
     private static final String WAND_RELOAD = "wandReload";
     private static final String DO_CRIT = "doCrit";
-    private static final String FREE_SHOT = "freeShot";
     private static final String SHOOTING_SPEED = "shootingSpeed";
     private static final String SHOOTING_ACCURACY = "shootingAccuracy";
     private static final String EXPLODE = "explode";
@@ -330,13 +332,13 @@ public class BaseGun extends MeleeWeapon {
 
         @Override
         public int proc(Char attacker, Char defender, int damage) {
-            boolean isDebuffed = false;
+            /*boolean isDebuffed = false;
             for (Buff buff : defender.buffs()) {
                 if (buff.type == Buff.buffType.NEGATIVE) {
                     isDebuffed = true;
                     break;
                 }
-            }
+            }*/
             return BaseGun.this.proc(attacker, defender, damage);
         }
 
@@ -396,7 +398,10 @@ public class BaseGun extends MeleeWeapon {
                 ACC *= shootingAccuracy;
             }
             if (shootAll || doBurst) {
-                ACC *= 0.65f;
+                if (hero.pointsInTalent(Talent.GIUX_PEWPEWRANGE) == 3)
+                    ACC *= 0.85f;
+                else
+                    ACC *= 0.65f;
             }
             return ACC;
         }
@@ -453,18 +458,31 @@ public class BaseGun extends MeleeWeapon {
                         CellEmitter.get(cell).burst(SmokeParticle.FACTORY, 2);
                         CellEmitter.center(cell).burst(BlastParticle.FACTORY, 2);
                     }
-                    if (!enemy.isAlive() && doBurst) {
-                        boolean gettarg = false;
-                        for (int i = oldMobi; i < hero.visibleEnemies(); i++){
-                            if (shotPerShootTarget != hero.visibleEnemy(i).pos){
-                                shotPerShootTarget = hero.visibleEnemy(i).pos;
-                                oldMobi = i;
-                                gettarg = true;
-                                break;
+                    if (!enemy.isAlive()){
+                        if (doBurst && hero.hasTalent(Talent.GIUX_PEWPEWRANGE)) {
+                            boolean gettarg = false;
+                            killedWithBurst++;
+                            for (int i = oldMobi; i < hero.visibleEnemies(); i++){
+                                if (shotPerShootTarget != hero.visibleEnemy(i).pos){
+                                    shotPerShootTarget = hero.visibleEnemy(i).pos;
+                                    oldMobi = i;
+                                    gettarg = true;
+                                    break;
+                                }
+                            }
+                            if (hero.pointsInTalent(Talent.GIUX_PEWPEWRANGE) == 1 && killedWithBurst >= 2)
+                                gettarg = false;
+                            if (!gettarg)
+                                shotPerShootTarget = cell;
+                        }
+                        if (hero.hasTalent(Talent.GIUX_PEWPEWKILL)){
+                            round += 1 + hero.pointsInTalent(Talent.GIUX_PEWPEWKILL);
+                        }
+                        if (hero.hasTalent(Talent.GIUX_PEWPEWBUFF)){
+                            if (Random.Int(100) <= (5 + (hero.pointsInTalent(Talent.GIUX_PEWPEWBUFF) * 15))) {
+                                buffsToApply++;
                             }
                         }
-                        if (!gettarg)
-                            shotPerShootTarget = cell;
                     }
                 }
             }
@@ -545,10 +563,15 @@ public class BaseGun extends MeleeWeapon {
                 knockBullet().cast(curUser, shotPerShootTarget);
             } else
             {
+                for (int i = 0; i < buffsToApply; i++)
+                    EscapeRoll.affectRandomBuff(hero, 10f);
                 shotPerShootTarget = 0;
-                doBurst = false;
-                oldMobi = 0;
-                Buff.affect(hero, PewpewCooldown.class).set(100f);
+                oldMobi = killedWithBurst = 0;
+                buffsToApply = 0;
+                if (hero.subClass == HeroSubClass.PEWPEW && doBurst){
+                    Buff.affect(hero, PewpewCooldown.class).set(100f);
+                    doBurst = false;
+                }
                 if (hero.buff(InstantBullet.class) == null){
                     hero.spendAndNext(delayFactor(hero));
                 }

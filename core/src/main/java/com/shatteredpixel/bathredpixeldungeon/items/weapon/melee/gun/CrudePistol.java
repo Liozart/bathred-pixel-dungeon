@@ -40,9 +40,6 @@ public class CrudePistol extends BaseGun {
         round = max_round;
     }
 
-    public static void shootAbility(Hero hero, MeleeWeapon carbine) {
-    }
-
     @Override
     public int bulletMax(int lvl) {
         return 3 * (tier + 1) +

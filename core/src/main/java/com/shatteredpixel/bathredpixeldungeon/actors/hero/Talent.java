@@ -206,8 +206,9 @@ public enum Talent {
 	//GIUX T3 ROLLER
 	GIUX_ROLLERCONF(171, 3), GIUX_ROLLERRANGE(172, 3), GIUX_ROLLERRANDOM(173, 3),
 	//GIUX T3 PEWPEW
-	GIUX_PEWPEWRANGE(174, 3), GIUX_PEWPEWKILL(175, 3);
+	GIUX_PEWPEWRANGE(174, 3), GIUX_PEWPEWKILL(175, 3), GIUX_PEWPEWBUFF(176, 3),
 	//GIUX T4
+	GIUX_IVYHEALTH(177, 4), GIUX_IVY2(178, 4), GIUX_IVY3(179, 4);
 	//GIUX T4
 	//GIUX T4
 
@@ -676,38 +677,8 @@ public enum Talent {
 		if (hero.hasTalent(GIUX_SCROLLBULLET)){
 			Sample.INSTANCE.play( Assets.Sounds.MELD );
 			KindOfWeapon wep = hero.belongings.attackingWeapon();
-			if (wep instanceof CrudePistol ) {
-				((CrudePistol)wep).reload();
-			} else if (wep instanceof Pistol ) {
-				((Pistol)wep).reload();
-			} else if (wep instanceof GoldenPistol ) {
-				((GoldenPistol)wep).reload();
-			} else if (wep instanceof Handgun ) {
-				((Handgun)wep).reload();
-			} else if (wep instanceof Magnum ) {
-				((Magnum)wep).reload();
-			} else if (wep instanceof TacticalHandgun ) {
-				((TacticalHandgun)wep).reload();
-			} else if (wep instanceof AutoHandgun ) {
-				((AutoHandgun)wep).reload();
-			} else if (wep instanceof DualPistol) {
-				((DualPistol)wep).reload();
-			} else if (wep instanceof SubMachinegun) {
-				((SubMachinegun)wep).reload();
-			} else if (wep instanceof AssultRifle ) {
-				((AssultRifle)wep).reload();
-			} else if (wep instanceof HeavyMachinegun ) {
-				((HeavyMachinegun)wep).reload();
-			} else if (wep instanceof Revolver ) {
-				((Revolver)wep).reload();
-			} else if (wep instanceof HuntingRifle ) {
-				((HuntingRifle)wep).reload();
-			} else if (wep instanceof Carbine ) {
-				((Carbine)wep).reload();
-			} else if (wep instanceof SniperRifle ) {
-				((SniperRifle)wep).reload();
-			} else if (wep instanceof MarksmanRifle ) {
-				((MarksmanRifle) wep).reload();
+			if (wep instanceof BaseGun ) {
+				((BaseGun)wep).reload();
 			}
 
 			if (hero.pointsInTalent(GIUX_SCROLLBULLET) == 2){
@@ -1005,7 +976,7 @@ public enum Talent {
 				Collections.addAll(tierTalents, GIUX_ROLLERCONF, GIUX_ROLLERRANGE, GIUX_ROLLERRANDOM);
 				break;
 			case PEWPEW:
-				Collections.addAll(tierTalents, GIUX_PEWPEWRANGE, GIUX_PEWPEWKILL, SPEEDY_STEALTH);
+				Collections.addAll(tierTalents, GIUX_PEWPEWRANGE, GIUX_PEWPEWKILL, GIUX_PEWPEWBUFF);
 				break;
 
 		}

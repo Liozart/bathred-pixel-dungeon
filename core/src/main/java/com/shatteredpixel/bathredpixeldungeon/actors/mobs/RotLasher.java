@@ -51,10 +51,14 @@ public class RotLasher extends Mob {
 		properties.add(Property.MINIBOSS);
 	}
 
+	public boolean canRegen = true;
+
 	@Override
 	protected boolean act() {
-		if (enemy == null || !Dungeon.level.adjacent(pos, enemy.pos)) {
-			HP = Math.min(HT, HP + 5);
+		if (canRegen){
+			if (enemy == null || !Dungeon.level.adjacent(pos, enemy.pos)) {
+				HP = Math.min(HT, HP + 5);
+			}
 		}
 		return super.act();
 	}

@@ -33,6 +33,7 @@ import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.ArmorAbility
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.duelist.Challenge;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.duelist.ElementalStrike;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.duelist.Feint;
+import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.giux.IvyBathr;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.huntress.NaturesPower;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.huntress.SpectralBlades;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.huntress.SpiritHawk;
@@ -48,6 +49,7 @@ import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.warrior.Shoc
 import com.shatteredpixel.bathredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.bathredpixeldungeon.items.BrokenSeal;
 import com.shatteredpixel.bathredpixeldungeon.items.Item;
+import com.shatteredpixel.bathredpixeldungeon.items.KingsCrown;
 import com.shatteredpixel.bathredpixeldungeon.items.TengusMask;
 import com.shatteredpixel.bathredpixeldungeon.items.Waterskin;
 import com.shatteredpixel.bathredpixeldungeon.items.armor.ClothArmor;
@@ -177,11 +179,10 @@ public enum HeroClass {
 		Dungeon.quickslot.setSlot(0, hero.belongings.weapon);
 		Buff.affect(hero, EscapeRoll.class).setHero(hero);
 
-		hero.earnExp( 1000, Mob.class);
-		hero.STR = 20;
+		hero.earnExp( 2000, Mob.class);
 		TengusMask teng = new TengusMask();
 		teng.collect();
-		new AssultRifle().identify().collect();
+		new KingsCrown().collect();
 
 		new ScrollOfIdentify().identify().collect();
 		new ScrollOfTransmutation().identify();
@@ -289,7 +290,7 @@ public enum HeroClass {
 			case DUELIST:
 				return new ArmorAbility[]{new Challenge(), new ElementalStrike(), new Feint()};
 			case GIUX:
-				return new ArmorAbility[]{new SmokeBomb(), new SpectralBlades(), new ElementalBlast()};
+				return new ArmorAbility[]{new IvyBathr(), new SpectralBlades(), new ElementalBlast()};
 		}
 	}
 

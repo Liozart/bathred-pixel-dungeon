@@ -271,7 +271,7 @@ public class EscapeRoll extends Buff implements ActionIndicator.Action {
             if (affectedMobs.size() > 0) {
                 if (hero.hasTalent(GIUX_ROLLERRANDOM)) {
                     if (Random.Int(100) < hero.pointsInTalent(GIUX_ROLLERRANDOM) * 10) {
-                        affectRandomBuff(hero);
+                        affectRandomBuff(hero, 20f);
                     }
                 }
             }
@@ -305,38 +305,38 @@ public class EscapeRoll extends Buff implements ActionIndicator.Action {
         });
     }
 
-    public void affectRandomBuff (Hero hero)
+    public static void affectRandomBuff (Hero hero, float time)
     {
         switch (Random.Int(10)) {
             case 0:
-                Buff.affect(hero, Adrenaline.class, 10f);
+                Buff.affect(hero, Adrenaline.class, time);
                 break;
             case 1:
-                Buff.affect(hero, Barrier.class).setShield(10);
+                Buff.affect(hero, Barrier.class).setShield((int)time);
                 break;
             case 2:
                 Buff.affect(hero, BathredBullets.class);
                 break;
             case 3:
-                Buff.affect(hero, Bless.class, 10f);
+                Buff.affect(hero, Bless.class, time);
                 break;
             case 4:
-                Buff.affect(hero, MagicImmune.class, 10f);
+                Buff.affect(hero, MagicImmune.class, time);
                 break;
             case 5:
-                Buff.affect(hero, FireImbue.class).set(10f);
+                Buff.affect(hero, FireImbue.class).set(time);
                 break;
             case 6:
-                Buff.affect(hero, FrostImbue.class, 10f);
+                Buff.affect(hero, FrostImbue.class, time);
                 break;
             case 7:
-                Buff.affect(hero, Invisibility.class, 10f);
+                Buff.affect(hero, Invisibility.class, time);
                 break;
             case 8:
-                Buff.affect(hero, Haste.class, 10f);
+                Buff.affect(hero, Haste.class, time);
                 break;
             case 9:
-                Buff.affect(hero, Healing.class).setHeal(10, 30, 3);
+                Buff.affect(hero, Healing.class).setHeal((int)time, (int)time / 5, 3);
                 break;
         }
     }
