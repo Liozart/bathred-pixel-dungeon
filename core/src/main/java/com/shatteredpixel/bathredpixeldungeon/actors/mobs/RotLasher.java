@@ -27,8 +27,14 @@ import com.shatteredpixel.bathredpixeldungeon.actors.blobs.ToxicGas;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Burning;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Cripple;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Poison;
+import com.shatteredpixel.bathredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.bathredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.bathredpixeldungeon.items.Generator;
+import com.shatteredpixel.bathredpixeldungeon.items.food.Berry;
+import com.shatteredpixel.bathredpixeldungeon.items.food.Blandfruit;
 import com.shatteredpixel.bathredpixeldungeon.sprites.RotLasherSprite;
+import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
 public class RotLasher extends Mob {
@@ -51,7 +57,24 @@ public class RotLasher extends Mob {
 		properties.add(Property.MINIBOSS);
 	}
 
-	public boolean canRegen = true;
+	boolean isFromGiux = false;
+	boolean canRegen = true;
+	private static final String CAN_REGEN     = "canRegen";
+	private static final String IS_FROM_GIUX  = "isFromGiux";
+
+	@Override
+	public void storeInBundle(Bundle bundle) {
+		super.storeInBundle(bundle);
+		bundle.put(IS_FROM_GIUX, isFromGiux);
+		bundle.put(CAN_REGEN, canRegen);
+	}
+
+	@Override
+	public void restoreFromBundle(Bundle bundle) {
+		super.restoreFromBundle(bundle);
+		isFromGiux = bundle.getBoolean(IS_FROM_GIUX);
+		canRegen = bundle.getBoolean(CAN_REGEN);
+	}
 
 	@Override
 	protected boolean act() {
@@ -61,6 +84,14 @@ public class RotLasher extends Mob {
 			}
 		}
 		return super.act();
+	}
+
+	public void set(int newhp, boolean canren ) {
+		isFromGiux = true;
+		alignment = Char.Alignment.ALLY;
+		properties.remove(Property.MINIBOSS);
+		canRegen = canren;
+		HT = HP = newhp;
 	}
 
 	@Override
@@ -76,7 +107,36 @@ public class RotLasher extends Mob {
 	@Override
 	public int attackProc(Char enemy, int damage) {
 		damage = super.attackProc( enemy, damage );
-		Buff.affect( enemy, Cripple.class, 2f );
+		if (isFromGiux) {
+			if (Dungeon.hero.hasTalent(Talent.GIUX_IVYPOISON)) {
+				int pois = Dungeon.hero.pointsInTalent(Talent.GIUX_IVYPOISON);
+				if (pois > 3)
+					pois = 3;
+				if (Random.Int(100) <= 30 * pois){
+					Buff.affect( enemy, Poison.class).set(Random.IntRange(4, 7 + pois));
+				}
+			}
+			if (Dungeon.hero.hasTalent(Talent.GIUX_IVYFOOD)) {
+				int poif = Dungeon.hero.pointsInTalent(Talent.GIUX_IVYFOOD);
+				int chance = (Dungeon.hero.pointsInTalent(Talent.GIUX_IVYFOOD) == 1) ? 10 : 20;
+				if (Random.Int(100) <= chance) {
+					int val = Random.Int(poif);
+					switch (val) {
+						case 0: case 1: default:
+							Dungeon.level.drop(new Berry(), pos).sprite.drop();
+							break;
+						case 2:
+							Dungeon.level.drop(new Blandfruit(), pos).sprite.drop();
+							break;
+						case 3:
+							Dungeon.level.drop(Generator.random(Generator.Category.SEED), pos).sprite.drop();
+							break;
+					}
+				}
+			}
+		} else {
+			Buff.affect( enemy, Cripple.class, 2f );
+		}
 		return super.attackProc(enemy, damage);
 	}
 

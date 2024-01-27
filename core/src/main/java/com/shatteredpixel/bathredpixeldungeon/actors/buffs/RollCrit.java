@@ -83,7 +83,6 @@ public class RollCrit extends FlavourBuff {
     }
 
     private static final String BOOST = "crit";
-    public static final String DUR	= "duration";
 
     @Override
     public void storeInBundle(Bundle bundle) {

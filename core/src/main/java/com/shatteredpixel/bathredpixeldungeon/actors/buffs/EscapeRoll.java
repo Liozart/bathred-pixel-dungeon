@@ -1,5 +1,8 @@
 package com.shatteredpixel.bathredpixeldungeon.actors.buffs;
 
+import static com.shatteredpixel.bathredpixeldungeon.actors.hero.Talent.GIUX_FROGRANGE;
+import static com.shatteredpixel.bathredpixeldungeon.actors.hero.Talent.GIUX_FROGTIME;
+import static com.shatteredpixel.bathredpixeldungeon.actors.hero.Talent.GIUX_FROGWATER;
 import static com.shatteredpixel.bathredpixeldungeon.actors.hero.Talent.GIUX_INSTANTBULLET;
 import static com.shatteredpixel.bathredpixeldungeon.actors.hero.Talent.GIUX_ROLLCRIT;
 import static com.shatteredpixel.bathredpixeldungeon.actors.hero.Talent.GIUX_ROLLDEG1;
@@ -8,26 +11,40 @@ import static com.shatteredpixel.bathredpixeldungeon.actors.hero.Talent.GIUX_ROL
 import static com.shatteredpixel.bathredpixeldungeon.actors.hero.Talent.GIUX_ROLLERRANDOM;
 import static com.shatteredpixel.bathredpixeldungeon.actors.hero.Talent.GIUX_ROLLERRANGE;
 
+import com.shatteredpixel.bathredpixeldungeon.Assets;
 import com.shatteredpixel.bathredpixeldungeon.Dungeon;
 import com.shatteredpixel.bathredpixeldungeon.actors.Actor;
+import com.shatteredpixel.bathredpixeldungeon.actors.Char;
+import com.shatteredpixel.bathredpixeldungeon.actors.blobs.Fire;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.HeroSubClass;
+import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.giux.FrogJump;
 import com.shatteredpixel.bathredpixeldungeon.actors.mobs.Mob;
+import com.shatteredpixel.bathredpixeldungeon.effects.Splash;
 import com.shatteredpixel.bathredpixeldungeon.effects.TargetedCell;
+import com.shatteredpixel.bathredpixeldungeon.items.wands.WandOfBlastWave;
+import com.shatteredpixel.bathredpixeldungeon.levels.Terrain;
+import com.shatteredpixel.bathredpixeldungeon.levels.traps.GeyserTrap;
 import com.shatteredpixel.bathredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.bathredpixeldungeon.messages.Messages;
+import com.shatteredpixel.bathredpixeldungeon.plants.Swiftthistle;
 import com.shatteredpixel.bathredpixeldungeon.scenes.CellSelector;
 import com.shatteredpixel.bathredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.bathredpixeldungeon.scenes.PixelScene;
+import com.shatteredpixel.bathredpixeldungeon.tiles.DungeonTilemap;
 import com.shatteredpixel.bathredpixeldungeon.ui.ActionIndicator;
 import com.shatteredpixel.bathredpixeldungeon.ui.BuffIndicator;
 import com.shatteredpixel.bathredpixeldungeon.ui.HeroIcon;
 import com.shatteredpixel.bathredpixeldungeon.utils.GLog;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.Visual;
+import com.watabou.noosa.audio.Sample;
+import com.watabou.utils.BArray;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;
+import com.watabou.utils.PathFinder;
 import com.watabou.utils.Point;
+import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
@@ -45,7 +62,8 @@ public class EscapeRoll extends Buff implements ActionIndicator.Action {
     private  int maxCoolDown = 10;
 
     private int distance = 2;
-
+    private int freeRolls = 0;
+    private boolean giveHaste = false;
     private Hero hero;
 
     public void setHero(Hero h){
@@ -115,6 +133,8 @@ public class EscapeRoll extends Buff implements ActionIndicator.Action {
     private static final String ROLL_CD =        "roll_cd";
     private static final String ROLL_MAXCD =        "roll_maxcd";
     private static final String ROLL_DISTANCE =        "roll_distance";
+    private static final String FREE_ROLLS =        "free_rolls";
+    private static final String GIVE_HASTE =        "give_haste";
 
     @Override
     public void storeInBundle(Bundle bundle) {
@@ -122,6 +142,8 @@ public class EscapeRoll extends Buff implements ActionIndicator.Action {
         bundle.put(ROLL_CD, rollCoolDown);
         bundle.put(ROLL_MAXCD, maxCoolDown);
         bundle.put(ROLL_DISTANCE, distance);
+        bundle.put(FREE_ROLLS, freeRolls);
+        bundle.put(GIVE_HASTE, giveHaste);
     }
 
     @Override
@@ -130,6 +152,8 @@ public class EscapeRoll extends Buff implements ActionIndicator.Action {
         rollCoolDown = bundle.getInt(ROLL_CD);
         maxCoolDown = bundle.getInt(ROLL_MAXCD);
         distance = bundle.getInt(ROLL_DISTANCE);
+        freeRolls = bundle.getInt(FREE_ROLLS);
+        giveHaste = bundle.getBoolean(GIVE_HASTE);
         if (rollCoolDown > 0){
             ActionIndicator.setAction(this);
         }
@@ -168,8 +192,17 @@ public class EscapeRoll extends Buff implements ActionIndicator.Action {
         Point c = Dungeon.level.cellToPoint(hero.pos);
         int left, right;
         int curr;
-        for (int y = Math.max(0, c.y - distance); y <= Math.min(Dungeon.level.height()-1, c.y + distance); y++) {
-            left = c.x - distance;
+        int dist = distance;
+        if (hero.hasTalent(GIUX_FROGRANGE)){
+            int poir = hero.pointsInTalent(GIUX_FROGRANGE);
+            if (poir != 3) {
+                dist += (poir == 4) ? 3 : poir;
+            } else {
+                dist += (Random.Int(2) == 0) ? 3 : 2;
+            }
+        }
+        for (int y = Math.max(0, c.y - dist); y <= Math.min(Dungeon.level.height()-1, c.y + dist); y++) {
+            left = c.x - dist;
             right = Math.min(Dungeon.level.width()-1, c.x + c.x - left);
             left = Math.max(0, left);
             for (curr = left + y * Dungeon.level.width(); curr <= right + y * Dungeon.level.width(); curr++) {
@@ -181,7 +214,7 @@ public class EscapeRoll extends Buff implements ActionIndicator.Action {
             @Override
             public void onSelect(Integer cell) {
                 if (cell == null) return;
-                if (Dungeon.level.distance(hero.pos, cell) > distance){
+                if (Dungeon.level.distance(hero.pos, cell) > distance + hero.pointsInTalent(GIUX_FROGRANGE)){
                     GLog.w(Messages.get(Combo.class, "bad_target"));
                 }
                 else
@@ -206,7 +239,13 @@ public class EscapeRoll extends Buff implements ActionIndicator.Action {
         maxCoolDown = 10 + 5 * h.pointsInTalent(GIUX_ROLLDIST) + (h.subClass == HeroSubClass.ROLLER ? 5 : 0);
     }
 
-
+    public void updateFreeRolls(int c) {
+        freeRolls = c;
+        if (c > 2)
+            freeRolls--;
+        if (c > 3)
+            giveHaste = true;
+    }
 
     private void DoRoll(Hero hero, int target) {
         Ballistica route = new Ballistica(hero.pos, target, Ballistica.STOP_TARGET | Ballistica.STOP_SOLID);
@@ -275,11 +314,8 @@ public class EscapeRoll extends Buff implements ActionIndicator.Action {
                     }
                 }
             }
+            BuffIndicator.refreshHero();
         }
-
-        rollCoolDown = maxCoolDown + 1;
-        BuffIndicator.refreshHero();
-        ActionIndicator.clearAction(this);
 
         final int dest = cell;
         hero.busy();
@@ -300,9 +336,64 @@ public class EscapeRoll extends Buff implements ActionIndicator.Action {
                 if (hero.pointsInTalent(GIUX_INSTANTBULLET) >= 2) {
                     Buff.affect(hero, InstantBullet.class, 5);
                 }
-                hero.spendAndNext(Actor.TICK);
+                if (hero.buff(FrogJump.FrogJumpBuff.class) == null){
+                    rollCoolDown = maxCoolDown + 1;
+                    ActionIndicator.clearAction(hero.buff(EscapeRoll.class));
+                }
+                else {
+                    if (hero.hasTalent(GIUX_FROGWATER)) {
+                        frogSplash(dest);
+                    }
+                    rollCoolDown = 0;
+                    hero.buff(FrogJump.FrogJumpBuff.class).update();
+                }
+                if (Dungeon.level.map[dest] == Terrain.WATER && hero.pointsInTalent(GIUX_FROGWATER) >= 2) {
+                    Buff.affect(hero, Healing.class).setHeal(5, 0.3f, 2);
+                }
+
+                if (freeRolls > 0) {
+                    freeRolls--;
+                    if (freeRolls == 0 && giveHaste) {
+                        giveHaste = false;
+                        Buff.affect(hero, Swiftthistle.TimeBubble.class).setLeft(3f);
+                    }
+                    hero.spendAndNext(0);
+                }
+                else {
+                    hero.spendAndNext(Actor.TICK);
+                }
             }
         });
+    }
+
+    public void frogSplash(int pos){
+        Sample.INSTANCE.play(Assets.Sounds.WATER, 1f, 0.75f);
+        Fire fire = (Fire) Dungeon.level.blobs.get(Fire.class);
+        //Splash.at( DungeonTilemap.tileCenterToWorld( pos ), -PointF.PI/2, PointF.PI/2, 0x5bc1e3, 100, 0.01f);
+        //PathFinder.buildDistanceMap( pos, BArray.not( Dungeon.level.solid, null ), 2 );
+        int chna = hero.pointsInTalent(GIUX_FROGWATER);
+        if (chna > 2)
+            chna = 3;
+        else chna = 1;
+        for (int i : PathFinder.NEIGHBOURS9) {
+            if (Random.Int(5) < chna) {
+                Dungeon.level.setCellToWater(true, pos + i);
+                if (fire != null){
+                    fire.clear(pos + i);
+                }
+            }
+            if (hero.pointsInTalent(GIUX_FROGWATER) == 4){
+                Char ch = Actor.findChar(pos + i);
+                if (ch != null && ch != hero) {
+                    //trace a ballistica to our target (which will also extend past them)
+                    Ballistica trajectory = new Ballistica(pos, ch.pos, Ballistica.STOP_TARGET);
+                    //trim it to just be the part that goes past them
+                    trajectory = new Ballistica(trajectory.collisionPos, trajectory.path.get(trajectory.path.size() - 1), Ballistica.PROJECTILE);
+                    //knock them back along that ballistica
+                    WandOfBlastWave.throwChar(ch, trajectory, 4, true, true, hero);
+                }
+            }
+        }
     }
 
     public static void affectRandomBuff (Hero hero, float time)

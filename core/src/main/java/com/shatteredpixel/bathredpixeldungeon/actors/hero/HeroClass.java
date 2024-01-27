@@ -33,6 +33,7 @@ import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.ArmorAbility
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.duelist.Challenge;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.duelist.ElementalStrike;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.duelist.Feint;
+import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.giux.FrogJump;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.giux.IvyBathr;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.huntress.NaturesPower;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.huntress.SpectralBlades;
@@ -290,7 +291,7 @@ public enum HeroClass {
 			case DUELIST:
 				return new ArmorAbility[]{new Challenge(), new ElementalStrike(), new Feint()};
 			case GIUX:
-				return new ArmorAbility[]{new IvyBathr(), new SpectralBlades(), new ElementalBlast()};
+				return new ArmorAbility[]{new IvyBathr(), new FrogJump(), new ElementalBlast()};
 		}
 	}
 

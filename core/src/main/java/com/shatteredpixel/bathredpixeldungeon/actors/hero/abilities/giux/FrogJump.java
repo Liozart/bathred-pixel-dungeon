@@ -32,6 +32,8 @@ import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Blindness;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.BlobImmunity;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Cripple;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.EscapeRoll;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.FlavourBuff;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.Talent;
@@ -46,8 +48,10 @@ import com.shatteredpixel.bathredpixeldungeon.messages.Messages;
 import com.shatteredpixel.bathredpixeldungeon.scenes.CellSelector;
 import com.shatteredpixel.bathredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.bathredpixeldungeon.sprites.MobSprite;
+import com.shatteredpixel.bathredpixeldungeon.ui.BuffIndicator;
 import com.shatteredpixel.bathredpixeldungeon.ui.HeroIcon;
 import com.shatteredpixel.bathredpixeldungeon.utils.GLog;
+import com.watabou.noosa.Image;
 import com.watabou.noosa.TextureFilm;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.GameMath;
@@ -56,19 +60,14 @@ import com.watabou.utils.Random;
 
 import java.util.ArrayList;
 
-public class IvyBathr extends ArmorAbility {
-
-    @Override
-    public String targetingPrompt() {
-        return Messages.get(this, "prompt");
-    }
+public class FrogJump extends ArmorAbility {
     @Override
     public boolean useTargeting(){
-        return true;
+        return false;
     }
 
     {
-        baseChargeUse = 35f;
+        baseChargeUse = 15f;
     }
 
     @Override
@@ -78,46 +77,71 @@ public class IvyBathr extends ArmorAbility {
 
     @Override
     protected void activate(ClassArmor armor, Hero hero, Integer target) {
-        if (target == null){
-            return;
-        }
-
-        if (Actor.findChar(target) == null && (Dungeon.level.passable[target] || Dungeon.level.avoid[target])){
+        if (hero.buff(FrogJumpBuff.class) == null)
+        {
+            Buff.affect(hero, FrogJumpBuff.class);
+            hero.buff(EscapeRoll.class).updateFreeRolls(hero.pointsInTalent(Talent.GIUX_FROGTIME));
             armor.charge -= chargeUse(hero);
             armor.updateQuickslot();
-
-            RotLasher rt = new RotLasher();
-            int poiheal = hero.pointsInTalent(Talent.GIUX_IVYHEALTH);
-            if (poiheal <= 3){
-                rt.set(rt.HT + poiheal * 15, false);
-            }
-            else {
-                rt.set(125, true);
-            }
-            rt.pos = target;
-            GameScene.add(rt);
-            ScrollOfTeleportation.appear(rt, rt.pos);
-
-            if (hero.pointsInTalent(Talent.GIUX_IVYPOISON) == 4) {
-                GameScene.add(Blob.seed(target, 200, ToxicGas.class));
-            }
-
             Dungeon.observe();
             Invisibility.dispel();
-            hero.spendAndNext(Actor.TICK);
-
-        } else {
-            GLog.w(Messages.get(this, "no_space"));
+            //hero.spendAndNext(Actor.TICK);
+        }
+        else {
+            GLog.w(Messages.get(this, "cooldown"));
         }
     }
 
+    public static class FrogJumpBuff extends Buff {
+        int lasting = 2;
+
+        {
+            announced = true;
+        }
+
+        public int icon() { return BuffIndicator.LEVITATION; }
+        public void update()
+        {
+            lasting--;
+            if (lasting == 0)
+                detach();
+        }
+
+        @Override
+        public void tintIcon(Image icon) { icon.hardlight(0.1f, 0.65f, 0.55f); }
+        @Override
+        public float iconFadePercent() { return (3 - lasting) / 3; }
+
+        @Override
+        public String desc() {
+            return Messages.get(this, "desc", lasting);
+        }
+
+        private static final String LASTING = "lasting";
+        @Override
+        public void storeInBundle(Bundle bundle) {
+            super.storeInBundle(bundle);
+            bundle.put( LASTING, lasting );
+        }
+
+        @Override
+        public void restoreFromBundle(Bundle bundle) {
+            super.restoreFromBundle(bundle);
+            lasting = bundle.getInt( LASTING );
+        }
+
+        public int getLasting() {
+            return lasting;
+        }
+    };
+
     @Override
     public int icon() {
-        return HeroIcon.GIUXPOWER_1;
+        return HeroIcon.GIUXPOWER_2;
     }
 
     @Override
     public Talent[] talents() {
-        return new Talent[]{Talent.GIUX_IVYHEALTH, Talent.GIUX_IVYPOISON, Talent.GIUX_IVYFOOD, Talent.HEROIC_ENERGY};
+        return new Talent[]{Talent.GIUX_FROGRANGE, Talent.GIUX_FROGTIME, Talent.GIUX_FROGWATER, Talent.HEROIC_ENERGY};
     }
 }
