@@ -32,6 +32,7 @@ public class DualPistol extends BaseGun {
     {
         image = ItemSpriteSheet.DUAL_PISTOL;
         tier = 2;
+        shotPerShoot = 2;
         max_round = 10;
         round = max_round;
     }

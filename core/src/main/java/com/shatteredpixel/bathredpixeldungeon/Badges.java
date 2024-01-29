@@ -709,6 +709,7 @@ public class Badges {
 		firstBossClassBadges.put(HeroClass.ROGUE, Badge.BOSS_SLAIN_1_ROGUE);
 		firstBossClassBadges.put(HeroClass.HUNTRESS, Badge.BOSS_SLAIN_1_HUNTRESS);
 		firstBossClassBadges.put(HeroClass.DUELIST, Badge.BOSS_SLAIN_1_DUELIST);
+		firstBossClassBadges.put(HeroClass.GIUX, Badge.BOSS_SLAIN_1_DUELIST);
 	}
 
 	private static LinkedHashMap<HeroClass, Badge> victoryClassBadges = new LinkedHashMap<>();
@@ -718,6 +719,7 @@ public class Badges {
 		victoryClassBadges.put(HeroClass.ROGUE, Badge.VICTORY_ROGUE);
 		victoryClassBadges.put(HeroClass.HUNTRESS, Badge.VICTORY_HUNTRESS);
 		victoryClassBadges.put(HeroClass.DUELIST, Badge.VICTORY_DUELIST);
+		victoryClassBadges.put(HeroClass.GIUX, Badge.VICTORY_DUELIST);
 	}
 
 	private static LinkedHashMap<HeroSubClass, Badge> thirdBossSubclassBadges = new LinkedHashMap<>();
@@ -732,6 +734,8 @@ public class Badges {
 		thirdBossSubclassBadges.put(HeroSubClass.WARDEN, Badge.BOSS_SLAIN_3_WARDEN);
 		thirdBossSubclassBadges.put(HeroSubClass.CHAMPION, Badge.BOSS_SLAIN_3_CHAMPION);
 		thirdBossSubclassBadges.put(HeroSubClass.MONK, Badge.BOSS_SLAIN_3_MONK);
+		thirdBossSubclassBadges.put(HeroSubClass.ROLLER, Badge.BOSS_SLAIN_3_CHAMPION);
+		thirdBossSubclassBadges.put(HeroSubClass.PEWPEW, Badge.BOSS_SLAIN_3_MONK);
 	}
 	
 	public static void validateBossSlain() {
@@ -829,7 +833,7 @@ public class Badges {
 		
 		Badge badge = null;
 		switch (Dungeon.hero.heroClass) {
-			case WARRIOR:
+			case WARRIOR:case GIUX:
 				badge = Badge.MASTERY_WARRIOR;
 				break;
 			case MAGE:

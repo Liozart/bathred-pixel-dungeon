@@ -226,11 +226,6 @@ public class EscapeRoll extends Buff implements ActionIndicator.Action {
                 return targetingPrompt();
             }
         });
-
-        /*Sample.INSTANCE.play(Assets.Sounds.MISS, 1f, 0.8f);
-        target.sprite.emitter().burst(Speck.factory(Speck.JET), 10);
-        SpellSprite.show(target, SpellSprite.HASTE, 1, 1, 0);
-        Buff.affect(Dungeon.hero, Swiftthistle.TimeBubble.class).setLeft(0.5f);*/
     }
 
     public void UpdateDistance(Hero h)
@@ -385,11 +380,8 @@ public class EscapeRoll extends Buff implements ActionIndicator.Action {
             if (hero.pointsInTalent(GIUX_FROGWATER) == 4){
                 Char ch = Actor.findChar(pos + i);
                 if (ch != null && ch != hero) {
-                    //trace a ballistica to our target (which will also extend past them)
                     Ballistica trajectory = new Ballistica(pos, ch.pos, Ballistica.STOP_TARGET);
-                    //trim it to just be the part that goes past them
                     trajectory = new Ballistica(trajectory.collisionPos, trajectory.path.get(trajectory.path.size() - 1), Ballistica.PROJECTILE);
-                    //knock them back along that ballistica
                     WandOfBlastWave.throwChar(ch, trajectory, 4, true, true, hero);
                 }
             }

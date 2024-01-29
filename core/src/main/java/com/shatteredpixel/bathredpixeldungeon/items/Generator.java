@@ -117,6 +117,8 @@ import com.shatteredpixel.bathredpixeldungeon.items.wands.WandOfWarding;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.AssassinsBlade;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun.AssultRifle;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.BattleAxe;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun.AutoHandgun;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun.AutoRifle;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun.BaseGun;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun.Carbine;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Crossbow;
@@ -142,6 +144,7 @@ import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Mace;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun.Magnum;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.MeleeWeapon;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun.MarksmanRifle;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun.Pistol;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Quarterstaff;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Rapier;
@@ -160,6 +163,7 @@ import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.WarHammer;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.WarScythe;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Whip;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.WornShortsword;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun.TacticalHandgun;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.missiles.Bolas;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.missiles.FishingSpear;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.missiles.ForceCube;
@@ -351,7 +355,11 @@ public class Generator {
 					Carbine.class,
 					GoldenPistol.class,
 					SubMachinegun.class,
-					HuntingRifle.class
+					HuntingRifle.class,
+					AutoHandgun.class,
+					AutoRifle.class,
+					MarksmanRifle.class,
+					TacticalHandgun.class
 			};
 			GUNS.defaultProbs = new float[]{ 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
 			GUNS.probs = GUNS.defaultProbs.clone();

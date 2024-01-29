@@ -32,6 +32,7 @@ import com.shatteredpixel.bathredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.bathredpixeldungeon.effects.Speck;
 import com.shatteredpixel.bathredpixeldungeon.levels.RegularLevel;
 import com.shatteredpixel.bathredpixeldungeon.levels.Terrain;
+import com.shatteredpixel.bathredpixeldungeon.levels.features.LevelTransition;
 import com.shatteredpixel.bathredpixeldungeon.levels.rooms.Room;
 import com.shatteredpixel.bathredpixeldungeon.levels.rooms.secret.SecretRoom;
 import com.shatteredpixel.bathredpixeldungeon.levels.rooms.special.SpecialRoom;
@@ -321,5 +322,31 @@ public class ScrollOfTeleportation extends Scroll {
 	@Override
 	public int value() {
 		return isKnown() ? 30 * quantity : super.value();
+	}
+
+	public static class ScrollOfDebug extends Scroll {
+
+		{
+			icon = ItemSpriteSheet.Icons.SCROLL_TELEPORT;
+		}
+
+		@Override
+		public void doRead() {
+
+			detach(curUser.belongings.backpack);
+			Sample.INSTANCE.play(Assets.Sounds.READ);
+
+			for (LevelTransition l : Dungeon.level.transitions) {
+				if (l.type == LevelTransition.Type.REGULAR_EXIT) {
+					if (teleportToLocation(curUser, l.cell())) {
+						readAnimation();
+					}
+				}
+			}
+		}
+		@Override
+		public int value() {
+			return isKnown() ? 30 * quantity : super.value();
+		}
 	}
 }

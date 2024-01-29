@@ -102,7 +102,7 @@ public class CityLevel extends RegularLevel {
 	protected Painter painter() {
 		return new CityPainter()
 				.setWater(feeling == Feeling.WATER ? 0.90f : 0.30f, 4)
-				.setGrass(feeling == Feeling.GRASS ? 0.80f : 0.35f, 3)
+				.setGrass(feeling == Feeling.GRASS ? 0.80f : 0.30f, 3)
 				.setTraps(nTraps(), trapClasses(), trapChances());
 	}
 	

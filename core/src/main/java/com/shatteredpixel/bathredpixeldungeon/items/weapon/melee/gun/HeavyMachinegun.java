@@ -22,6 +22,7 @@
 package com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun;
 
 import com.shatteredpixel.bathredpixeldungeon.Dungeon;
+import com.shatteredpixel.bathredpixeldungeon.actors.Char;
 import com.shatteredpixel.bathredpixeldungeon.items.rings.RingOfSharpshooting;
 import com.shatteredpixel.bathredpixeldungeon.messages.Messages;
 import com.shatteredpixel.bathredpixeldungeon.sprites.ItemSpriteSheet;
@@ -33,6 +34,7 @@ public class HeavyMachinegun extends BaseGun {
     {
         image = ItemSpriteSheet.HEAVY_MACHINEGUN;
         tier = 5;
+        shotPerShoot = 2;
         max_round = 15;
         round = max_round;
     }
@@ -47,6 +49,11 @@ public class HeavyMachinegun extends BaseGun {
         return 2 * (tier)   +
                 lvl * (tier-2) +
                 RingOfSharpshooting.levelDamageBonus(Dungeon.hero);
+    }
+
+    @Override
+    public float delayFactor( Char owner ) {
+        return baseDelay(owner) * (1f/speedMultiplier(owner) * 0.5f);
     }
 
     @Override
@@ -73,7 +80,7 @@ public class HeavyMachinegun extends BaseGun {
     public class HeavyMachinegunBullet extends BaseGun.Bullet {
 
         {
-            image = ItemSpriteSheet.TRIPLE_BULLET;
+            image = ItemSpriteSheet.SINGLE_BULLET;
 
             tier = 5;
             ACC = 0.7f;

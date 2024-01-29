@@ -101,10 +101,10 @@ public class SewerLevel extends RegularLevel {
 	protected Painter painter() {
 		return new SewerPainter()
 				.setWater(feeling == Feeling.WATER ? 0.85f : 0.30f, 5)
-				.setGrass(feeling == Feeling.GRASS ? 0.80f : 0.30f, 4)
+				.setGrass(feeling == Feeling.GRASS ? 0.80f : 0.25f, 4)
 				.setTraps(nTraps(), trapClasses(), trapChances());
 	}
-	
+
 	@Override
 	public String tilesTex() {
 		return Assets.Environment.TILES_SEWERS;
@@ -145,13 +145,13 @@ public class SewerLevel extends RegularLevel {
 	public boolean activateTransition(Hero hero, LevelTransition transition) {
 		if (transition.type == LevelTransition.Type.SURFACE){
 			if (hero.belongings.getItem( Amulet.class ) == null) {
-				Game.runOnRenderThread(new Callback() {
-					@Override
-					public void call() {
-						GameScene.show( new WndMessage( Messages.get(hero, "leave") ) );
-					}
-				});
-				return false;
+				LevelTransition transi = new LevelTransition(Dungeon.level,
+						transition.centerCell,
+						LevelTransition.Type.BRANCH_EXIT,
+						Dungeon.depth,
+						Dungeon.branch + 1,
+						LevelTransition.Type.BRANCH_ENTRANCE);
+				return super.activateTransition(hero, transi);
 			} else {
 				Statistics.ascended = true;
 				Badges.silentValidateHappyEnd();

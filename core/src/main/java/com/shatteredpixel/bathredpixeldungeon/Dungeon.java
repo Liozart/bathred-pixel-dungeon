@@ -51,6 +51,7 @@ import com.shatteredpixel.bathredpixeldungeon.items.scrolls.Scroll;
 import com.shatteredpixel.bathredpixeldungeon.items.wands.WandOfRegrowth;
 import com.shatteredpixel.bathredpixeldungeon.items.wands.WandOfWarding;
 import com.shatteredpixel.bathredpixeldungeon.journal.Notes;
+import com.shatteredpixel.bathredpixeldungeon.levels.BathrLevel;
 import com.shatteredpixel.bathredpixeldungeon.levels.CavesBossLevel;
 import com.shatteredpixel.bathredpixeldungeon.levels.CavesLevel;
 import com.shatteredpixel.bathredpixeldungeon.levels.CityBossLevel;
@@ -351,6 +352,9 @@ public class Dungeon {
 			}
 		} else if (branch == 1) {
 			switch (depth) {
+				case 1:
+					level = new BathrLevel();
+					break;
 				case 11:
 				case 12:
 				case 13:

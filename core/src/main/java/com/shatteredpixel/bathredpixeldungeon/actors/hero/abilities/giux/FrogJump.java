@@ -67,7 +67,7 @@ public class FrogJump extends ArmorAbility {
     }
 
     {
-        baseChargeUse = 15f;
+        baseChargeUse = 30f;
     }
 
     @Override

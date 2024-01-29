@@ -107,9 +107,6 @@ public class TengusMask extends Item {
 		if (way == HeroSubClass.ROLLER){
 			curUser.buff(EscapeRoll.class).UpdateDistance(curUser);
 		}
-		if (way == HeroSubClass.PEWPEW){
-			//Buff.affect(curUser, Pewpew.class).setHero(curUser);
-		}
 		
 		curUser.sprite.operate( curUser.pos );
 		Sample.INSTANCE.play( Assets.Sounds.MASTERY );

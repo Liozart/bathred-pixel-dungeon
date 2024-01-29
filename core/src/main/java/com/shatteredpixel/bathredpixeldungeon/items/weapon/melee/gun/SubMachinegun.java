@@ -32,7 +32,8 @@ public class SubMachinegun extends BaseGun {
     {
         image = ItemSpriteSheet.SUBMACHINEGUN;
         tier = 3;
-        max_round = 9;
+        shotPerShoot = 3;
+        max_round = 15;
         round = max_round;
     }
 

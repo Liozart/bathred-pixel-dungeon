@@ -1,6 +1,7 @@
 package com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun;
 
 import static com.shatteredpixel.bathredpixeldungeon.Dungeon.hero;
+import static com.shatteredpixel.bathredpixeldungeon.items.scrolls.ScrollOfTeleportation.appear;
 import static com.shatteredpixel.bathredpixeldungeon.items.wands.WandOfCorruption.MAJOR_DEBUFFS;
 import static com.shatteredpixel.bathredpixeldungeon.items.wands.WandOfCorruption.MINOR_DEBUFFS;
 import static com.shatteredpixel.bathredpixeldungeon.items.wands.WandOfCorruption.debuffEnemy;
@@ -11,6 +12,7 @@ import com.shatteredpixel.bathredpixeldungeon.actors.Actor;
 import com.shatteredpixel.bathredpixeldungeon.actors.Char;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.BathredBullets;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Daze;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.EscapeRoll;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.InstantBullet;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.PewpewCooldown;
@@ -21,16 +23,24 @@ import com.shatteredpixel.bathredpixeldungeon.actors.buffs.RollCrit;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.Talent;
+import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.giux.TeleBathr;
+import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.mage.WarpBeacon;
 import com.shatteredpixel.bathredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.bathredpixeldungeon.effects.CellEmitter;
+import com.shatteredpixel.bathredpixeldungeon.effects.TargetedCell;
 import com.shatteredpixel.bathredpixeldungeon.effects.particles.BlastParticle;
 import com.shatteredpixel.bathredpixeldungeon.effects.particles.SmokeParticle;
 import com.shatteredpixel.bathredpixeldungeon.items.Item;
 import com.shatteredpixel.bathredpixeldungeon.items.rings.RingOfSharpshooting;
+import com.shatteredpixel.bathredpixeldungeon.items.scrolls.ScrollOfTeleportation;
+import com.shatteredpixel.bathredpixeldungeon.items.wands.WandOfBlastWave;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Dagger;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.MeleeWeapon;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.missiles.MissileWeapon;
+import com.shatteredpixel.bathredpixeldungeon.levels.RegularLevel;
+import com.shatteredpixel.bathredpixeldungeon.levels.rooms.Room;
+import com.shatteredpixel.bathredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.bathredpixeldungeon.messages.Messages;
 import com.shatteredpixel.bathredpixeldungeon.scenes.CellSelector;
 import com.shatteredpixel.bathredpixeldungeon.scenes.GameScene;
@@ -39,9 +49,11 @@ import com.shatteredpixel.bathredpixeldungeon.sprites.MissileSprite;
 import com.shatteredpixel.bathredpixeldungeon.ui.QuickSlotButton;
 import com.shatteredpixel.bathredpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
+import com.watabou.utils.BArray;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;
 import com.watabou.utils.PathFinder;
+import com.watabou.utils.Point;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
@@ -572,6 +584,11 @@ public class BaseGun extends MeleeWeapon {
                     Buff.affect(hero, PewpewCooldown.class).set(100f);
                     doBurst = false;
                 }
+                if (hero.buff(TeleBathr.TeleBathrBuff.class) != null){
+                    TeleBathr.teleBathrport();
+                }
+
+                //END TURN (OR NOT)
                 if (hero.buff(InstantBullet.class) == null){
                     hero.spendAndNext(delayFactor(hero));
                 }

@@ -34,7 +34,7 @@ public class Pistol extends BaseGun {
     {
         image = ItemSpriteSheet.PISTOL;
         tier = 2;
-        max_round = 3;
+        max_round = 4;
         round = max_round;
     }
 

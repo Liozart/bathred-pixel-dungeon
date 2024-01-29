@@ -95,6 +95,7 @@ public class Blacksmith extends NPC {
 					case ROGUE:     msg1 += Messages.get(Blacksmith.this, "intro_quest_rogue"); break;
 					case HUNTRESS:  msg1 += Messages.get(Blacksmith.this, "intro_quest_huntress"); break;
 					case DUELIST:   msg1 += Messages.get(Blacksmith.this, "intro_quest_duelist"); break;
+					case GIUX:   msg1 += Messages.get(Blacksmith.this, "intro_quest_giux"); break;
 					//case CLERIC: msg1 += Messages.get(Blacksmith.this, "intro_quest_cleric"); break;
 				}
 
@@ -423,11 +424,11 @@ public class Blacksmith extends NPC {
 			//30%:+0, 45%:+1, 20%:+2, 5%:+3
 			int rewardLevel;
 			float itemLevelRoll = Random.Float();
-			if (itemLevelRoll < 0.3f){
+			if (itemLevelRoll < 0.2f){
 				rewardLevel = 0;
-			} else if (itemLevelRoll < 0.75f){
+			} else if (itemLevelRoll < 0.45f){
 				rewardLevel = 1;
-			} else if (itemLevelRoll < 0.95f){
+			} else if (itemLevelRoll < 0.75f){
 				rewardLevel = 2;
 			} else {
 				rewardLevel = 3;

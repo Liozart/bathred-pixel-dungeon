@@ -35,6 +35,7 @@ import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.duelist.Elem
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.duelist.Feint;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.giux.FrogJump;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.giux.IvyBathr;
+import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.giux.TeleBathr;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.huntress.NaturesPower;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.huntress.SpectralBlades;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.huntress.SpiritHawk;
@@ -49,11 +50,13 @@ import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.warrior.Hero
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.warrior.Shockwave;
 import com.shatteredpixel.bathredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.bathredpixeldungeon.items.BrokenSeal;
+import com.shatteredpixel.bathredpixeldungeon.items.Generator;
 import com.shatteredpixel.bathredpixeldungeon.items.Item;
 import com.shatteredpixel.bathredpixeldungeon.items.KingsCrown;
 import com.shatteredpixel.bathredpixeldungeon.items.TengusMask;
 import com.shatteredpixel.bathredpixeldungeon.items.Waterskin;
 import com.shatteredpixel.bathredpixeldungeon.items.armor.ClothArmor;
+import com.shatteredpixel.bathredpixeldungeon.items.artifacts.Artifact;
 import com.shatteredpixel.bathredpixeldungeon.items.artifacts.CloakOfShadows;
 import com.shatteredpixel.bathredpixeldungeon.items.bags.VelvetPouch;
 import com.shatteredpixel.bathredpixeldungeon.items.food.Food;
@@ -68,22 +71,27 @@ import com.shatteredpixel.bathredpixeldungeon.items.scrolls.ScrollOfLullaby;
 import com.shatteredpixel.bathredpixeldungeon.items.scrolls.ScrollOfMagicMapping;
 import com.shatteredpixel.bathredpixeldungeon.items.scrolls.ScrollOfMirrorImage;
 import com.shatteredpixel.bathredpixeldungeon.items.scrolls.ScrollOfRage;
+import com.shatteredpixel.bathredpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.shatteredpixel.bathredpixeldungeon.items.scrolls.ScrollOfTransmutation;
 import com.shatteredpixel.bathredpixeldungeon.items.scrolls.ScrollOfUpgrade;
+import com.shatteredpixel.bathredpixeldungeon.items.wands.WandOfLightning;
 import com.shatteredpixel.bathredpixeldungeon.items.wands.WandOfMagicMissile;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun.AssultRifle;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun.BaseGun;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun.CrudePistol;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Dagger;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Gloves;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Rapier;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.WornShortsword;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun.HeavyMachinegun;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.missiles.ThrowingKnife;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.missiles.ThrowingSpike;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.missiles.ThrowingStone;
 import com.shatteredpixel.bathredpixeldungeon.messages.Messages;
 import com.watabou.utils.DeviceCompat;
+import com.watabou.utils.Reflection;
 
 public enum HeroClass {
 
@@ -174,15 +182,14 @@ public enum HeroClass {
 	}
 
 	private static void initGiux(Hero hero) {
-		(hero.belongings.weapon = new CrudePistol()).identify();
+		(hero.belongings.weapon = new CrudePistol()).identify().upgrade(12);
 		hero.belongings.weapon.activate(hero);
 
 		Dungeon.quickslot.setSlot(0, hero.belongings.weapon);
 		Buff.affect(hero, EscapeRoll.class).setHero(hero);
 
-		hero.earnExp( 2000, Mob.class);
-		TengusMask teng = new TengusMask();
-		teng.collect();
+		hero.earnExp(2000, Hero.class);
+		new TengusMask().collect();
 		new KingsCrown().collect();
 
 		new ScrollOfIdentify().identify().collect();
@@ -291,7 +298,7 @@ public enum HeroClass {
 			case DUELIST:
 				return new ArmorAbility[]{new Challenge(), new ElementalStrike(), new Feint()};
 			case GIUX:
-				return new ArmorAbility[]{new IvyBathr(), new FrogJump(), new ElementalBlast()};
+				return new ArmorAbility[]{new IvyBathr(), new FrogJump(), new TeleBathr()};
 		}
 	}
 
