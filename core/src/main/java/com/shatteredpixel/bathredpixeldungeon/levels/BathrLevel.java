@@ -22,17 +22,36 @@
 package com.shatteredpixel.bathredpixeldungeon.levels;
 
 import com.shatteredpixel.bathredpixeldungeon.Assets;
+import com.shatteredpixel.bathredpixeldungeon.Challenges;
 import com.shatteredpixel.bathredpixeldungeon.Dungeon;
 import com.shatteredpixel.bathredpixeldungeon.Statistics;
 import com.shatteredpixel.bathredpixeldungeon.actors.Actor;
 import com.shatteredpixel.bathredpixeldungeon.actors.Char;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.bathredpixeldungeon.actors.buffs.ChampionEnemy;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.bathredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.bathredpixeldungeon.actors.mobs.npcs.Blacksmith;
+import com.shatteredpixel.bathredpixeldungeon.items.Amulet;
+import com.shatteredpixel.bathredpixeldungeon.items.Torch;
+import com.shatteredpixel.bathredpixeldungeon.items.food.MeatPie;
+import com.shatteredpixel.bathredpixeldungeon.items.potions.PotionOfLiquidFlame;
 import com.shatteredpixel.bathredpixeldungeon.items.quest.Pickaxe;
 import com.shatteredpixel.bathredpixeldungeon.levels.features.LevelTransition;
 import com.shatteredpixel.bathredpixeldungeon.levels.painters.CavesPainter;
 import com.shatteredpixel.bathredpixeldungeon.levels.painters.Painter;
+import com.shatteredpixel.bathredpixeldungeon.levels.rooms.CastleRoom;
 import com.shatteredpixel.bathredpixeldungeon.levels.rooms.Room;
+import com.shatteredpixel.bathredpixeldungeon.levels.rooms.connection.BridgeRoom;
+import com.shatteredpixel.bathredpixeldungeon.levels.rooms.quest.MineLargeRoom;
+import com.shatteredpixel.bathredpixeldungeon.levels.rooms.quest.MineSmallRoom;
+import com.shatteredpixel.bathredpixeldungeon.levels.rooms.secret.SecretRoom;
+import com.shatteredpixel.bathredpixeldungeon.levels.rooms.special.PitRoom;
+import com.shatteredpixel.bathredpixeldungeon.levels.rooms.special.ShopRoom;
+import com.shatteredpixel.bathredpixeldungeon.levels.rooms.special.SpecialRoom;
+import com.shatteredpixel.bathredpixeldungeon.levels.rooms.standard.EntranceRoom;
+import com.shatteredpixel.bathredpixeldungeon.levels.rooms.standard.ExitRoom;
+import com.shatteredpixel.bathredpixeldungeon.levels.rooms.standard.StandardRoom;
 import com.shatteredpixel.bathredpixeldungeon.levels.traps.BurningTrap;
 import com.shatteredpixel.bathredpixeldungeon.levels.traps.ConfusionTrap;
 import com.shatteredpixel.bathredpixeldungeon.levels.traps.CorrosionTrap;
@@ -64,6 +83,7 @@ import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class BathrLevel extends RegularLevel {
 
@@ -79,54 +99,184 @@ public class BathrLevel extends RegularLevel {
 
     @Override
     public void playLevelMusic() {
-        if (Statistics.amuletObtained){
-            Music.INSTANCE.play(Assets.Music.CAVES_TENSE, true);
-        } else {
-            Music.INSTANCE.playTracks(CAVES_TRACK_LIST, CAVES_TRACK_CHANCES, false);
-        }
+        Music.INSTANCE.playTracks(CAVES_TRACK_LIST, CAVES_TRACK_CHANCES, false);
     }
 
-    @Override
     protected ArrayList<Room> initRooms() {
-        ArrayList<Room> rooms = super.initRooms();
-        return rooms;
+        ArrayList<Room> initRooms = new ArrayList<>();
+        EntranceRoom k = new EntranceRoom();
+        initRooms.add (k);
+        CastleRoom carom = new CastleRoom();
+        initRooms.add(carom);
+
+        int standards = standardRooms(true);
+        StandardRoom s;
+        for (int i = 0; i < standards; i++) {
+            do {
+                s = StandardRoom.createRoom();
+            } while (!s.setSizeCat( standards-i ));
+            i += s.sizeCat.roomValue-1;
+            initRooms.add(s);
+        }
+        for (int i = 0; i < standardRooms(true) / 10; i++){
+            s = new MineLargeRoom();
+            s.setSizeCat();
+            initRooms.add(s);
+        }
+        int specials = specialRooms(true);
+        SpecialRoom.initForFloor();
+        for (int i = 0; i < specials; i++) {
+            SpecialRoom sp = SpecialRoom.createRoom();
+            if (sp instanceof PitRoom) specials++;
+            initRooms.add(sp);
+        }
+        int secrets = SecretRoom.secretsForFloor(Dungeon.depth) + 1;
+        //one additional secret for secret levels
+        if (feeling == Feeling.SECRETS) secrets++;
+        for (int i = 0; i < secrets; i++) {
+            initRooms.add(SecretRoom.createRoom());
+        }
+
+        return initRooms;
     }
 
     @Override
     protected int standardRooms(boolean forceMax) {
-        if (forceMax) return 12;
-        //6 to 7, average 6.333
-        return 6+Random.Int(7);
+        return 40;
     }
 
     @Override
     protected int specialRooms(boolean forceMax) {
-        if (forceMax) return 3;
-        //2 to 3, average 2.2
-        return 2+Random.chances(new float[]{4, 1});
+        return 10;
+    }
+    @Override
+    public int mobLimit() {
+        return 8;
+    }
+
+    @Override
+    protected void createMobs() {
+        int mobsToSpawn = mobLimit();
+
+        ArrayList<Room> stdRooms = new ArrayList<>();
+        for (Room room : rooms) {
+            if (room instanceof StandardRoom && room != roomEntrance) {
+                for (int i = 0; i < ((StandardRoom) room).sizeCat.roomValue; i++) {
+                    stdRooms.add(room);
+                }
+            }
+        }
+        Random.shuffle(stdRooms);
+        Iterator<Room> stdRoomIter = stdRooms.iterator();
+
+        while (mobsToSpawn > 0) {
+            Mob mob = createMob();
+            Class<?extends ChampionEnemy> buffCls;
+            switch (Random.Int(6)){
+                case 0: default:    buffCls = ChampionEnemy.Blazing.class;      break;
+                case 1:             buffCls = ChampionEnemy.Projecting.class;   break;
+                case 2:             buffCls = ChampionEnemy.AntiMagic.class;    break;
+                case 3:             buffCls = ChampionEnemy.Giant.class;        break;
+                case 4:             buffCls = ChampionEnemy.Blessed.class;      break;
+                case 5:             buffCls = ChampionEnemy.Growing.class;      break;
+            }
+            Buff.affect(mob, buffCls);
+            mob.state = Random.Int(2) == 0 ? mob.WANDERING : mob.SLEEPING;
+
+            Room roomToSpawn;
+
+            if (!stdRoomIter.hasNext()) {
+                stdRoomIter = stdRooms.iterator();
+            }
+            roomToSpawn = stdRoomIter.next();
+
+            int tries = 30;
+            do {
+                mob.pos = pointToCell(roomToSpawn.random());
+                tries--;
+            } while (tries >= 0 && (findMob(mob.pos) != null
+                    || !passable[mob.pos]
+                    || solid[mob.pos]
+                    || !roomToSpawn.canPlaceCharacter(cellToPoint(mob.pos), this)
+                    || mob.pos == exit()
+                    || traps.get(mob.pos) != null || plants.get(mob.pos) != null
+                    || (!openSpace[mob.pos] && mob.properties().contains(Char.Property.LARGE))));
+
+            if (tries >= 0) {
+                mobsToSpawn--;
+                mobs.add(mob);
+
+                //chance to add a second mob to this room, except on floor 1
+                if (Dungeon.depth > 1 && mobsToSpawn > 0 && Random.Int(4) == 0){
+                    mob = createMob();
+
+                    tries = 30;
+                    do {
+                        mob.pos = pointToCell(roomToSpawn.random());
+                        tries--;
+                    } while (tries >= 0 && (findMob(mob.pos) != null
+                            || !passable[mob.pos]
+                            || solid[mob.pos]
+                            || !roomToSpawn.canPlaceCharacter(cellToPoint(mob.pos), this)
+                            || mob.pos == exit()
+                            || traps.get(mob.pos) != null || plants.get(mob.pos) != null
+                            || (!openSpace[mob.pos] && mob.properties().contains(Char.Property.LARGE))));
+
+                    if (tries >= 0) {
+                        mobsToSpawn--;
+                        mobs.add(mob);
+                    }
+                }
+            }
+        }
+
+        for (Mob m : mobs){
+            if (map[m.pos] == Terrain.HIGH_GRASS || map[m.pos] == Terrain.FURROWED_GRASS) {
+                map[m.pos] = Terrain.GRASS;
+                losBlocking[m.pos] = false;
+            }
+        }
+    }
+    @Override
+    protected void createItems() {
+        super.createItems();
+        int cell = randomDropCell();
+        if (map[cell] == Terrain.HIGH_GRASS || map[cell] == Terrain.FURROWED_GRASS) {
+            map[cell] = Terrain.GRASS;
+            losBlocking[cell] = false;
+        }
+        drop( new PotionOfLiquidFlame(), cell );
+        for (int i = 0; i < 3; i++){
+            cell = randomDropCell();
+            if (map[cell] == Terrain.HIGH_GRASS || map[cell] == Terrain.FURROWED_GRASS) {
+                map[cell] = Terrain.GRASS;
+                losBlocking[cell] = false;
+            }
+            drop( new MeatPie(), cell );
+        }
     }
 
     @Override
     protected Painter painter() {
         return new CavesPainter()
                 .setWater(feeling == Feeling.WATER ? 0.85f : 0.30f, 6)
-                .setGrass(feeling == Feeling.GRASS ? 0.65f : 0.30f, 3)
+                .setGrass(feeling == Feeling.GRASS ? 0.65f : 0.40f, 3)
                 .setTraps(nTraps(), trapClasses(), trapChances());
     }
 
     @Override
     public boolean activateTransition(Hero hero, LevelTransition transition) {
-            return super.activateTransition(hero, transition);
+        return super.activateTransition(hero, transition);
     }
 
     @Override
     public String tilesTex() {
-        return Assets.Environment.TILES_CAVES;
+        return Assets.Environment.TILES_BATHR;
     }
 
     @Override
     public String waterTex() {
-        return Assets.Environment.WATER_SEWERS;
+        return Assets.Environment.WATER_CITY;
     }
 
     @Override
@@ -217,58 +367,5 @@ public class BathrLevel extends RegularLevel {
             delay = Random.Float( 2 );
         }
 
-        @Override
-        public void update() {
-
-            if (visible = (pos < Dungeon.level.heroFOV.length && Dungeon.level.heroFOV[pos])) {
-
-                super.update();
-
-                if ((delay -= Game.elapsed) <= 0) {
-
-                    //pickaxe can remove the ore, should remove the sparkling too.
-                    if (Dungeon.level.map[pos] != Terrain.WALL_DECO){
-                        kill();
-                        return;
-                    }
-
-                    delay = Random.Float();
-
-                    PointF p = DungeonTilemap.tileToWorld( pos );
-                    if (includeOverhang && !DungeonTileSheet.wallStitcheable(Dungeon.level.map[pos-Dungeon.level.width()])){
-                        //also sparkles in the bottom 1/2 of the upper tile. Increases particle frequency by 50% accordingly.
-                        delay *= 0.67f;
-                        p.y -= DungeonTilemap.SIZE/2f;
-                        ((Sparkle)recycle( Sparkle.class )).reset(
-                                p.x + Random.Float( DungeonTilemap.SIZE ),
-                                p.y + Random.Float( DungeonTilemap.SIZE*1.5f ) );
-                    } else {
-                        ((Sparkle)recycle( Sparkle.class )).reset(
-                                p.x + Random.Float( DungeonTilemap.SIZE ),
-                                p.y + Random.Float( DungeonTilemap.SIZE ) );
-                    }
-                }
-            }
-        }
-    }
-
-    public static final class Sparkle extends PixelParticle {
-
-        public void reset( float x, float y ) {
-            revive();
-
-            this.x = x;
-            this.y = y;
-
-            left = lifespan = 0.5f;
-        }
-
-        @Override
-        public void update() {
-            super.update();
-
-            float p = left / lifespan;
-            size( (am = p < 0.5f ? p * 2 : (1 - p) * 2) * 2 );
-        }
     }
 }

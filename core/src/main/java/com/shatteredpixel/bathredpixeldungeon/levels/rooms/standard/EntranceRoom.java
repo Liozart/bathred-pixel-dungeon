@@ -75,8 +75,15 @@ public class EntranceRoom extends StandardRoom {
 		} while (level.findMob(entrance) != null);
 		Painter.set( level, entrance, Terrain.ENTRANCE );
 
-		if (Dungeon.depth == 1){
+		if (Dungeon.depth == 1 && Dungeon.branch == 0){
 			level.transitions.add(new LevelTransition(level, entrance, LevelTransition.Type.SURFACE));
+		} else if (Dungeon.depth == 1 && Dungeon.branch == 1){
+			level.transitions.add(new LevelTransition(level,
+				entrance,
+				LevelTransition.Type.BRANCH_EXIT,
+				Dungeon.depth,
+				Dungeon.branch - 1,
+				LevelTransition.Type.BRANCH_ENTRANCE));
 		} else {
 			level.transitions.add(new LevelTransition(level, entrance, LevelTransition.Type.REGULAR_ENTRANCE));
 		}

@@ -549,7 +549,7 @@ public class GameScene extends PixelScene {
 			}
 
 			for (Mob mob : Dungeon.level.mobs) {
-				if (!mob.buffs(ChampionEnemy.class).isEmpty()) {
+				if (!mob.buffs(ChampionEnemy.class).isEmpty() && Dungeon.branch == 0) {
 					GLog.w(Messages.get(ChampionEnemy.class, "warn"));
 				}
 			}

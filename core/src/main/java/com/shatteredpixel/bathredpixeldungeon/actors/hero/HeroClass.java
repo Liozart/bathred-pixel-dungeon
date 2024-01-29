@@ -188,9 +188,9 @@ public enum HeroClass {
 		Dungeon.quickslot.setSlot(0, hero.belongings.weapon);
 		Buff.affect(hero, EscapeRoll.class).setHero(hero);
 
-		hero.earnExp(2000, Hero.class);
-		new TengusMask().collect();
-		new KingsCrown().collect();
+		new ScrollOfMagicMapping().identify().collect();
+		new PotionOfMindVision().identify().collect();
+		new PotionOfLiquidFlame().identify().collect();
 
 		new ScrollOfIdentify().identify().collect();
 		new ScrollOfTransmutation().identify();
