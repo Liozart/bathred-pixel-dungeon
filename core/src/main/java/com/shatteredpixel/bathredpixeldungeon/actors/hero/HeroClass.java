@@ -190,7 +190,10 @@ public enum HeroClass {
 
 		new ScrollOfMagicMapping().identify().collect();
 		new PotionOfMindVision().identify().collect();
-		new PotionOfLiquidFlame().identify().collect();
+		new PotionOfInvisibility().identify().collect();
+		new PotionOfInvisibility().identify().collect();
+		new PotionOfInvisibility().identify().collect();
+		new PotionOfInvisibility().identify().collect();
 
 		new ScrollOfIdentify().identify().collect();
 		new ScrollOfTransmutation().identify();

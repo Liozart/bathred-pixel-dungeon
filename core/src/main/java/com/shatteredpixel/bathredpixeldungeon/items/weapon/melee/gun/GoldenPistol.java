@@ -35,7 +35,7 @@ public class GoldenPistol extends BaseGun {
     {
         image = ItemSpriteSheet.GOLDEN_PISTOL;
         tier = 3;
-        max_round = 12;
+        max_round = 7;
         round = max_round;
     }
 

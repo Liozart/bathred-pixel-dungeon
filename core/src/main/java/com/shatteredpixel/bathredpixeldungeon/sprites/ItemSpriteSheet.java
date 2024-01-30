@@ -606,8 +606,8 @@ public class ItemSpriteSheet {
 		for (int i = BREWS; i < BREWS+16; i++)
 			assignItemRect(i, 12, 14);
 	}
-	
-	                                                                                    //16 free slots
+	private static final int BATHRITEMS          =                               xy(1, 26);  //8 slots
+	public static final int BATHRITEMS_BULLET   = BATHRITEMS+0;
 	
 	private static final int SPELLS         =                               xy(1, 27);  //16 slots
 	public static final int MAGIC_PORTER    = SPELLS+0;
@@ -685,6 +685,7 @@ public class ItemSpriteSheet {
 	public static final int TOKEN   = QUEST+6;
 	public static final int BLOB    = QUEST+7;
 	public static final int SHARD   = QUEST+8;
+	public static final int BATHRTOKEN   = QUEST+9;
 	static{
 		assignItemRect(SKULL,   16, 11);
 		assignItemRect(DUST,    12, 11);
@@ -695,6 +696,7 @@ public class ItemSpriteSheet {
 		assignItemRect(TOKEN,   12, 12);
 		assignItemRect(BLOB,    10,  9);
 		assignItemRect(SHARD,    8, 10);
+		assignItemRect(BATHRTOKEN,   12, 12);
 	}
 
 	private static final int BAGS       =                                   xy(1, 31);  //16 slots

@@ -25,6 +25,7 @@ import com.shatteredpixel.bathredpixeldungeon.Dungeon;
 import com.shatteredpixel.bathredpixeldungeon.items.armor.Armor;
 import com.shatteredpixel.bathredpixeldungeon.items.armor.ClothArmor;
 import com.shatteredpixel.bathredpixeldungeon.items.armor.DuelistArmor;
+import com.shatteredpixel.bathredpixeldungeon.items.armor.GiuxArmor;
 import com.shatteredpixel.bathredpixeldungeon.items.armor.HuntressArmor;
 import com.shatteredpixel.bathredpixeldungeon.items.armor.LeatherArmor;
 import com.shatteredpixel.bathredpixeldungeon.items.armor.MageArmor;
@@ -361,7 +362,7 @@ public class Generator {
 					MarksmanRifle.class,
 					TacticalHandgun.class
 			};
-			GUNS.defaultProbs = new float[]{ 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
+			GUNS.defaultProbs = new float[]{ 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
 			GUNS.probs = GUNS.defaultProbs.clone();
 
 			WAND.classes = new Class<?>[]{
@@ -450,8 +451,12 @@ public class Generator {
 					Magnum.class,
 					HeavyMachinegun.class,
 					SniperRifle.class,
+					AutoHandgun.class,
+					AutoRifle.class,
+					MarksmanRifle.class,
+					TacticalHandgun.class
 			};
-			WEP_T5.defaultProbs = new float[]{ 3, 3, 3, 3, 3, 3, 3, 4, 4, 4 };
+			WEP_T5.defaultProbs = new float[]{ 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4 };
 			WEP_T5.probs = WEP_T5.defaultProbs.clone();
 			
 			//see Generator.randomArmor
@@ -465,9 +470,10 @@ public class Generator {
 					MageArmor.class,
 					RogueArmor.class,
 					HuntressArmor.class,
-					DuelistArmor.class
+					DuelistArmor.class,
+					GiuxArmor.class
 			};
-			ARMOR.probs = new float[]{ 1, 1, 1, 1, 1, 0, 0, 0, 0, 0 };
+			ARMOR.probs = new float[]{ 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0 };
 			
 			//see Generator.randomMissile
 			MISSILE.classes = new Class<?>[]{};
@@ -727,9 +733,12 @@ public class Generator {
 
 	public static BaseGun randomGun(int floorSet) {
 		floorSet = (int)GameMath.gate(0, floorSet, floorSetTierProbs.length-1);
-		BaseGun bg = (BaseGun)Reflection.newInstance(Category.GUNS.classes[Random.chances(floorSetTierProbs[floorSet])]);
+		MeleeWeapon bg;
+		do {
+			bg = (MeleeWeapon) randomUsingDefaults(wepTiers[Random.chances(floorSetTierProbs[floorSet])]);
+		} while (!(bg instanceof BaseGun));
 		bg.random();
-		return bg;
+		return (BaseGun)bg;
 	}
 	
 	public static final Category[] misTiers = new Category[]{

@@ -35,19 +35,19 @@ public class HeavyMachinegun extends BaseGun {
         image = ItemSpriteSheet.HEAVY_MACHINEGUN;
         tier = 5;
         shotPerShoot = 2;
-        max_round = 15;
+        max_round = 30;
         round = max_round;
     }
 
     public int Bulletmin(int lvl) {
-        return tier +
+        return tier + 1 +
                 lvl +
                 RingOfSharpshooting.levelDamageBonus(Dungeon.hero);
     }
 
     public int Bulletmax(int lvl) {
         return 2 * (tier)   +
-                lvl * (tier-2) +
+                lvl * (tier) +
                 RingOfSharpshooting.levelDamageBonus(Dungeon.hero);
     }
 

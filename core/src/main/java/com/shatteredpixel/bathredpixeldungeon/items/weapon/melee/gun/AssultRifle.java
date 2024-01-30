@@ -33,20 +33,20 @@ public class AssultRifle extends BaseGun {
     {
         image = ItemSpriteSheet.ASSULT_RIFLE;
         tier = 4;
-        max_round = 12;
+        max_round = 21;
         round = max_round;
         shotPerShoot = 3;
     }
 
     public int Bulletmin(int lvl) {
-        return tier +
+        return tier + 2 +
                 lvl +
                 RingOfSharpshooting.levelDamageBonus(Dungeon.hero);
     }
 
     public int Bulletmax(int lvl) {
         return 2 * (tier)   +
-                lvl * (tier-2) +
+                lvl * (tier) +
                 RingOfSharpshooting.levelDamageBonus(Dungeon.hero);
     }
 

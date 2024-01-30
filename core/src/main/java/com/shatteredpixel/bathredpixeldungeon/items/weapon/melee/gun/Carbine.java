@@ -34,10 +34,11 @@ public class Carbine extends BaseGun {
         tier = 4;
         max_round = 1;
         round = max_round;
+        reload_time = 1;
     }
 
     public int Bulletmin(int lvl) {
-        return 3 * tier +
+        return 4 * tier +
                 lvl      +
                 RingOfSharpshooting.levelDamageBonus(Dungeon.hero);
     }

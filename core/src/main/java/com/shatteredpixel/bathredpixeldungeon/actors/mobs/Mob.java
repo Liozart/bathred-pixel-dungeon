@@ -21,6 +21,8 @@
 
 package com.shatteredpixel.bathredpixeldungeon.actors.mobs;
 
+import static com.shatteredpixel.bathredpixeldungeon.Dungeon.branch;
+import static com.shatteredpixel.bathredpixeldungeon.Dungeon.depth;
 import static com.shatteredpixel.bathredpixeldungeon.Dungeon.hero;
 
 import com.shatteredpixel.bathredpixeldungeon.Assets;
@@ -54,6 +56,7 @@ import com.shatteredpixel.bathredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.abilities.duelist.Feint;
+import com.shatteredpixel.bathredpixeldungeon.actors.mobs.npcs.BathrNPC;
 import com.shatteredpixel.bathredpixeldungeon.actors.mobs.npcs.DirectableAlly;
 import com.shatteredpixel.bathredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.bathredpixeldungeon.effects.Speck;
@@ -64,6 +67,8 @@ import com.shatteredpixel.bathredpixeldungeon.items.Generator;
 import com.shatteredpixel.bathredpixeldungeon.items.Item;
 import com.shatteredpixel.bathredpixeldungeon.items.artifacts.MasterThievesArmband;
 import com.shatteredpixel.bathredpixeldungeon.items.artifacts.TimekeepersHourglass;
+import com.shatteredpixel.bathredpixeldungeon.items.quest.BathrToken;
+import com.shatteredpixel.bathredpixeldungeon.items.quest.DwarfToken;
 import com.shatteredpixel.bathredpixeldungeon.items.rings.Ring;
 import com.shatteredpixel.bathredpixeldungeon.items.rings.RingOfWealth;
 import com.shatteredpixel.bathredpixeldungeon.items.stones.StoneOfAggression;
@@ -909,6 +914,11 @@ public abstract class Mob extends Char {
 			Talent.onFoodEaten(Dungeon.hero, 0, null);
 		}
 
+		if (depth == 1){
+			if (branch == 1 && !BathrNPC.Quest.isCompleted()) {
+					Dungeon.level.drop( new BathrToken(), pos ).sprite.drop();
+			}
+		}
 	}
 	
 	protected Object loot = null;

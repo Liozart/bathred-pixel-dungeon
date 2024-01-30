@@ -35,27 +35,21 @@ public class AutoRifle extends BaseGun {
         image = ItemSpriteSheet.AUTO_RIFLE;
 
         tier = 5;
-        shotPerShoot = 3;
-        max_round = 12;
+        shotPerShoot = 4;
+        max_round = 20;
         round = max_round;
     }
 
     public int Bulletmin(int lvl) {
-        return tier +
+        return tier + 1 +
                 lvl +
                 RingOfSharpshooting.levelDamageBonus(Dungeon.hero);
     }
 
     public int Bulletmax(int lvl) {
-        if (shotPerShoot < 1) {
-            return 2 * (tier)   +
-                    lvl * (tier-2) +
-                    RingOfSharpshooting.levelDamageBonus(Dungeon.hero);
-        } else {
-            return 4 * (tier)   +
-                    lvl * (tier) +
-                    RingOfSharpshooting.levelDamageBonus(Dungeon.hero);
-        }
+        return 2 * (tier)   +
+                lvl * (tier) +
+                RingOfSharpshooting.levelDamageBonus(Dungeon.hero);
     }
 
     @Override

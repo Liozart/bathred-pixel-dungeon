@@ -36,6 +36,7 @@ public class TacticalHandgun extends BaseGun {
         tier = 6;
         max_round = 6;
         round = max_round;
+        reload_time = 0;
     }
 
     public int Bulletmin(int lvl) {

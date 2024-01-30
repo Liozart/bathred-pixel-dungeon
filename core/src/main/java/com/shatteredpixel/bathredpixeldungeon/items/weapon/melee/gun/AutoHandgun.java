@@ -36,19 +36,19 @@ public class AutoHandgun extends BaseGun {
         image = ItemSpriteSheet.AUTOHANDGUN;
         tier = 5;
         shotPerShoot = 2;
-        max_round = 6;
+        max_round = 8;
         round = max_round;
     }
 
     public int Bulletmin(int lvl) {
-            return 2 * tier +
+            return 2 * tier + 1 +
                     lvl      +
                     RingOfSharpshooting.levelDamageBonus(hero);
     }
 
     public int Bulletmax(int lvl) {
             return 4 * (tier+1)   +
-                    lvl * (tier+1)  +
+                    lvl * (tier+2)  +
                     RingOfSharpshooting.levelDamageBonus(hero);
     }
     @Override

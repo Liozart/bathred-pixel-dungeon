@@ -33,19 +33,19 @@ public class SubMachinegun extends BaseGun {
         image = ItemSpriteSheet.SUBMACHINEGUN;
         tier = 3;
         shotPerShoot = 3;
-        max_round = 15;
+        max_round = 18;
         round = max_round;
     }
 
     public int Bulletmin(int lvl) {
-        return tier +
+        return tier + 1 +
                 lvl +
                 RingOfSharpshooting.levelDamageBonus(Dungeon.hero);
     }
 
     public int Bulletmax(int lvl) {
         return 2 * (tier)   +
-                lvl * (tier-2) +
+                2 * lvl * (tier) +
                 RingOfSharpshooting.levelDamageBonus(Dungeon.hero);
     }
 

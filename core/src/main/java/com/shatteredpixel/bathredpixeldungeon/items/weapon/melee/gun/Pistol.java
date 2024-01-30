@@ -36,6 +36,7 @@ public class Pistol extends BaseGun {
         tier = 2;
         max_round = 4;
         round = max_round;
+        reload_time = 1;
     }
 
     public int Bulletmin(int lvl) {

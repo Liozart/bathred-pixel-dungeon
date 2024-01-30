@@ -2,6 +2,7 @@ package com.shatteredpixel.bathredpixeldungeon.levels.rooms;
 
 import com.shatteredpixel.bathredpixeldungeon.Dungeon;
 import com.shatteredpixel.bathredpixeldungeon.items.Generator;
+import com.shatteredpixel.bathredpixeldungeon.items.food.MeatPie;
 import com.shatteredpixel.bathredpixeldungeon.levels.Level;
 import com.shatteredpixel.bathredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.bathredpixeldungeon.levels.painters.Painter;
@@ -40,24 +41,27 @@ public class CastleRoom extends StandardRoom {
         int pillarH = 2;
 
         Painter.fill(level, left + (wid - pillarW) / 2, top + 3, pillarW, 1, Terrain.BOOKSHELF);
-        Painter.fill(level, left + (wid - pillarW) / 2, bottom - 3, pillarW, 1, Terrain.STATUE);
+        Painter.fill(level, left + (wid - pillarW) / 2, bottom - 3, pillarW, 1, Terrain.BOOKSHELF);
 
-        Painter.fill(level, left + 3, top + (hei - pillarH) / 2, 1, pillarH, Terrain.BOOKSHELF);
+        Painter.fill(level, left + 3, top + (hei - pillarH) / 2, 1, pillarH, Terrain.STATUE);
         Painter.fill(level, right - 3, top + (hei - pillarH) / 2, 1, pillarH, Terrain.STATUE);
 
         PerimeterRoom.fillPerimiterPaths(level, this, Terrain.EMPTY_SP);
 
         for (Door door : connected.values()) {
-                door.set(Door.Type.BARRICADE);
+                door.set(Door.Type.CRYSTAL);
         }
 
-        for (int i = 0; i < 4; i++){
+        for (int i = 0; i < 7; i++){
             int itemPos;
             do{
                 itemPos = level.pointToCell(random());
             } while ( level.map[itemPos] != Terrain.EMPTY_SP
                     || level.heaps.get(itemPos) != null);
-            level.drop(Generator.randomGun(Random.Int(2) + 1), itemPos);
+            if (i == 0)
+                level.drop( new MeatPie(), itemPos );
+            else
+                level.drop(Generator.randomGun(Random.Int(3) + 2).upgrade(), itemPos);
         }
     }
 }

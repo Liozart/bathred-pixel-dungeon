@@ -38,13 +38,13 @@ public class DualPistol extends BaseGun {
     }
 
     public int Bulletmin(int lvl) {
-        return tier +
+        return tier + 1 +
                 lvl +
                 RingOfSharpshooting.levelDamageBonus(Dungeon.hero);
     }
 
     public int Bulletmax(int lvl) {
-        return 2 * (tier)   +
+        return 3 * (tier) + 1 +
                 lvl * (tier) +
                 RingOfSharpshooting.levelDamageBonus(Dungeon.hero);
     }

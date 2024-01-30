@@ -31,8 +31,11 @@ import com.shatteredpixel.bathredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.bathredpixeldungeon.actors.buffs.ChampionEnemy;
 import com.shatteredpixel.bathredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.bathredpixeldungeon.actors.mobs.Mob;
+import com.shatteredpixel.bathredpixeldungeon.actors.mobs.npcs.BathrNPC;
 import com.shatteredpixel.bathredpixeldungeon.actors.mobs.npcs.Blacksmith;
+import com.shatteredpixel.bathredpixeldungeon.actors.mobs.npcs.Imp;
 import com.shatteredpixel.bathredpixeldungeon.items.Amulet;
+import com.shatteredpixel.bathredpixeldungeon.items.Generator;
 import com.shatteredpixel.bathredpixeldungeon.items.Torch;
 import com.shatteredpixel.bathredpixeldungeon.items.food.MeatPie;
 import com.shatteredpixel.bathredpixeldungeon.items.potions.PotionOfLiquidFlame;
@@ -92,6 +95,8 @@ public class BathrLevel extends RegularLevel {
         color2 = 0x009900;
     }
 
+    Room entranceRoom;
+
     public static final String[] CAVES_TRACK_LIST
             = new String[]{Assets.Music.CAVES_1, Assets.Music.CAVES_2, Assets.Music.CAVES_2,
             Assets.Music.CAVES_1, Assets.Music.CAVES_3, Assets.Music.CAVES_3};
@@ -104,8 +109,8 @@ public class BathrLevel extends RegularLevel {
 
     protected ArrayList<Room> initRooms() {
         ArrayList<Room> initRooms = new ArrayList<>();
-        EntranceRoom k = new EntranceRoom();
-        initRooms.add (k);
+        entranceRoom = new EntranceRoom();
+        initRooms.add (entranceRoom);
         CastleRoom carom = new CastleRoom();
         initRooms.add(carom);
 
@@ -151,7 +156,7 @@ public class BathrLevel extends RegularLevel {
     }
     @Override
     public int mobLimit() {
-        return 8;
+        return 30;
     }
 
     @Override
@@ -160,7 +165,7 @@ public class BathrLevel extends RegularLevel {
 
         ArrayList<Room> stdRooms = new ArrayList<>();
         for (Room room : rooms) {
-            if (room instanceof StandardRoom && room != roomEntrance) {
+            if (room instanceof StandardRoom && room != roomEntrance && !(room instanceof CastleRoom)) {
                 for (int i = 0; i < ((StandardRoom) room).sizeCat.roomValue; i++) {
                     stdRooms.add(room);
                 }
@@ -236,16 +241,13 @@ public class BathrLevel extends RegularLevel {
                 losBlocking[m.pos] = false;
             }
         }
+
+        BathrNPC.Quest.spawn( this, entranceRoom );
     }
     @Override
     protected void createItems() {
         super.createItems();
-        int cell = randomDropCell();
-        if (map[cell] == Terrain.HIGH_GRASS || map[cell] == Terrain.FURROWED_GRASS) {
-            map[cell] = Terrain.GRASS;
-            losBlocking[cell] = false;
-        }
-        drop( new PotionOfLiquidFlame(), cell );
+        int cell;
         for (int i = 0; i < 3; i++){
             cell = randomDropCell();
             if (map[cell] == Terrain.HIGH_GRASS || map[cell] == Terrain.FURROWED_GRASS) {

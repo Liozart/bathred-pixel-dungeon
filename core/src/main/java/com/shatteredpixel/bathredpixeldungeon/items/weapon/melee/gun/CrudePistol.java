@@ -41,13 +41,6 @@ public class CrudePistol extends BaseGun {
     }
 
     @Override
-    public int bulletMax(int lvl) {
-        return 3 * (tier + 1) +
-                lvl * (tier + 1) +
-                RingOfSharpshooting.levelDamageBonus(hero);
-    }
-
-    @Override
     public Bullet knockBullet(){
         return new CrudeBullet();
     }

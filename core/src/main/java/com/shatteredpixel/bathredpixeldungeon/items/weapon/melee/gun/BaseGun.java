@@ -284,25 +284,6 @@ public class BaseGun extends MeleeWeapon {
 
     }
 
-    public int bulletMin(int lvl) {
-        return tier +
-                lvl +
-                RingOfSharpshooting.levelDamageBonus(hero);
-    }
-
-    public int bulletMin() {
-        return bulletMin(this.buffedLvl());
-    }
-
-    //need to be overridden
-    public int bulletMax(int lvl) {
-        return 0;
-    }
-
-    public int bulletMax() {
-        return bulletMax(this.buffedLvl());
-    }
-
     @Override
     protected float baseDelay(Char owner) {
         return super.baseDelay(owner) - (hero.pointsInTalent(Talent.GIUX_INSTANTBULLET) == 3 ? 0.2f : 0);
@@ -344,13 +325,6 @@ public class BaseGun extends MeleeWeapon {
 
         @Override
         public int proc(Char attacker, Char defender, int damage) {
-            /*boolean isDebuffed = false;
-            for (Buff buff : defender.buffs()) {
-                if (buff.type == Buff.buffType.NEGATIVE) {
-                    isDebuffed = true;
-                    break;
-                }
-            }*/
             return BaseGun.this.proc(attacker, defender, damage);
         }
 

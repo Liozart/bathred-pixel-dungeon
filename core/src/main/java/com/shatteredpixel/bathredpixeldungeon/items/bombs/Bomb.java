@@ -364,17 +364,17 @@ public class Bomb extends Item {
 			bombCosts.put(FrostBomb.class,      0);
 			bombCosts.put(WoollyBomb.class,     0);
 			
-			bombCosts.put(Firebomb.class,       1);
-			bombCosts.put(Noisemaker.class,     1);
+			bombCosts.put(Firebomb.class,       0);
+			bombCosts.put(Noisemaker.class,     0);
 			
-			bombCosts.put(Flashbang.class,      2);
-			bombCosts.put(ShockBomb.class,      2);
+			bombCosts.put(Flashbang.class,      0);
+			bombCosts.put(ShockBomb.class,      0);
 
-			bombCosts.put(RegrowthBomb.class,   3);
-			bombCosts.put(HolyBomb.class,       3);
+			bombCosts.put(RegrowthBomb.class,  0);
+			bombCosts.put(HolyBomb.class,       0);
 			
-			bombCosts.put(ArcaneBomb.class,     6);
-			bombCosts.put(ShrapnelBomb.class,   6);
+			bombCosts.put(ArcaneBomb.class,     0);
+			bombCosts.put(ShrapnelBomb.class,   0);
 		}
 		
 		@Override

@@ -51,6 +51,7 @@ import com.shatteredpixel.bathredpixeldungeon.items.scrolls.ScrollOfRemoveCurse;
 import com.shatteredpixel.bathredpixeldungeon.items.spells.Alchemize;
 import com.shatteredpixel.bathredpixeldungeon.items.stones.StoneOfEnchantment;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.MeleeWeapon;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun.BaseGun;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.missiles.darts.TippedDart;
 import com.shatteredpixel.bathredpixeldungeon.levels.Level;
 import com.shatteredpixel.bathredpixeldungeon.levels.Terrain;
@@ -263,7 +264,7 @@ public class ShopRoom extends SpecialRoom {
 				rare = Generator.random( Generator.Category.ARTIFACT );
 				break;
 			default:
-				rare = new Stylus();
+				rare = Generator.random(Generator.Category.GUNS);
 		}
 		rare.cursed = false;
 		rare.cursedKnown = true;
@@ -295,22 +296,25 @@ public class ShopRoom extends SpecialRoom {
 
 		if (bags.isEmpty()) return null;
 
-		//count up items in the main bag
-		for (Item item : pack.backpack.items) {
-			for (Bag bag : bags.keySet()){
-				if (bag.canHold(item)){
-					bags.put(bag, bags.get(bag)+1);
+		Bag bestBag = null;
+		if (Dungeon.depth == 5) {
+			bestBag = new ScrollHolder();
+		} else {
+			//count up items in the main bag
+			for (Item item : pack.backpack.items) {
+				for (Bag bag : bags.keySet()){
+					if (bag.canHold(item)){
+						bags.put(bag, bags.get(bag)+1);
+					}
 				}
 			}
-		}
-
-		//find which bag will result in most inventory savings, drop that.
-		Bag bestBag = null;
-		for (Bag bag : bags.keySet()){
-			if (bestBag == null){
-				bestBag = bag;
-			} else if (bags.get(bag) > bags.get(bestBag)){
-				bestBag = bag;
+			//find which bag will result in most inventory savings, drop that.
+			for (Bag bag : bags.keySet()){
+				if (bestBag == null){
+					bestBag = bag;
+				} else if (bags.get(bag) > bags.get(bestBag)){
+					bestBag = bag;
+				}
 			}
 		}
 
