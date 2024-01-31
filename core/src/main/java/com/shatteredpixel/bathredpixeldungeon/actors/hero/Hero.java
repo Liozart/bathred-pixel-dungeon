@@ -99,6 +99,7 @@ import com.shatteredpixel.bathredpixeldungeon.items.artifacts.TalismanOfForesigh
 import com.shatteredpixel.bathredpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.shatteredpixel.bathredpixeldungeon.items.bags.MagicalHolster;
 import com.shatteredpixel.bathredpixeldungeon.items.journal.Guidebook;
+import com.shatteredpixel.bathredpixeldungeon.items.keys.BathrKey;
 import com.shatteredpixel.bathredpixeldungeon.items.keys.CrystalKey;
 import com.shatteredpixel.bathredpixeldungeon.items.keys.GoldenKey;
 import com.shatteredpixel.bathredpixeldungeon.items.keys.IronKey;
@@ -1122,7 +1123,13 @@ public class Hero extends Char {
 					&& Notes.keyCount(new SkeletonKey(Dungeon.depth)) > 0) {
 
 				hasKey = true;
+
 				
+			} else if (door == Terrain.BATHR_DOOR
+					&& Notes.keyCount(new BathrKey(Dungeon.depth)) > 0) {
+
+				hasKey = true;
+
 			}
 			
 			if (hasKey) {
@@ -1720,7 +1727,8 @@ public class Hero extends Char {
 				curAction = new HeroAction.OpenChest( cell );
 			}
 			
-		} else if (Dungeon.level.map[cell] == Terrain.LOCKED_DOOR || Dungeon.level.map[cell] == Terrain.CRYSTAL_DOOR || Dungeon.level.map[cell] == Terrain.LOCKED_EXIT) {
+		} else if (Dungeon.level.map[cell] == Terrain.LOCKED_DOOR || Dungeon.level.map[cell] == Terrain.CRYSTAL_DOOR
+				|| Dungeon.level.map[cell] == Terrain.LOCKED_EXIT || Dungeon.level.map[cell] == Terrain.BATHR_DOOR) {
 			
 			curAction = new HeroAction.Unlock( cell );
 			
@@ -2145,6 +2153,13 @@ public class Hero extends Char {
 						Level.set(doorCell, Terrain.EMPTY);
 						Sample.INSTANCE.play(Assets.Sounds.TELEPORT);
 						CellEmitter.get( doorCell ).start( Speck.factory( Speck.DISCOVER ), 0.025f, 20 );
+					}
+				}else if (door == Terrain.BATHR_DOOR) {
+					hasKey = Notes.remove(new BathrKey(Dungeon.depth));
+					if (hasKey) {
+						Level.set(doorCell, Terrain.DOOR);
+						Sample.INSTANCE.play(Assets.Sounds.BURNING);
+						CellEmitter.get( doorCell ).start( Speck.factory( Speck.INFERNO ), 0.025f, 20 );
 					}
 				} else {
 					hasKey = Notes.remove(new SkeletonKey(Dungeon.depth));

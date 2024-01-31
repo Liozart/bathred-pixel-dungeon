@@ -11,6 +11,7 @@ import com.shatteredpixel.bathredpixeldungeon.actors.mobs.Golem;
 import com.shatteredpixel.bathredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.bathredpixeldungeon.actors.mobs.Monk;
 import com.shatteredpixel.bathredpixeldungeon.items.Generator;
+import com.shatteredpixel.bathredpixeldungeon.items.keys.BathrKey;
 import com.shatteredpixel.bathredpixeldungeon.items.keys.CrystalKey;
 import com.shatteredpixel.bathredpixeldungeon.items.quest.BathrToken;
 import com.shatteredpixel.bathredpixeldungeon.items.quest.DwarfToken;
@@ -76,7 +77,7 @@ public class BathrNPC extends NPC {
         if (BathrNPC.Quest.given) {
             BathrToken tokens = Dungeon.hero.belongings.getItem( BathrToken.class );
             if (tokens != null && (tokens.quantity() >= 20)) {
-                Dungeon.level.drop(new CrystalKey(depth), pos + 1);
+                Dungeon.level.drop(new BathrKey(depth), pos + 1);
                 tokens.detachAll( Dungeon.hero.belongings.backpack );
                 flee();
                 BathrNPC.Quest.complete();

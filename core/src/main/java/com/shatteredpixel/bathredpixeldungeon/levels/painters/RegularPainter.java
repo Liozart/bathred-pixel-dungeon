@@ -290,6 +290,9 @@ public abstract class RegularPainter extends Painter {
 					case WALL:
 						l.map[door] = Terrain.WALL;
 						break;
+					case BATHR:
+						l.map[door] = Terrain.BATHR_DOOR;
+						break;
 				}
 			}
 		}

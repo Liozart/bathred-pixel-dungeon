@@ -23,6 +23,7 @@ package com.shatteredpixel.bathredpixeldungeon.ui;
 
 import com.shatteredpixel.bathredpixeldungeon.Assets;
 import com.shatteredpixel.bathredpixeldungeon.Dungeon;
+import com.shatteredpixel.bathredpixeldungeon.items.keys.BathrKey;
 import com.shatteredpixel.bathredpixeldungeon.items.keys.CrystalKey;
 import com.shatteredpixel.bathredpixeldungeon.items.keys.GoldenKey;
 import com.shatteredpixel.bathredpixeldungeon.items.keys.IronKey;
@@ -57,10 +58,11 @@ public class KeyDisplay extends Visual {
 	//and the order they will be truncated if there is no space (higher first, larger counts first)
 	private static final LinkedHashMap<Class<? extends Key>, Integer> keyMap = new LinkedHashMap<>();
 	static {
-		keyMap.put(SkeletonKey.class, 1);
-		keyMap.put(CrystalKey.class, 2);
-		keyMap.put(GoldenKey.class, 3);
-		keyMap.put(IronKey.class, 4);
+		keyMap.put(BathrKey.class, 1);
+		keyMap.put(SkeletonKey.class, 2);
+		keyMap.put(CrystalKey.class, 3);
+		keyMap.put(GoldenKey.class, 4);
+		keyMap.put(IronKey.class, 5);
 	}
 	
 	private int totalKeys = 0;

@@ -49,7 +49,7 @@ public class CastleRoom extends StandardRoom {
         PerimeterRoom.fillPerimiterPaths(level, this, Terrain.EMPTY_SP);
 
         for (Door door : connected.values()) {
-                door.set(Door.Type.CRYSTAL);
+                door.set(Door.Type.BATHR);
         }
 
         for (int i = 0; i < 7; i++){

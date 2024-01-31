@@ -33,6 +33,7 @@ import com.shatteredpixel.bathredpixeldungeon.effects.Speck;
 import com.shatteredpixel.bathredpixeldungeon.levels.RegularLevel;
 import com.shatteredpixel.bathredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.bathredpixeldungeon.levels.features.LevelTransition;
+import com.shatteredpixel.bathredpixeldungeon.levels.rooms.CastleRoom;
 import com.shatteredpixel.bathredpixeldungeon.levels.rooms.Room;
 import com.shatteredpixel.bathredpixeldungeon.levels.rooms.secret.SecretRoom;
 import com.shatteredpixel.bathredpixeldungeon.levels.rooms.special.SpecialRoom;
@@ -161,6 +162,8 @@ public class ScrollOfTeleportation extends Scroll {
 					continue;
 				}
 			}
+			if (r instanceof CastleRoom)
+				continue;
 			
 			int cell;
 			for (Point p : r.charPlaceablePoints(level)){

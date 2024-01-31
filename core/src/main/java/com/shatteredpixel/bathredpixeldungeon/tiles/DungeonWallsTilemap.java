@@ -52,6 +52,8 @@ public class DungeonWallsTilemap extends DungeonTilemap {
 					return DungeonTileSheet.DOOR_SIDEWAYS_CRYSTAL;
 				} else if (map[pos + mapWidth] == Terrain.OPEN_DOOR){
 					return DungeonTileSheet.NULL_TILE;
+				} else if (map[pos + mapWidth] == Terrain.BATHR_DOOR){
+					return DungeonTileSheet.DOOR_SIDEWAYS_BATHR;
 				}
 
 			} else {
@@ -88,6 +90,8 @@ public class DungeonWallsTilemap extends DungeonTilemap {
 			return DungeonTileSheet.DOOR_OVERHANG_OPEN;
 		} else if (Dungeon.level.insideMap(pos) && map[pos+mapWidth] == Terrain.CRYSTAL_DOOR ) {
 			return DungeonTileSheet.DOOR_OVERHANG_CRYSTAL;
+		} else if (Dungeon.level.insideMap(pos) && map[pos+mapWidth] == Terrain.BATHR_DOOR ) {
+			return DungeonTileSheet.DOOR_OVERHANG_BATHR;
 		} else if (pos + mapWidth < size && map[pos+mapWidth] == Terrain.STATUE){
 			return DungeonTileSheet.STATUE_OVERHANG;
 		} else if (pos + mapWidth < size && map[pos+mapWidth] == Terrain.STATUE_SP){
