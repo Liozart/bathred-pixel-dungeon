@@ -60,6 +60,7 @@ import com.shatteredpixel.bathredpixeldungeon.items.artifacts.Artifact;
 import com.shatteredpixel.bathredpixeldungeon.items.artifacts.CloakOfShadows;
 import com.shatteredpixel.bathredpixeldungeon.items.bags.VelvetPouch;
 import com.shatteredpixel.bathredpixeldungeon.items.food.Food;
+import com.shatteredpixel.bathredpixeldungeon.items.food.MysteryMeat;
 import com.shatteredpixel.bathredpixeldungeon.items.potions.PotionOfExperience;
 import com.shatteredpixel.bathredpixeldungeon.items.potions.PotionOfHealing;
 import com.shatteredpixel.bathredpixeldungeon.items.potions.PotionOfInvisibility;
@@ -78,6 +79,7 @@ import com.shatteredpixel.bathredpixeldungeon.items.wands.WandOfLightning;
 import com.shatteredpixel.bathredpixeldungeon.items.wands.WandOfMagicMissile;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun.AssultRifle;
+import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun.AutoHandgun;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun.BaseGun;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.gun.CrudePistol;
 import com.shatteredpixel.bathredpixeldungeon.items.weapon.melee.Dagger;
@@ -182,20 +184,20 @@ public enum HeroClass {
 	}
 
 	private static void initGiux(Hero hero) {
-		(hero.belongings.weapon = new CrudePistol()).identify().upgrade(12);
+		(hero.belongings.weapon = new CrudePistol()).identify();
 		hero.belongings.weapon.activate(hero);
 
 		Dungeon.quickslot.setSlot(0, hero.belongings.weapon);
 		Buff.affect(hero, EscapeRoll.class).setHero(hero);
+		new MysteryMeat().identify().collect();
 
-		new ScrollOfMagicMapping().identify().collect();
-		new PotionOfMindVision().identify().collect();
-		new PotionOfInvisibility().identify().collect();
-		new PotionOfInvisibility().identify().collect();
-		new PotionOfInvisibility().identify().collect();
-		new PotionOfInvisibility().identify().collect();
+		new AutoHandgun().identify().collect();
+		new ScrollOfUpgrade().identify().collect();
+		new ScrollOfUpgrade().identify().collect();
+		new ScrollOfUpgrade().identify().collect();
+		new ScrollOfUpgrade().identify().collect();
 
-		new ScrollOfIdentify().identify().collect();
+		new ScrollOfIdentify().identify();
 		new ScrollOfTransmutation().identify();
 		new PotionOfHealing().identify();
 	}

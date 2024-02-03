@@ -73,7 +73,7 @@ public class SubMachinegun extends BaseGun {
     public class SubMachinegunBullet extends BaseGun.Bullet {
 
         {
-            image = ItemSpriteSheet.TRIPLE_BULLET;
+            image = ItemSpriteSheet.SINGLE_BULLET;
             tier = 3;
             ACC = 0.8f;
         }

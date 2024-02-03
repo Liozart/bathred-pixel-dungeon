@@ -531,11 +531,18 @@ public enum Talent {
 		if (hero.hasTalent(GIUX_GUNMEAL)){
 			KindOfWeapon wep = hero.belongings.attackingWeapon();
 			if (wep instanceof BaseGun){
-				((BaseGun)wep).manualReload(hero.pointsInTalent(GIUX_GUNMEAL ) * 2, false, false);
+				int poim = hero.pointsInTalent(GIUX_GUNMEAL);
+				if (poim == 1)
+					((BaseGun)wep).manualReload( 4, false, false);
+				else
+				{
+					((BaseGun)wep).manualReload( 5, true, false);
+					hero.buff(EscapeRoll.class).gunMealUpdate();
+				}
 			}
 		}
 		if (hero.hasTalent(GIUX_ARMORMEAL)){
-			Buff.affect(hero, ArmorEmpower.class).set(hero.pointsInTalent(Talent.GIUX_ARMORMEAL), 10f + hero.pointsInTalent(Talent.GIUX_ARMORMEAL) * 10f);
+			Buff.affect(hero, ArmorEmpower.class).set(hero.pointsInTalent(Talent.GIUX_ARMORMEAL), hero.pointsInTalent(Talent.GIUX_ARMORMEAL) * 30f);
 		}
 		if (hero.hasTalent(EMPOWERING_MEAL)){
 			//2/3 bonus wand damage for next 3 zaps

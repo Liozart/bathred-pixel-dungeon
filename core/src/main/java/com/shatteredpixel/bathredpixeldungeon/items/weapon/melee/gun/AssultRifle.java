@@ -76,9 +76,9 @@ public class AssultRifle extends BaseGun {
     }
     public class AssultBullet extends Bullet {
         {
-            image = ItemSpriteSheet.TRIPLE_BULLET;
+            image = ItemSpriteSheet.SNIPER_BULLET;
             tier = 4;
-            ACC = 0.7f;
+            ACC = 0.75f;
         }
     }
 }

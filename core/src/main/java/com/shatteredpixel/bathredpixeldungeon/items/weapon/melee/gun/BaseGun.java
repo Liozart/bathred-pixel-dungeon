@@ -244,7 +244,7 @@ public class BaseGun extends MeleeWeapon {
     }
 
     public void manualReload(int amount, boolean overReload, boolean wandRel) {
-        round += amount;
+        round += amount * shotPerShoot;
         if (!overReload) {
             if (round > maxRound()) {
                 round = maxRound();
@@ -445,28 +445,31 @@ public class BaseGun extends MeleeWeapon {
                         CellEmitter.center(cell).burst(BlastParticle.FACTORY, 2);
                     }
                     if (!enemy.isAlive()){
-                        if (doBurst && hero.hasTalent(Talent.GIUX_PEWPEWRANGE)) {
-                            boolean gettarg = false;
-                            killedWithBurst++;
-                            for (int i = oldMobi; i < hero.visibleEnemies(); i++){
-                                if (shotPerShootTarget != hero.visibleEnemy(i).pos){
-                                    shotPerShootTarget = hero.visibleEnemy(i).pos;
-                                    oldMobi = i;
-                                    gettarg = true;
-                                    break;
+                        if (doBurst){
+                            if(hero.hasTalent(Talent.GIUX_PEWPEWRANGE))
+                            {
+                                boolean gettarg = false;
+                                killedWithBurst++;
+                                for (int i = oldMobi; i < hero.visibleEnemies(); i++){
+                                    if (shotPerShootTarget != hero.visibleEnemy(i).pos){
+                                        shotPerShootTarget = hero.visibleEnemy(i).pos;
+                                        oldMobi = i;
+                                        gettarg = true;
+                                        break;
+                                    }
                                 }
+                                if (hero.pointsInTalent(Talent.GIUX_PEWPEWRANGE) == 1 && killedWithBurst >= 2)
+                                    gettarg = false;
+                                if (!gettarg)
+                                    shotPerShootTarget = cell;
                             }
-                            if (hero.pointsInTalent(Talent.GIUX_PEWPEWRANGE) == 1 && killedWithBurst >= 2)
-                                gettarg = false;
-                            if (!gettarg)
-                                shotPerShootTarget = cell;
-                        }
-                        if (hero.hasTalent(Talent.GIUX_PEWPEWKILL)){
-                            round += 1 + hero.pointsInTalent(Talent.GIUX_PEWPEWKILL);
-                        }
-                        if (hero.hasTalent(Talent.GIUX_PEWPEWBUFF)){
-                            if (Random.Int(100) <= (5 + (hero.pointsInTalent(Talent.GIUX_PEWPEWBUFF) * 15))) {
-                                buffsToApply++;
+                            if (hero.hasTalent(Talent.GIUX_PEWPEWKILL)){
+                                round += 1 + hero.pointsInTalent(Talent.GIUX_PEWPEWKILL);
+                            }
+                            if (hero.hasTalent(Talent.GIUX_PEWPEWBUFF)){
+                                if (Random.Int(100) <= (5 + (hero.pointsInTalent(Talent.GIUX_PEWPEWBUFF) * 15))) {
+                                    buffsToApply++;
+                                }
                             }
                         }
                     }
@@ -555,7 +558,12 @@ public class BaseGun extends MeleeWeapon {
                 oldMobi = killedWithBurst = 0;
                 buffsToApply = 0;
                 if (hero.subClass == HeroSubClass.PEWPEW && doBurst){
-                    Buff.affect(hero, PewpewCooldown.class).set(100f);
+                    if (hero.hasTalent(Talent.GIUX_PEWPEWKILL)){
+                        Buff.affect(hero, PewpewCooldown.class).set(95f - (hero.pointsInTalent(Talent.GIUX_PEWPEWKILL) * 15));
+                    }
+                    else {
+                        Buff.affect(hero, PewpewCooldown.class).set(100f);
+                    }
                     doBurst = false;
                 }
                 if (hero.buff(TeleBathr.TeleBathrBuff.class) != null){

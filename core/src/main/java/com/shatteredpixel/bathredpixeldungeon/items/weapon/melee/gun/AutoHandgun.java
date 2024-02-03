@@ -35,7 +35,6 @@ public class AutoHandgun extends BaseGun {
     {
         image = ItemSpriteSheet.AUTOHANDGUN;
         tier = 5;
-        shotPerShoot = 2;
         max_round = 8;
         round = max_round;
     }
@@ -75,11 +74,7 @@ public class AutoHandgun extends BaseGun {
     }
     public class AutoHandBullet extends Bullet {
         {
-            if (shotPerShoot > 1) {
-                image = ItemSpriteSheet.DUAL_BULLET;
-            } else {
-                image = ItemSpriteSheet.SINGLE_BULLET;
-            }
+            image = ItemSpriteSheet.SINGLE_BULLET;
             tier = 5;
         }
     }

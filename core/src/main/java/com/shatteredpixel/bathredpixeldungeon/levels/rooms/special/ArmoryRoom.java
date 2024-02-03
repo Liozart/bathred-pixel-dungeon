@@ -21,6 +21,8 @@
 
 package com.shatteredpixel.bathredpixeldungeon.levels.rooms.special;
 
+import static com.shatteredpixel.bathredpixeldungeon.items.Generator.randomGun;
+
 import com.shatteredpixel.bathredpixeldungeon.Dungeon;
 import com.shatteredpixel.bathredpixeldungeon.items.Generator;
 import com.shatteredpixel.bathredpixeldungeon.items.Item;
@@ -76,7 +78,7 @@ public class ArmoryRoom extends SpecialRoom {
 		prizeCats[index] = 0;
 		switch (index){
 			case 0: case 1: default:
-				return new BaseGun().random();
+				return Generator.randomGun(Dungeon.depth / 5 + 1);
 			case 2:
 				return Generator.randomArmor();
 			case 3:

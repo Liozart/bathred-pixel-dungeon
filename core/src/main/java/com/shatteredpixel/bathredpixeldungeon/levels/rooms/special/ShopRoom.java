@@ -297,7 +297,7 @@ public class ShopRoom extends SpecialRoom {
 		if (bags.isEmpty()) return null;
 
 		Bag bestBag = null;
-		if (Dungeon.depth == 5) {
+		if (Dungeon.depth == 6) {
 			bestBag = new ScrollHolder();
 		} else {
 			//count up items in the main bag
@@ -329,7 +329,5 @@ public class ShopRoom extends SpecialRoom {
 		}
 
 		return bestBag;
-
 	}
-
 }

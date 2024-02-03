@@ -69,6 +69,9 @@ public class EscapeRoll extends Buff implements ActionIndicator.Action {
     public void setHero(Hero h){
         hero = h;
     }
+
+    public void gunMealUpdate(){ rollCoolDown = 0; act(); }
+
     @Override
     public void detach() {
         super.detach();

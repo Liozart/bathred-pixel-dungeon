@@ -77,11 +77,7 @@ public class AutoRifle extends BaseGun {
     }
     public class AutoRifleBullet extends BaseGun.Bullet {
         {
-            if (shotPerShoot > 1) {
-                image = ItemSpriteSheet.TRIPLE_BULLET;
-            } else {
-                image = ItemSpriteSheet.SINGLE_BULLET;
-            }
+            image = ItemSpriteSheet.TRIPLE_BULLET;
             tier = 5;
             ACC = 0.7f;
         }

@@ -76,7 +76,7 @@ public class Magnum extends BaseGun {
     public class MagnumBullet extends BaseGun.Bullet {
 
         {
-            image = ItemSpriteSheet.SINGLE_BULLET;
+            image = ItemSpriteSheet.SNIPER_BULLET;
             tier = 5;
         }
     }
